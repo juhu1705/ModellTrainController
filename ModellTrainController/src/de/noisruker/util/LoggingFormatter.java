@@ -18,8 +18,8 @@ class LoggingFormatter extends Formatter {
 		
 		StringBuilder sb = new StringBuilder();
 		
-		sb.append("[" + LocalDateTime.now().format(dateTimeFormatter) + "] [" + record.getLevel()
-		+ " | " + record.getSourceClassName() + "] " + record.getMessage() + "\n");
+		sb.append("[").append(LocalDateTime.now().format(dateTimeFormatter)).append("] [").append(record.getLevel())
+				.append(" | ").append(record.getSourceClassName()).append("] ").append(record.getMessage()).append("\n");
 		
 		Throwable thrown = record.getThrown();
 		if (thrown != null) {

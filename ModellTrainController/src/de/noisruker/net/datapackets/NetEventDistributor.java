@@ -71,13 +71,7 @@ public class NetEventDistributor {
 	 * <ul>
 	 *     <li>muss die Annotation {@link NetEventHandler} enthalten</li>
 	 *     <li>muss statisch sein</li>
-	 *     <li>
-	 *         muss exakt zwei Parameter enthalten:
-	 *         <ol>
-	 *             <li>Ein Parameter, über den der Datenpaket-Wert ({@code value}) übergeben wird</li>
-	 *             <li>Ein Parameter, über den der {@link DatapacketSender} übergeben wird</li>
-	 *         </ol>
-	 *     </li>
+	 *     <li>muss exakt einen Parameter enthalten, über den das {@link NetEvent} übergeben wird</li>
 	 * </ul>
 	 *
 	 * @param eventHandler EventHandler-Methode
@@ -152,7 +146,7 @@ public class NetEventDistributor {
 
 		for (Entry<Method, DatapacketType> e : this.eventHandlers.entrySet()) {
 			if (e.getValue() == dp.getType()) {
-				e.getKey().invoke(null, dp.getType().getRequiredValueType().cast(dp.getValue()), event.getSender());
+				e.getKey().invoke(null, new NetEvent(event.getSender(), dp));
 			}
 		}
 	}
