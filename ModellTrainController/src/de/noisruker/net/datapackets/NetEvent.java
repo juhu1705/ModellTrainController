@@ -2,7 +2,7 @@ package de.noisruker.net.datapackets;
 
 /**
  * Enthält Metadaten über ein empfangenes Datenpaket
- * 
+ *
  * @author Niklas
  */
 public class NetEvent {

@@ -1,14 +1,13 @@
 package de.noisruker.net.datapackets;
 
-import java.io.Serializable;
-
 import de.noisruker.net.Side;
 
+import java.io.Serializable;
 
 
 /**
  * Typen von Datenpaketen
- * 
+ *
  * @author Niklas
  */
 public enum DatapacketType {

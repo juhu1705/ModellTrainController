@@ -1,9 +1,8 @@
 package de.noisruker.net.datapackets;
 
-import java.io.Serializable;
-
 import de.noisruker.util.Ref;
 
+import java.io.Serializable;
 
 
 /**
@@ -15,7 +14,7 @@ public final class DatapacketVoid implements Serializable {
 
 	private static final long serialVersionUID = Ref.UNIVERSAL_SERIAL_VERSION_UID;
 
-	private static DatapacketVoid vObj = new DatapacketVoid();
+	private static final DatapacketVoid vObj = new DatapacketVoid();
 
 
 	private DatapacketVoid() {

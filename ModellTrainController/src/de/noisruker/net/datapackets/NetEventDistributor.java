@@ -1,5 +1,7 @@
 package de.noisruker.net.datapackets;
 
+import de.noisruker.util.Ref;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -9,51 +11,38 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 
-import de.noisruker.util.Ref;
-
 /**
  * Ermöglicht vereinfachte Behandlung von eintreffenden {@link Datapacket
  * Datenpaketen}. Verwaltet {@link NetEventHandler} und die EventQueue.
  *
  * @author Niklas
  */
-public final class NetEventDistributor {
+public class NetEventDistributor {
 
-	private static Map<Method, DatapacketType> eventHandlers = new HashMap<>();
+	private final Map<Method, DatapacketType> eventHandlers = new HashMap<>();
 
-	private static LinkedList<NetEvent> eventQueue = new LinkedList<>();
+	private final LinkedList<NetEvent> eventQueue = new LinkedList<>();
 
-	private static Thread eventRunner;
-	private static boolean processing = false;
+	private Thread eventRunner;
+	private boolean processing = false;
 
-	static {
-		NetEventDistributor.eventRunner = new Thread(new Runnable() {
 
-			@Override
-			public void run() {
-				while (processing) {
-					if (!eventQueue.isEmpty()) {
-						NetEvent event = eventQueue.removeFirst();
+	public NetEventDistributor() {
+		this.eventRunner = new Thread(() -> {
+			while (processing) {
+				if (!eventQueue.isEmpty()) {
+					NetEvent event = eventQueue.removeFirst();
 
-						try {
-							NetEventDistributor.processEvent(event);
-						} catch (InvocationTargetException e) {
-							Ref.LOGGER.log(Level.SEVERE, "Exception in EventHandler:", e.getCause());
-						} catch (IllegalAccessException | IllegalArgumentException e) {
-							e.printStackTrace();
-						}
+					try {
+						this.processEvent(event);
+					} catch (InvocationTargetException e) {
+						Ref.LOGGER.log(Level.SEVERE, "Exception in EventHandler:", e.getCause());
+					} catch (IllegalAccessException | IllegalArgumentException e) {
+						e.printStackTrace();
 					}
 				}
 			}
 		}, "eventRunner");
-	}
-
-
-	/**
-	 * Nicht zu benutzender Dummy-Konstruktor, der den Default-Konstruktor
-	 * verhindert
-	 */
-	private NetEventDistributor() {
 	}
 
 
@@ -65,10 +54,10 @@ public final class NetEventDistributor {
 	 *                      registriert werden sollen
 	 * @see #registerEventHandler(Method)
 	 */
-	public static void registerEventHandlers(Class<?> eventListener) {
+	public void registerEventHandlers(Class<?> eventListener) {
 		for (Method m : eventListener.getMethods()) {
 			if (m.getAnnotation(NetEventHandler.class) != null) {
-				NetEventDistributor.registerEventHandler(m);
+				this.registerEventHandler(m);
 			}
 		}
 	}
@@ -77,7 +66,7 @@ public final class NetEventDistributor {
 	/**
 	 * Registriert eine Methode als EventHandler. <br>
 	 * <br>
-	 *
+	 * <p>
 	 * Diese muss folgende Bedingungen erfüllen:<br>
 	 * - muss die Annotation {@link NetEventHandler} enthalten<br>
 	 * - muss statisch sein<br>
@@ -93,7 +82,7 @@ public final class NetEventDistributor {
 	 *                                  nicht erfüllt ist
 	 * @see #registerEventHandlers(Class)
 	 */
-	public static void registerEventHandler(Method eventHandler) {
+	public void registerEventHandler(Method eventHandler) {
 		NetEventHandler annotation = eventHandler.getAnnotation(NetEventHandler.class);
 		if (annotation == null) {
 			throw new IllegalArgumentException("Angegebene Methode hat keine NetEventHandler-Annotation");
@@ -110,7 +99,7 @@ public final class NetEventDistributor {
 			throw new IllegalArgumentException("Angegebene Methode muss statisch sein");
 		}
 
-		NetEventDistributor.eventHandlers.put(eventHandler, type);
+		this.eventHandlers.put(eventHandler, type);
 	}
 
 
@@ -118,51 +107,47 @@ public final class NetEventDistributor {
 	 * Fügt ein {@link NetEvent} zur Warteschlange hinzu, sodass dieses vom
 	 * eventRunner-Thread verarbeitet wird, sobald alle vorherigen {@link NetEvent
 	 * NetEvents} verarbeitet wurden
-	 * 
+	 *
 	 * @param event das hinzuzufügende Event
 	 */
-	public static void addEventToQueue(NetEvent event) {
-		NetEventDistributor.eventQueue.addLast(event);
+	public void addEventToQueue(NetEvent event) {
+		this.eventQueue.addLast(event);
 	}
 
 
 	/**
 	 * Startet den EventRunner, sodass Events verarbeitet werden können
-	 * 
+	 *
 	 * @see #stopProcessing()
 	 */
-	public static void startProcessing() {
+	public void startProcessing() {
 		// eventRunner starten
-		if (!NetEventDistributor.eventRunner.isAlive())
-			NetEventDistributor.eventRunner.start();
-		NetEventDistributor.processing = true;
+		if (!this.eventRunner.isAlive())
+			this.eventRunner.start();
+		this.processing = true;
 	}
 
 
 	/**
 	 * Stoppt den EventRunner
-	 * 
+	 *
 	 * @see #startProcessing()
 	 */
-	public static void stopProcessing() {
-		NetEventDistributor.processing = false;
+	public void stopProcessing() {
+		this.processing = false;
 	}
 
 
 	/**
 	 * Ruft ein Datenpaket-Event auf
 	 *
-	 * @param dp     Datenpaket
-	 * @param sender Datenpaketsender
-	 * @throws IllegalArgumentException
-	 * @throws IllegalAccessException
-	 * @throws InvocationTargetException
+	 * @param event Datenpaket-Event
 	 */
-	private static void processEvent(NetEvent event)
+	private void processEvent(NetEvent event)
 			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		Datapacket dp = event.getDatapacket();
 
-		for (Entry<Method, DatapacketType> e : NetEventDistributor.eventHandlers.entrySet()) {
+		for (Entry<Method, DatapacketType> e : this.eventHandlers.entrySet()) {
 			if (e.getValue() == dp.getType()) {
 				e.getKey().invoke(null, dp.getType().getRequiredValueType().cast(dp.getValue()), event.getSender());
 			}
