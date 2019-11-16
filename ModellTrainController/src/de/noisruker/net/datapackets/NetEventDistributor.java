@@ -68,14 +68,17 @@ public class NetEventDistributor {
 	 * <br>
 	 * <p>
 	 * Diese muss folgende Bedingungen erfüllen:<br>
-	 * - muss die Annotation {@link NetEventHandler} enthalten<br>
-	 * - muss statisch sein<br>
-	 * - muss exakt zwei Parameter enthalten:<br>
-	 * <ol>
-	 * <li>Ein Parameter, über den der Datenpaket-Wert ({@code value}) übergeben
-	 * wird</li>
-	 * <li>Ein Parameter, über den der {@link DatapacketSender} übergeben wird</li>
-	 * </ol>
+	 * <ul>
+	 *     <li>muss die Annotation {@link NetEventHandler} enthalten</li>
+	 *     <li>muss statisch sein</li>
+	 *     <li>
+	 *         muss exakt zwei Parameter enthalten:
+	 *         <ol>
+	 *             <li>Ein Parameter, über den der Datenpaket-Wert ({@code value}) übergeben wird</li>
+	 *             <li>Ein Parameter, über den der {@link DatapacketSender} übergeben wird</li>
+	 *         </ol>
+	 *     </li>
+	 * </ul>
 	 *
 	 * @param eventHandler EventHandler-Methode
 	 * @throws IllegalArgumentException wenn eine der oben genannten Bedingungen
