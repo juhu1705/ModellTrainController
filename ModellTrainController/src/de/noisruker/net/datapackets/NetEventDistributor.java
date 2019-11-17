@@ -146,7 +146,7 @@ public class NetEventDistributor {
 
 		for (Entry<Method, DatapacketType> e : this.eventHandlers.entrySet()) {
 			if (e.getValue() == dp.getType()) {
-				e.getKey().invoke(null, new NetEvent(event.getSender(), dp));
+				e.getKey().invoke(null, event);
 			}
 		}
 	}
