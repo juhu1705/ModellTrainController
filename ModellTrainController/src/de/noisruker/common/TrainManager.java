@@ -7,7 +7,7 @@ public class TrainManager {
 	private HashMap<Byte, Train> trains = new HashMap<Byte, Train>();
 	
 	public Train getTrain(byte address) {
-		return this.trains.getOrDefault(Byte.valueOf(address), new Train(address));
+		return this.trains.getOrDefault(address, new Train(address));
 	}
 	
 	public TrainManager() {
