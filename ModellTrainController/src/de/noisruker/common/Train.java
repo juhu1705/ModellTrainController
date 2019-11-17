@@ -1,10 +1,17 @@
 package de.noisruker.common;
 
+import java.io.Serializable;
+
 import de.noisruker.server.ModellRailroad;
+import de.noisruker.util.Ref;
 import jssc.SerialPortException;
 
-public class Train {
-
+public class Train implements Serializable {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = Ref.UNIVERSAL_SERIAL_VERSION_UID;
 	/**
 	 * Die eindeutige Addresse unter der ein Zug eingespeichert ist.
 	 */

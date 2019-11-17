@@ -1,7 +1,6 @@
 package de.noisruker.net.datapackets;
 
 import de.noisruker.net.Side;
-
 import java.io.Serializable;
 
 
@@ -12,7 +11,8 @@ import java.io.Serializable;
  */
 public enum DatapacketType {
 
-	TEST(Side.SERVER, String.class);
+	HAS_FUNKTION(Side.SERVER, Boolean.class),
+	SEND_COMMAND(Side.CLIENT, String.class);
 
 	private final Class<? extends Serializable> requiredValueType;
 	private final Side senderSide;

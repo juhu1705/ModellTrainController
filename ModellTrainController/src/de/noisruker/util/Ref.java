@@ -8,7 +8,7 @@ public class Ref {
 	
 	public static final long UNIVERSAL_SERIAL_VERSION_UID = 983475897014889764L;
 	
-	public static final int STANDARD_HOST_PORT = 18419;
+	public static final int STANDARD_HOST_PORT = 2357;
 	
 	public static final Logger LOGGER;
 	static {
