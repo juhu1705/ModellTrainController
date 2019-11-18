@@ -24,7 +24,7 @@ public class NetEventDistributor {
 	private final LinkedList<NetEvent> eventQueue = new LinkedList<>();
 
 	private Thread eventRunner;
-	private boolean processing = false;
+	private boolean processing = true;
 
 
 	public NetEventDistributor() {
@@ -40,6 +40,13 @@ public class NetEventDistributor {
 					} catch (IllegalAccessException | IllegalArgumentException e) {
 						e.printStackTrace();
 					}
+				}
+				
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
 		}, "eventRunner");
@@ -87,9 +94,8 @@ public class NetEventDistributor {
 		Class<?>[] paramTypes = eventHandler.getParameterTypes();
 		DatapacketType type = annotation.type();
 
-		if (!(paramTypes.length == 2 && paramTypes[0] == type.getRequiredValueType())) {
-			throw new IllegalArgumentException("Angegebene Methode muss genau zwei Parameter, einen vom Typ "
-					+ type.getRequiredValueType().getName() + " und einen vom Typ DatapacketSender enthalten");
+		if (!(paramTypes.length == 1 && paramTypes[0] == NetEvent.class)) {
+			throw new IllegalArgumentException("Angegebene Methode muss genau einen Parameter vom Typ NetEvent enthalten");
 		}
 
 		if (!Modifier.isStatic(eventHandler.getModifiers())) {

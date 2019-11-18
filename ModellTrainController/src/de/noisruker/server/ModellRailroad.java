@@ -7,16 +7,15 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 
 import de.noisruker.common.TrainManager;
+import de.noisruker.net.datapackets.Datapacket;
 import de.noisruker.net.datapackets.DatapacketSender;
+import de.noisruker.net.datapackets.DatapacketType;
 import de.noisruker.util.Ref;
 import jssc.SerialPort;
 import jssc.SerialPortException;
 
 public class ModellRailroad implements Runnable {
 
-	
-	
-	private TrainManager trainManager;
 	private boolean active = true;
 	
 	private ArrayList<CommandMessage> messages = new ArrayList<>();
@@ -45,16 +44,12 @@ public class ModellRailroad implements Runnable {
 		ModellRailroad.modellRailroadPort = new SerialPort("COM3");
 		try {
 			ModellRailroad.modellRailroadPort.openPort();
+			ModellRailroad.modellRailroadPort.setParams(9600, SerialPort.DATABITS_8,
+                    SerialPort.STOPBITS_2,
+                    SerialPort.PARITY_NONE);
 		} catch (SerialPortException e) {
 			Ref.LOGGER.log(Level.SEVERE, "Unnable to open the connection to the TwinCenter", e.getCause());
-		}
-		
-		
-		this.trainManager = new TrainManager();
-	}
-	
-	public TrainManager getTrainManager() {
-		return this.trainManager;
+		}	
 	}
 	
 	public void close() {
@@ -90,11 +85,15 @@ public class ModellRailroad implements Runnable {
 			ModellRailroad.modellRailroadPort.addEventListener(l -> {
 				try {
 					String message = ModellRailroad.modellRailroadPort.readString();
-					message.equalsIgnoreCase(this.actualMessage.getCommand());
-						
 					
-						
+					Ref.LOGGER.info(message);
+					
+					if(this.actualMessage.getSender() != null)
+						((ClientHandler)this.actualMessage.getSender()).sendDatapacket(new Datapacket(DatapacketType.HAS_FUNKTION, Boolean.valueOf(message.equalsIgnoreCase(this.actualMessage.getCommand()))));
+					this.recievedAnswer = true;
 				} catch (SerialPortException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			});
@@ -108,6 +107,7 @@ public class ModellRailroad implements Runnable {
 				this.actualMessage = this.messages.remove(0);
 				if(this.actualMessage == null)
 					continue;
+				Ref.LOGGER.info(this.actualMessage.getCommand());
 				try {
 					ModellRailroad.modellRailroadPort.writeBytes(this.actualMessage.getCommand().getBytes(StandardCharsets.UTF_8));
 				} catch (SerialPortException e) {

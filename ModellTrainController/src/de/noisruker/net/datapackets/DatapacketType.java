@@ -2,6 +2,8 @@ package de.noisruker.net.datapackets;
 
 import de.noisruker.net.Side;
 import java.io.Serializable;
+import de.noisruker.client.*;
+import de.noisruker.server.*;
 
 
 /**
@@ -12,6 +14,9 @@ import java.io.Serializable;
 public enum DatapacketType {
 
 	HAS_FUNKTION(Side.SERVER, Boolean.class),
+	PASSWORD_REQUEST(Side.SERVER, PasswordRequest.class),
+	PASSWORD_ANSWER(Side.CLIENT, ClientPassword.class),
+	START_CLIENT_INTERFACE(Side.SERVER, DatapacketVoid.class),
 	SEND_COMMAND(Side.CLIENT, String.class);
 
 	private final Class<? extends Serializable> requiredValueType;

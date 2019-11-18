@@ -9,6 +9,7 @@ import java.net.Socket;
 import de.noisruker.net.Side;
 import de.noisruker.net.datapackets.Datapacket;
 import de.noisruker.net.datapackets.DatapacketSender;
+import de.noisruker.net.datapackets.NetEvent;
 import de.noisruker.net.datapackets.NetEventDistributor;
 
 /**
@@ -22,7 +23,7 @@ public class ClientHandler implements Runnable, DatapacketSender {
 	private ObjectInputStream objectIn;
 	private ObjectOutputStream objectOut;
 	private Thread thread;
-	private ConnectionController controller;
+	private NetEventDistributor eventDistributor;
 	private int permissionLevel;
 	private long lastMessageMillis;
 	
@@ -37,8 +38,9 @@ public class ClientHandler implements Runnable, DatapacketSender {
 		this.objectIn = new ObjectInputStream(this.clientSocket.getInputStream());
 		this.objectOut = new ObjectOutputStream(this.clientSocket.getOutputStream());
 		
-		Thread t = new Thread(this.controller = new ConnectionController(this));
-		t.start();
+		this.eventDistributor = new NetEventDistributor();
+		this.eventDistributor.registerEventHandlers(Events.class);
+		this.eventDistributor.startProcessing();
 		
 		this.thread = new Thread(this);
 		this.thread.start();
@@ -48,7 +50,7 @@ public class ClientHandler implements Runnable, DatapacketSender {
 	@Override
 	public void run() {
 		while (true) {
-			if(end) Thread.currentThread().stop();
+			if(end) Thread.currentThread().interrupt();
 			Datapacket dp = null;
 			try {
 				dp = Datapacket.receive(this.objectIn);
@@ -56,12 +58,15 @@ public class ClientHandler implements Runnable, DatapacketSender {
 				e.printStackTrace();
 			}
 			
-			
+			if(dp == null)
+				return;
 			
 			if (dp.getType().getSenderSide() != Side.CLIENT) {
 				System.err.println("[SERVER] Warnung: Nicht-Clientseitiges Datenpaket empfangen, wird ignoriert!");
 				continue;
 			}
+			
+			this.eventDistributor.addEventToQueue(new NetEvent(this, dp));
 			
 		}
 	}
@@ -81,7 +86,6 @@ public class ClientHandler implements Runnable, DatapacketSender {
 			e.printStackTrace();
 		}
 	}
-	
 	
 	public String getName() {
 		return this.name;
@@ -113,54 +117,5 @@ public class ClientHandler implements Runnable, DatapacketSender {
 
 	public void setLastMessageMillis(long lastMessageMillis) {
 		this.lastMessageMillis = lastMessageMillis;
-	}
-
-	private class ConnectionController implements Runnable	{
-
-		private boolean reacted = true;
-		private long time = System.nanoTime();
-		private long inactiveTime = System.nanoTime();
-		private long countdownStartTime = System.nanoTime();
-		private ClientHandler boundClient;
-		private InetAddress address;
-		
-		private ConnectionController(ClientHandler boundClient) {
-			this.boundClient = boundClient;
-			this.address = boundClient.clientSocket.getInetAddress();
-		}
-		
-		@Override
-		public void run() {
-			while(true)	{
-				this.time = System.nanoTime();
-				if(this.reacted)	{
-					if(this.time > this.inactiveTime + (Utils.convertSecondToNanosecond(Utils.CHECKING_FREQUENCY_S)))	{
-						
-						this.countdownStartTime = System.nanoTime();
-						this.reacted = false;
-					}
-				}	else	{
-					if(this.time > this.countdownStartTime + (Utils.convertSecondToNanosecond(Utils.MAX_WAIT_TIME_S)))	{
-						ServerStarter.sendMessageToAllClient("&0x33ECFF [Server]$ " + this.boundClient.getName() + " hat die Verbindung verloren!");
-						ReconnectionHandler.getInstance().addReconnector(this.boundClient, this.boundClient.clientSocket, this.address);
-					}
-					this.inactiveTime = System.nanoTime();
-				}
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		
-		private void alive()	{
-			this.reacted = true;
-		}
-		
-	}
-	
-	public void alive() {
-		this.controller.alive();
 	}
 }
