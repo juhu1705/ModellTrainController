@@ -4,13 +4,13 @@ Der ModellTrainController ist ein Programm zur einfachen Steuerung einer Modellb
 
 Hierzu werden mehrere Steuerungsmöglichkeiten zur verfügung gestellt:
 
-+ +Dierekte Zugsteuerung
-- -Direkte Weichensteuernung
-- -Routenerstellung (direkt/automatisch) inklusive passender weichen und Sensoransteuerung
++ Dierekte Zugsteuerung (+)
+- Direkte Weichensteuernung (-)
+- Routenerstellung (direkt/automatisch) inklusive passender weichen und Sensoransteuerung (-)
 
 Weitere Funktionen:
-- -Visuelle Gleisplanerstellung (nur Serverseitig)
-- -Visuelle Gleisplanbetrachtung
+- Visuelle Gleisplanerstellung (nur Serverseitig) (-)
+- Visuelle Gleisplanbetrachtung (-)
 
 @copyright Team Noisruker
 
