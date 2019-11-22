@@ -1,27 +1,26 @@
 package de.noisruker.util;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
+import java.io.*;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class Ref {
-	
+
 	public static final long UNIVERSAL_SERIAL_VERSION_UID = 983475897014889764L;
-	
+
 	public static final int STANDARD_HOST_PORT = 12346;
-	
+
 	public static final String password = "1";
-	
+
 	public static final Logger LOGGER;
+	public static final String VERSION;
+	public static final String PROJECT_NAME;
+
 	static {
 		LOGGER = Logger.getLogger("schiffespiel");
 		LOGGER.setUseParentHandlers(false);
@@ -31,8 +30,7 @@ public class Ref {
 		LOGGER.addHandler(handler);
 		LOGGER.setLevel(Level.ALL);
 	}
-	
-	public static final String VERSION;
+
 	static {
 		MavenXpp3Reader reader = new MavenXpp3Reader();
 		Model model = null;
@@ -60,7 +58,6 @@ public class Ref {
 		// VERSION = "Snapshot-0.0.1";
 	}
 
-	public static final String PROJECT_NAME;
 	static {
 		MavenXpp3Reader reader = new MavenXpp3Reader();
 		Model model = null;

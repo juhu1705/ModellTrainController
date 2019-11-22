@@ -1,11 +1,5 @@
 package de.noisruker.client;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
-import java.util.ArrayList;
-
 import de.noisruker.net.EventManager;
 import de.noisruker.net.Side;
 import de.noisruker.net.datapackets.Datapacket;
@@ -14,14 +8,20 @@ import de.noisruker.net.datapackets.NetEvent;
 import de.noisruker.net.datapackets.NetEventDistributor;
 import de.noisruker.util.Ref;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+import java.util.ArrayList;
+
 /**
  * Behandelt die clientseitige Verbindung zum Server
- * @author NominoX
  *
+ * @author NominoX
  */
 
 public class ConnectionHandler implements Runnable, DatapacketSender {
-	
+
 	private Socket serverSocket;
 	private ObjectInputStream objectIn;
 	private ObjectOutputStream objectOut;
@@ -29,7 +29,7 @@ public class ConnectionHandler implements Runnable, DatapacketSender {
 	private String hostIp;
 	private NetEventDistributor ned;
 	private ArrayList<Datapacket> events = new ArrayList<Datapacket>();
-	
+
 	ConnectionHandler(Socket serverSocket, String hostIp, NetEventDistributor ned) throws IOException {
 		this.ned = ned;
 		this.hostIp = hostIp;
@@ -40,8 +40,8 @@ public class ConnectionHandler implements Runnable, DatapacketSender {
 		this.thread = new Thread(this);
 		this.thread.start();
 	}
-	
-	public void reconnect()	{
+
+	public void reconnect() {
 		try {
 			Thread.sleep(1000);
 			serverSocket = new Socket(hostIp, Ref.STANDARD_HOST_PORT);
@@ -54,7 +54,7 @@ public class ConnectionHandler implements Runnable, DatapacketSender {
 		}
 	}
 
-	
+
 	@Override
 	public void run() {
 		Thread t = new Thread(new EventManager(this));
@@ -66,24 +66,25 @@ public class ConnectionHandler implements Runnable, DatapacketSender {
 			} catch (ClassNotFoundException | IOException e) {
 				e.printStackTrace();
 			}
+			assert dp != null;
 			if (dp.getType().getSenderSide() != Side.SERVER) {
 				System.err.println("[CLIENT] Warnung: Nicht-Serverseitiges Datenpaket empfangen, wird ignoriert!");
 				return;
 			}
-			
+
 			Ref.LOGGER.finest("HAha" + dp.getType().toString());
 			//System.out.println("Added Datapacket");
 			this.ned.addEventToQueue(new NetEvent(this, dp));
 		}
 	}
-	
-	public Datapacket getNextEvent()	{
+
+	public Datapacket getNextEvent() {
 		return events.isEmpty() ? null : events.remove(0);
 	}
-	
+
 	/**
 	 * Sendet ein Datenpaket zum Server
-	 * 
+	 *
 	 * @param dp zu sendendes Datenpaket
 	 * @throws IOException falls das Senden fehlschlägt
 	 */

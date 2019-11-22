@@ -9,17 +9,17 @@ public class EventManager implements Runnable {
 
 	private ConnectionHandler c;
 	private NetEventDistributor eventDistributor;
-	
-	public EventManager(ConnectionHandler c)	{
+
+	public EventManager(ConnectionHandler c) {
 		this.eventDistributor = new NetEventDistributor();
 		this.c = c;
 	}
-	
+
 	@Override
-	public void run()	{
-		while(true)	{
+	public void run() {
+		while (true) {
 			Datapacket dp = this.c.getNextEvent();
-			if(dp != null) eventDistributor.addEventToQueue(new NetEvent(this.c, dp));
+			if (dp != null) eventDistributor.addEventToQueue(new NetEvent(this.c, dp));
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {

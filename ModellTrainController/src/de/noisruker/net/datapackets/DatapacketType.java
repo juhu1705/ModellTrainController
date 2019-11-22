@@ -1,9 +1,10 @@
 package de.noisruker.net.datapackets;
 
+import de.noisruker.client.ClientPassword;
 import de.noisruker.net.Side;
+import de.noisruker.server.PasswordRequest;
+
 import java.io.Serializable;
-import de.noisruker.client.*;
-import de.noisruker.server.*;
 
 
 /**
