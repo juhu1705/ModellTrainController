@@ -68,11 +68,11 @@ public class Ref {
 				model = reader.read(new InputStreamReader(Ref.class
 						.getResourceAsStream("/META-INF/maven/ModellTrainController/ModellTrainController/pom.xml")));
 		} catch (FileNotFoundException e) {
-
+			LOGGER.log(Level.SEVERE, "Error while reading pom.xml", e);
 		} catch (IOException e) {
-
+			LOGGER.log(Level.SEVERE, "Error while reading pom.xml", e);
 		} catch (XmlPullParserException e) {
-
+			LOGGER.log(Level.SEVERE, "Error while reading pom.xml", e);
 		}
 		if (model == null)
 			PROJECT_NAME = "ModellTrainController";
