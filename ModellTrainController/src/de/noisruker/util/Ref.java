@@ -75,10 +75,9 @@ public class Ref {
 
 		}
 		if (model == null)
-			PROJECT_NAME = "CaRP Assigner";
+			PROJECT_NAME = "ModellTrainController";
 		else
 			PROJECT_NAME = model.getName();
-		// PROJECT_NAME = "KuFa Zuweiser";
 	}
 
 }
