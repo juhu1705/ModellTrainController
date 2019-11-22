@@ -42,7 +42,7 @@ public class Ref {
 				model = reader.read(new FileReader("pom.xml"));
 			else
 				model = reader.read(new InputStreamReader(Ref.class
-						.getResourceAsStream("/META-INF/maven/de.juhu/Course_and_Research_Paper-Assigner/pom.xml")));
+						.getResourceAsStream("/META-INF/maven/ModellTrainController/ModellTrainController/pom.xml")));
 		} catch (FileNotFoundException e) {
 
 		} catch (IOException e) {
@@ -69,7 +69,7 @@ public class Ref {
 				model = reader.read(new FileReader("pom.xml"));
 			else
 				model = reader.read(new InputStreamReader(Ref.class
-						.getResourceAsStream("/META-INF/maven/de.juhu/Course_and_Research_Paper-Assigner/pom.xml")));
+						.getResourceAsStream("/META-INF/maven/ModellTrainController/ModellTrainController/pom.xml")));
 		} catch (FileNotFoundException e) {
 
 		} catch (IOException e) {
