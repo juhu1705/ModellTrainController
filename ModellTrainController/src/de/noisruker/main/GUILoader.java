@@ -10,6 +10,7 @@ import javafx.stage.StageStyle;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.PropertyResourceBundle;
 
 import static de.noisruker.util.Ref.*;
 
@@ -41,7 +42,7 @@ public class GUILoader extends Application {
 		else
 			i = new Image("/assets/textures/logo/logo.png");
 
-		Parent root = FXMLLoader.load(getClass().getResource("/assets/layouts/GUIStart.fxml"));
+		Parent root = FXMLLoader.load(getClass().getResource("/assets/layouts/GUIStart.fxml"), new PropertyResourceBundle(getClass().getResourceAsStream("/assets/language/de.properties")));
 		Scene s = new Scene(root);
 
 		s.getStylesheets().add("/assets/styles/dark_theme.css");

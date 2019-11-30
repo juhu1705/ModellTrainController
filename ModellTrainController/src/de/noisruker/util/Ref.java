@@ -4,6 +4,8 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
+import de.noisruker.net.Side;
+
 import java.io.*;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -17,6 +19,8 @@ public class Ref {
 
 	public static final String password = "1";
 
+	public static Side side;
+	
 	public static final Logger LOGGER;
 	public static final String VERSION;
 	public static final String PROJECT_NAME;

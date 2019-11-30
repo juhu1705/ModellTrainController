@@ -63,12 +63,17 @@ public class ModellRailroad implements Runnable {
 
 	public void setSpeedOfTrain(byte address, byte speed, boolean foreward) throws SerialPortException {
 		String message;
-		if (foreward)
-			message = "v" + Short.toString(address) + "v" + Short.toString(speed);
+		String sspeed;
+		if(speed < 10)
+			sspeed = "0" + speed;
 		else
-			message = "r" + Short.toString(address) + "r" + Short.toString(speed);
+			sspeed = speed + "";
+		if (foreward)
+			message = "v" + Short.toString(address) + "v" + sspeed;
+		else
+			message = "r" + Short.toString(address) + "r" + sspeed;
 
-		ModellRailroad.modellRailroadPort.writeBytes(message.getBytes(StandardCharsets.UTF_8));
+		this.sendCommand(message, null);
 	}
 
 
@@ -106,9 +111,13 @@ public class ModellRailroad implements Runnable {
 				} catch (SerialPortException e) {
 					e.printStackTrace();
 				}
+				int i = 0;
 				while (!this.recievedAnswer) {
 					try {
 						Thread.sleep(1000);
+						i++;
+						if(i == 10)
+							break;
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}

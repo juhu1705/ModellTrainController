@@ -12,19 +12,18 @@
    <top>
        <MenuBar BorderPane.alignment="CENTER">
            <Menu mnemonicParsing="false" text="File">
-               <MenuItem mnemonicParsing="false" text="Close"/>
-           </Menu>
-           <Menu mnemonicParsing="false" text="Edit">
-               <MenuItem mnemonicParsing="false" text="Delete"/>
+            <MenuItem mnemonicParsing="false" text="AddTrain" />
+               <MenuItem mnemonicParsing="false" text="Close" />
+            <MenuItem mnemonicParsing="false" onAction="#onDriveFar" text="On Drive 2" />
            </Menu>
            <Menu mnemonicParsing="false" text="Help">
-               <MenuItem mnemonicParsing="false" text="About"/>
+               <MenuItem mnemonicParsing="false" text="About" />
            </Menu>
        </MenuBar>
    </top>
    <bottom>
        <StackPane prefHeight="150.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-           <Button mnemonicParsing="false" onAction="#onSend" text="Send"/>
+           <Button mnemonicParsing="false" onAction="#onSend" text="%send.text" />
        </StackPane>
    </bottom>
    <center>

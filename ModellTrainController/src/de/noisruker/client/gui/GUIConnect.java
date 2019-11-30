@@ -16,6 +16,7 @@ import javafx.stage.StageStyle;
 import java.io.File;
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.PropertyResourceBundle;
 
 import static de.noisruker.util.Ref.PROJECT_NAME;
 import static de.noisruker.util.Ref.VERSION;
@@ -69,7 +70,7 @@ public class GUIConnect {
 
 		Parent root = null;
 		try {
-			root = FXMLLoader.load(getClass().getResource("/assets/layouts/GUIClient.fxml"));
+			root = FXMLLoader.load(getClass().getResource("/assets/layouts/GUIClient.fxml"), new PropertyResourceBundle(getClass().getResourceAsStream("/assets/language/de.properties")));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

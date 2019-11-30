@@ -26,6 +26,63 @@ public class GUIServer implements Initializable {
 			e.printStackTrace();
 		}
 	}
+	
+	public void onDriveFar(ActionEvent event) {
+		Thread t = new Thread(new Runnable() {
+			boolean increase = true;
+			byte speed = 0;
+			@Override
+			public void run() {
+				while(true) {
+					if(increase) {
+						speed++;
+						try {
+							ModellRailroad.getInstance().setSpeedOfTrain((byte) 9, speed, true);
+						} catch (SerialPortException e) {
+							e.printStackTrace();
+						}
+						try {
+							Thread.sleep(1000);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+						if(speed == 9) {
+							try {
+								Thread.sleep(10000);
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
+							this.increase = false;
+						}
+					} else {
+						speed--;
+						try {
+							ModellRailroad.getInstance().setSpeedOfTrain((byte) 9, speed, true);
+						} catch (SerialPortException e) {
+							e.printStackTrace();
+						}
+						try {
+							Thread.sleep(1000);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+						if(speed == 0) {
+							this.increase = true;
+							try {
+								Thread.sleep(10000);
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
+							
+//							return;
+						}
+					}
+				}
+					
+			}
+		});
+		t.start();
+	}
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {

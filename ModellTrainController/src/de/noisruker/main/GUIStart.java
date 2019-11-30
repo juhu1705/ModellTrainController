@@ -12,6 +12,10 @@ import javafx.stage.StageStyle;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.PropertyResourceBundle;
+
+import de.noisruker.net.Side;
+import de.noisruker.util.Ref;
 
 import static de.noisruker.util.Ref.PROJECT_NAME;
 import static de.noisruker.util.Ref.VERSION;
@@ -31,7 +35,7 @@ public class GUIStart {
 
 		Parent root = null;
 		try {
-			root = FXMLLoader.load(getClass().getResource("/assets/layouts/GUIConnect.fxml"));
+			root = FXMLLoader.load(getClass().getResource("/assets/layouts/GUIConnect.fxml"), new PropertyResourceBundle(getClass().getResourceAsStream("/assets/language/de.properties")));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -54,6 +58,8 @@ public class GUIStart {
 
 		primaryStage.show();
 
+		Ref.side = Side.CLIENT;
+		
 		((Stage) ((Button) event.getSource()).getScene().getWindow()).close();
 	}
 
@@ -70,7 +76,7 @@ public class GUIStart {
 
 		Parent root = null;
 		try {
-			root = FXMLLoader.load(getClass().getResource("/assets/layouts/GUIServer.fxml"));
+			root = FXMLLoader.load(getClass().getResource("/assets/layouts/GUIServer.fxml"), new PropertyResourceBundle(getClass().getResourceAsStream("/assets/language/de.properties")));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -92,6 +98,8 @@ public class GUIStart {
 		primaryStage.getIcons().add(i);
 
 		primaryStage.show();
+		
+		Ref.side = Side.SERVER;
 
 		((Stage) ((Button) event.getSource()).getScene().getWindow()).close();
 	}
