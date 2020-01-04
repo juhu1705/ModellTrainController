@@ -50,6 +50,8 @@ public class NetEventDistributor {
 				}
 			}
 		}, "eventRunner");
+
+		this.eventRunner.setDaemon(true);
 	}
 
 
@@ -124,10 +126,10 @@ public class NetEventDistributor {
 	 * @see #stopProcessing()
 	 */
 	public void startProcessing() {
+		this.processing = true;
 		// eventRunner starten
 		if (!this.eventRunner.isAlive())
 			this.eventRunner.start();
-		this.processing = true;
 	}
 
 
