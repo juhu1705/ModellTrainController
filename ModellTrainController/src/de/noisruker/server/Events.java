@@ -32,6 +32,7 @@ public class Events {
 
 	@NetEventHandler(type = DatapacketType.CLIENT_SEND_CHAT_MESSAGE)
 	public static void clientMessage(NetEvent netEvent) {
+		Ref.LOGGER.info("Message");
 		ChatMessage m = ((ChatMessage) netEvent.getDatapacket().getValue())
 				.setName(((ClientHandler) netEvent.getSender()).getName())
 				.setLevel(((ClientHandler) netEvent.getSender()).getPermissionLevel().toString());
