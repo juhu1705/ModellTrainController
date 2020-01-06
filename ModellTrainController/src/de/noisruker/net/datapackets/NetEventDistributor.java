@@ -1,7 +1,5 @@
 package de.noisruker.net.datapackets;
 
-import de.noisruker.util.Ref;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -10,6 +8,8 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
+
+import de.noisruker.util.Ref;
 
 /**
  * Ermöglicht vereinfachte Behandlung von eintreffenden {@link Datapacket
@@ -25,7 +25,6 @@ public class NetEventDistributor {
 
 	private Thread eventRunner;
 	private boolean processing = true;
-
 
 	public NetEventDistributor() {
 		this.eventRunner = new Thread(() -> {
@@ -54,7 +53,6 @@ public class NetEventDistributor {
 		this.eventRunner.setDaemon(true);
 	}
 
-
 	/**
 	 * Registriert alle mit {@link NetEventHandler} annotiierten Methoden der Klasse
 	 * {@code eventListener}
@@ -71,16 +69,16 @@ public class NetEventDistributor {
 		}
 	}
 
-
 	/**
 	 * Registriert eine Methode als EventHandler. <br>
 	 * <br>
 	 * <p>
 	 * Diese muss folgende Bedingungen erfüllen:<br>
 	 * <ul>
-	 *     <li>muss die Annotation {@link NetEventHandler} enthalten</li>
-	 *     <li>muss statisch sein</li>
-	 *     <li>muss exakt einen Parameter enthalten, über den das {@link NetEvent} übergeben wird</li>
+	 * <li>muss die Annotation {@link NetEventHandler} enthalten</li>
+	 * <li>muss statisch sein</li>
+	 * <li>muss exakt einen Parameter enthalten, über den das {@link NetEvent}
+	 * übergeben wird</li>
 	 * </ul>
 	 *
 	 * @param eventHandler EventHandler-Methode
@@ -97,7 +95,8 @@ public class NetEventDistributor {
 		DatapacketType type = annotation.type();
 
 		if (!(paramTypes.length == 1 && paramTypes[0] == NetEvent.class)) {
-			throw new IllegalArgumentException("Angegebene Methode muss genau einen Parameter vom Typ NetEvent enthalten");
+			throw new IllegalArgumentException(
+					"Angegebene Methode muss genau einen Parameter vom Typ NetEvent enthalten");
 		}
 
 		if (!Modifier.isStatic(eventHandler.getModifiers())) {
@@ -106,7 +105,6 @@ public class NetEventDistributor {
 
 		this.eventHandlers.put(eventHandler, type);
 	}
-
 
 	/**
 	 * Fügt ein {@link NetEvent} zur Warteschlange hinzu, sodass dieses vom
@@ -118,7 +116,6 @@ public class NetEventDistributor {
 	public void addEventToQueue(NetEvent event) {
 		this.eventQueue.addLast(event);
 	}
-
 
 	/**
 	 * Startet den EventRunner, sodass Events verarbeitet werden können
@@ -132,7 +129,6 @@ public class NetEventDistributor {
 			this.eventRunner.start();
 	}
 
-
 	/**
 	 * Stoppt den EventRunner
 	 *
@@ -141,7 +137,6 @@ public class NetEventDistributor {
 	public void stopProcessing() {
 		this.processing = false;
 	}
-
 
 	/**
 	 * Ruft ein Datenpaket-Event auf

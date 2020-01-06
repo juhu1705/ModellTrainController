@@ -1,11 +1,15 @@
 package de.noisruker.client;
 
+import java.io.IOException;
+
 import de.noisruker.client.gui.GUIConnect;
-import de.noisruker.net.datapackets.*;
+import de.noisruker.net.datapackets.Datapacket;
+import de.noisruker.net.datapackets.DatapacketSender;
+import de.noisruker.net.datapackets.DatapacketType;
+import de.noisruker.net.datapackets.NetEvent;
+import de.noisruker.net.datapackets.NetEventHandler;
 import de.noisruker.server.PasswordRequest;
 import de.noisruker.util.Ref;
-
-import java.io.IOException;
 
 public class Events {
 
@@ -16,7 +20,8 @@ public class Events {
 		DatapacketSender sender = netEvent.getSender();
 
 		try {
-			Client.getConnectionHandler().sendDatapacket(new Datapacket(DatapacketType.PASSWORD_ANSWER, new ClientPassword(GUIConnect.password, GUIConnect.name)));
+			Client.getConnectionHandler().sendDatapacket(new Datapacket(DatapacketType.PASSWORD_ANSWER,
+					new ClientPassword(GUIConnect.password, GUIConnect.name)));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

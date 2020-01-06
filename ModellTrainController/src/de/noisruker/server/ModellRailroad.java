@@ -1,17 +1,16 @@
 package de.noisruker.server;
 
-import de.noisruker.net.datapackets.Datapacket;
-import de.noisruker.net.datapackets.DatapacketSender;
-import de.noisruker.net.datapackets.DatapacketType;
-import de.noisruker.util.Ref;
-import jssc.SerialPort;
-import jssc.SerialPortException;
-
-import java.io.IOException;
+import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.logging.Level;
 
+import de.noisruker.net.datapackets.DatapacketSender;
+import de.noisruker.util.Ref;
+import jssc.SerialPort;
+import jssc.SerialPortException;
+
+@Deprecated
 public class ModellRailroad implements Runnable {
 
 	/**
@@ -24,6 +23,7 @@ public class ModellRailroad implements Runnable {
 	private static ModellRailroad instance;
 	private boolean active = true;
 	private ArrayList<CommandMessage> messages = new ArrayList<>();
+	public ArrayList<ByteMessage> m = new ArrayList<>();
 	private CommandMessage actualMessage = null;
 	private boolean recievedAnswer = false;
 
@@ -31,8 +31,7 @@ public class ModellRailroad implements Runnable {
 		ModellRailroad.modellRailroadPort = new SerialPort("COM3");
 		try {
 			ModellRailroad.modellRailroadPort.openPort();
-			ModellRailroad.modellRailroadPort.setParams(9600, SerialPort.DATABITS_8,
-					SerialPort.STOPBITS_2,
+			ModellRailroad.modellRailroadPort.setParams(9600, SerialPort.DATABITS_8, SerialPort.STOPBITS_2,
 					SerialPort.PARITY_NONE);
 		} catch (SerialPortException e) {
 			Ref.LOGGER.log(Level.SEVERE, "Unnable to open the connection to the TwinCenter", e.getCause());
@@ -43,7 +42,8 @@ public class ModellRailroad implements Runnable {
 	 * @return Gibt die aktuelle Instanz der Klasse Railroad zurück.
 	 */
 	public static ModellRailroad getInstance() {
-		return ModellRailroad.instance != null ? ModellRailroad.instance : (ModellRailroad.instance = new ModellRailroad());
+		return ModellRailroad.instance != null ? ModellRailroad.instance
+				: (ModellRailroad.instance = new ModellRailroad());
 	}
 
 	public void close() {
@@ -60,44 +60,76 @@ public class ModellRailroad implements Runnable {
 		this.messages.add(new CommandMessage(command, sender));
 	}
 
-
 	public void setSpeedOfTrain(byte address, byte speed, boolean foreward) throws SerialPortException {
-		String message;
-		String sspeed;
-		if(speed < 10)
-			sspeed = "0" + speed;
-		else
-			sspeed = speed + "";
-		if (foreward)
-			message = "v" + Short.toString(address) + "v" + sspeed;
-		else
-			message = "r" + Short.toString(address) + "r" + sspeed;
-
-		this.sendCommand(message, null);
+		this.m.add(new ByteMessage(this.addCheckSum((byte) -96, address, speed)));
 	}
-
 
 	@Override
 	public void run() {
 		try {
 			ModellRailroad.modellRailroadPort.addEventListener(l -> {
 				try {
-					String message = ModellRailroad.modellRailroadPort.readString();
+					Thread.sleep(1000);
 
-					Ref.LOGGER.info(message);
+					byte[] message = ModellRailroad.modellRailroadPort.readBytes();
 
-					if (this.actualMessage.getSender() != null)
-						((ClientHandler) this.actualMessage.getSender()).sendDatapacket(new Datapacket(DatapacketType.HAS_FUNKTION, Boolean.valueOf(message.equalsIgnoreCase(this.actualMessage.getCommand()))));
+					//
+
+					if (message == null)
+						return;
+
+					String s = "";
+
+					byte bb = 0;
+
+					for (int b : message) {
+						s += b + "|";
+						bb ^= b;
+					}
+
+					Ref.LOGGER.config(s);
+					Ref.LOGGER.config(bb + "|" + (byte) 0xFF);
+
+//					if (this.actualMessage.getSender() != null)
+//						((ClientHandler) this.actualMessage.getSender())
+//								.sendDatapacket(new Datapacket(DatapacketType.HAS_FUNKTION,
+//										Boolean.valueOf(message.equalsIgnoreCase(this.actualMessage.getCommand()))));
 					this.recievedAnswer = true;
-				} catch (SerialPortException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
+				} catch (SerialPortException | InterruptedException e) {
 					e.printStackTrace();
 				}
 			});
 		} catch (SerialPortException e1) {
 			e1.printStackTrace();
 		}
+
+		Thread t = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				while (active) {
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e1) {
+						e1.printStackTrace();
+					}
+
+					if (!m.isEmpty()) {
+						byte[] array = m.get(0).getBytes();
+
+						for (byte i : array)
+							Ref.LOGGER.config(i + "");
+
+						try {
+							ModellRailroad.modellRailroadPort.writeBytes(m.remove(0).getBytes());
+						} catch (SerialPortException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			}
+		});
+		t.start();
 
 		while (active) {
 			if (!this.messages.isEmpty()) {
@@ -107,7 +139,12 @@ public class ModellRailroad implements Runnable {
 					continue;
 				Ref.LOGGER.info(this.actualMessage.getCommand());
 				try {
-					ModellRailroad.modellRailroadPort.writeBytes(this.actualMessage.getCommand().getBytes(StandardCharsets.UTF_8));
+					ModellRailroad.modellRailroadPort
+							.writeBytes(String
+									.format("%040x",
+											new BigInteger(1,
+													this.actualMessage.getCommand().getBytes(StandardCharsets.UTF_8)))
+									.getBytes());
 				} catch (SerialPortException e) {
 					e.printStackTrace();
 				}
@@ -116,7 +153,7 @@ public class ModellRailroad implements Runnable {
 					try {
 						Thread.sleep(1000);
 						i++;
-						if(i == 10)
+						if (i == 10)
 							break;
 					} catch (InterruptedException e) {
 						e.printStackTrace();
@@ -129,6 +166,24 @@ public class ModellRailroad implements Runnable {
 					e.printStackTrace();
 				}
 		}
+	}
+
+	public byte getCheckSum(byte... bytes) {
+		byte xoredbydes = 0;
+
+		for (byte b : bytes)
+			xoredbydes ^= b;
+
+		return (byte) ~xoredbydes;
+	}
+
+	public byte[] addCheckSum(byte... bytes) {
+		byte[] b = new byte[bytes.length + 1];
+		for (int i = 0; i < bytes.length; i++)
+			b[i] = bytes[i];
+
+		b[b.length - 1] = this.getCheckSum(bytes);
+		return b;
 	}
 
 }

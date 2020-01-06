@@ -1,15 +1,15 @@
 package de.noisruker.server;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+
 import de.noisruker.net.Side;
 import de.noisruker.net.datapackets.Datapacket;
 import de.noisruker.net.datapackets.DatapacketSender;
 import de.noisruker.net.datapackets.NetEvent;
 import de.noisruker.net.datapackets.NetEventDistributor;
-
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
 
 /**
  * Behandelt die serverseitige Verbindung zum Client
@@ -23,15 +23,14 @@ public class ClientHandler implements Runnable, DatapacketSender {
 	private ObjectOutputStream objectOut;
 	private Thread thread;
 	private NetEventDistributor eventDistributor;
-	private int permissionLevel;
+	private PermissionLevel permissionLevel;
 	private long lastMessageMillis;
 
 	private String name;
 	private boolean end = false;
 
-
 	ClientHandler(Socket clientSocket) throws IOException {
-		this.permissionLevel = 1;
+		this.permissionLevel = PermissionLevel.SPECTATOR;
 		this.clientSocket = clientSocket;
 
 		this.objectIn = new ObjectInputStream(this.clientSocket.getInputStream());
@@ -45,11 +44,11 @@ public class ClientHandler implements Runnable, DatapacketSender {
 		this.thread.start();
 	}
 
-
 	@Override
 	public void run() {
 		while (true) {
-			if (end) Thread.currentThread().interrupt();
+			if (end)
+				Thread.currentThread().interrupt();
 			Datapacket dp = null;
 			try {
 				dp = Datapacket.receive(this.objectIn);
@@ -65,11 +64,11 @@ public class ClientHandler implements Runnable, DatapacketSender {
 				continue;
 			}
 
-			this.eventDistributor.addEventToQueue(new NetEvent(this, dp));
+			if (this.permissionLevel.isEqualOrGreate(dp.getType().getNeededPermissionLevel()))
+				this.eventDistributor.addEventToQueue(new NetEvent(this, dp));
 
 		}
 	}
-
 
 	/**
 	 * Sendet ein Datenpaket zum Client
@@ -92,16 +91,13 @@ public class ClientHandler implements Runnable, DatapacketSender {
 
 	public void setName(String name) {
 		this.name = name;
-		if (name.equals("juhu1705")) this.permissionLevel = 4;
-		if (name.equals("admin")) this.permissionLevel = 4;
-		if (name.equals("Hecht")) this.permissionLevel = 4;
 	}
 
-	public int getPermissionLevel() {
+	public PermissionLevel getPermissionLevel() {
 		return this.permissionLevel;
 	}
 
-	public void setPermissionLevel(int level) {
+	public void setPermissionLevel(PermissionLevel level) {
 		this.permissionLevel = level;
 	}
 
@@ -116,5 +112,27 @@ public class ClientHandler implements Runnable, DatapacketSender {
 
 	public void setLastMessageMillis(long lastMessageMillis) {
 		this.lastMessageMillis = lastMessageMillis;
+	}
+
+	public enum PermissionLevel {
+		SPECTATOR(0), MEMBER(1), SUPPORTER(2), CONTROLLER(3), ADMIN(4);
+
+		int level;
+
+		PermissionLevel(int level) {
+			this.level = level;
+		}
+
+		public int getLevel() {
+			return this.level;
+		}
+
+		public boolean isGreater(PermissionLevel plevel) {
+			return this.level > plevel.level;
+		}
+
+		public boolean isEqualOrGreate(PermissionLevel plevel) {
+			return this.level >= plevel.level;
+		}
 	}
 }
