@@ -7,6 +7,7 @@ import static de.noisruker.server.ClientHandler.PermissionLevel.SPECTATOR;
 import java.io.Serializable;
 
 import de.noisruker.client.ClientPassword;
+import de.noisruker.common.ChatMessage;
 import de.noisruker.common.messages.AbstractMessage;
 import de.noisruker.common.messages.SpeedMessage;
 import de.noisruker.common.messages.SwitchMessage;
@@ -21,8 +22,8 @@ import de.noisruker.server.PasswordRequest;
  */
 public enum DatapacketType {
 
-	CLIENT_SEND_CHAT_MESSAGE(Side.CLIENT, Boolean.class, MEMBER),
-	SERVER_SEND_CHAT_MESSAGE(Side.SERVER, Boolean.class, MEMBER),
+	CLIENT_SEND_CHAT_MESSAGE(Side.CLIENT, ChatMessage.class, MEMBER),
+	SERVER_SEND_CHAT_MESSAGE(Side.SERVER, ChatMessage.class, MEMBER),
 	PASSWORD_REQUEST(Side.SERVER, PasswordRequest.class, SPECTATOR),
 	PASSWORD_ANSWER(Side.CLIENT, ClientPassword.class, SPECTATOR),
 	START_CLIENT_INTERFACE(Side.SERVER, DatapacketVoid.class, SPECTATOR),

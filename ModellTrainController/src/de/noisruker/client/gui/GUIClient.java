@@ -1,64 +1,47 @@
 package de.noisruker.client.gui;
 
-import de.noisruker.client.Client;
-import de.noisruker.net.datapackets.Datapacket;
-import de.noisruker.net.datapackets.DatapacketType;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory;
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+
+import de.noisruker.client.Client;
+import de.noisruker.common.ChatMessage;
+import de.noisruker.net.datapackets.Datapacket;
+import de.noisruker.net.datapackets.DatapacketType;
+import de.noisruker.util.Ref;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 
 public class GUIClient implements Initializable {
 
-	@FXML
-	private Spinner<Integer> address;
+	private static GUIClient instance;
+
+	public static GUIClient getInstance() {
+		return instance;
+	}
 
 	@FXML
-	private Spinner<Integer> speed;
+	public TextArea messages;
 
 	@FXML
-	private RadioButton foreward;
+	public TextField send;
 
-	@FXML
-	void onSend(ActionEvent event) {
-		String command;
-		String speed;
-		StringBuilder address = new StringBuilder(this.address.getValue().toString());
-
-		if (this.speed.getValue() > 9)
-			speed = this.speed.getValue().toString();
-		else
-			speed = "0" + this.speed.getValue().toString();
-
-		if (address.length() > 4)
-			return;
-
-		for (int i = 0; address.length() == 4; i++)
-			address.insert(0, "0");
-
-		if (foreward.isSelected())
-			command = "v" + address + "v" + speed;
-		else
-			command = "r" + address + "r" + speed;
-
-
+	public void onSend(ActionEvent event) {
 		try {
-			Client.getConnectionHandler().sendDatapacket(new Datapacket(DatapacketType.SEND_COMMAND, command));
+			Client.getConnectionHandler().sendDatapacket(
+					new Datapacket(DatapacketType.CLIENT_SEND_CHAT_MESSAGE, new ChatMessage(this.send.getText())));
 		} catch (IOException e) {
-			e.printStackTrace();
+			Ref.LOGGER.log(Level.SEVERE, "", e);
 		}
 	}
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		address.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, Integer.MAX_VALUE, 9));
-		speed.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 15, 0));
+		instance = this;
 	}
 
 }
