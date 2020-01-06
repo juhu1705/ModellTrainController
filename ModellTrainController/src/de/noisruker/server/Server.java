@@ -1,14 +1,14 @@
 package de.noisruker.server;
 
-import de.noisruker.net.datapackets.Datapacket;
-import de.noisruker.net.datapackets.DatapacketType;
-import de.noisruker.net.datapackets.NetEventDistributor;
-import de.noisruker.util.Ref;
-
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.List;
+
+import de.noisruker.net.datapackets.Datapacket;
+import de.noisruker.net.datapackets.DatapacketType;
+import de.noisruker.net.datapackets.NetEventDistributor;
+import de.noisruker.util.Ref;
 
 /**
  * Serverklasse
@@ -30,7 +30,8 @@ public final class Server implements Runnable {
 	}
 
 	/**
-	 * Wartet auf Verbindungen eines Clients und überschreibt ggf. den aktuellen ClientHandler
+	 * Wartet auf Verbindungen eines Clients und überschreibt ggf. den aktuellen
+	 * ClientHandler
 	 *
 	 * @return Einen Client-Handler
 	 * @throws IOException wenn ein I/O Fehler auftritt
@@ -51,7 +52,6 @@ public final class Server implements Runnable {
 		new Thread(new Server()).start();
 	}
 
-
 	public static void removeClient(ClientHandler client) {
 		Server.clientHandlers.remove(client);
 		Server.nonRegisteredClientHandler.remove(client);
@@ -71,7 +71,6 @@ public final class Server implements Runnable {
 		return new ArrayList<>(Server.clientHandlers);
 	}
 
-
 	public static void removeClientOfClientHandler(ClientHandler player) {
 		Server.clientHandlers.remove(player);
 	}
@@ -82,7 +81,7 @@ public final class Server implements Runnable {
 			try {
 				ClientHandler client = Server.waitForClient();
 
-				Ref.LOGGER.info("hi");
+				Ref.LOGGER.info("Client try to join");
 
 				client.sendDatapacket(new Datapacket(DatapacketType.PASSWORD_REQUEST, new PasswordRequest()));
 			} catch (IOException e) {

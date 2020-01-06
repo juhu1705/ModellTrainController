@@ -1,15 +1,20 @@
 package de.noisruker.util;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.PropertyResourceBundle;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.noisruker.net.Side;
-
-import java.io.*;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Ref {
 
@@ -17,10 +22,12 @@ public class Ref {
 
 	public static final int STANDARD_HOST_PORT = 12346;
 
-	public static final String password = "1";
+	public static String password = "1";
+
+	public static PropertyResourceBundle language;
 
 	public static Side side;
-	
+
 	public static final Logger LOGGER;
 	public static final String VERSION;
 	public static final String PROJECT_NAME;
