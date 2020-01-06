@@ -1,5 +1,11 @@
 package de.noisruker.client;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+import java.util.ArrayList;
+
 import de.noisruker.net.EventManager;
 import de.noisruker.net.Side;
 import de.noisruker.net.datapackets.Datapacket;
@@ -7,12 +13,6 @@ import de.noisruker.net.datapackets.DatapacketSender;
 import de.noisruker.net.datapackets.NetEvent;
 import de.noisruker.net.datapackets.NetEventDistributor;
 import de.noisruker.util.Ref;
-
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
-import java.util.ArrayList;
 
 /**
  * Behandelt die clientseitige Verbindung zum Server
@@ -41,19 +41,18 @@ public class ConnectionHandler implements Runnable, DatapacketSender {
 		this.thread.start();
 	}
 
-	public void reconnect() {
-		try {
-			Thread.sleep(1000);
-			serverSocket = new Socket(hostIp, Ref.STANDARD_HOST_PORT);
-			Client.setConnectionHandler(new ConnectionHandler(serverSocket, hostIp, this.ned));
-			this.thread.interrupt();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
-
+//	public void reconnect() {
+//		try {
+//			Thread.sleep(1000);
+//			serverSocket = new Socket(hostIp, Ref.STANDARD_HOST_PORT);
+//			Client.setConnectionHandler(new ConnectionHandler(serverSocket, hostIp, this.ned));
+//			this.thread.interrupt();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 	@Override
 	public void run() {
@@ -73,7 +72,7 @@ public class ConnectionHandler implements Runnable, DatapacketSender {
 			}
 
 			Ref.LOGGER.finest("HAha" + dp.getType().toString());
-			//System.out.println("Added Datapacket");
+			// System.out.println("Added Datapacket");
 			this.ned.addEventToQueue(new NetEvent(this, dp));
 		}
 	}

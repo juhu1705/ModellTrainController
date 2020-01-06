@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 
 import de.noisruker.client.ClientPassword;
+import de.noisruker.common.ChatMessage;
 import de.noisruker.common.messages.SpeedMessage;
 import de.noisruker.common.messages.SwitchMessage;
 import de.noisruker.net.datapackets.Datapacket;
@@ -31,9 +32,19 @@ public class Events {
 
 	@NetEventHandler(type = DatapacketType.CLIENT_SEND_CHAT_MESSAGE)
 	public static void clientMessage(NetEvent netEvent) {
-		for (ClientHandler ch : Server.getClientHandlers()) {
+		ChatMessage m = ((ChatMessage) netEvent.getDatapacket().getValue())
+				.setName(((ClientHandler) netEvent.getSender()).getName())
+				.setLevel(((ClientHandler) netEvent.getSender()).getPermissionLevel().toString());
 
-		}
+		GUIServer.getInstance().messages.appendText(m.getFormatted());
+
+		for (ClientHandler ch : Server.getClientHandlers())
+			try {
+				ch.sendDatapacket(new Datapacket(DatapacketType.SERVER_SEND_CHAT_MESSAGE, m));
+			} catch (IOException e) {
+				Ref.LOGGER.log(Level.SEVERE, "", e);
+			}
+
 	}
 
 	@NetEventHandler(type = DatapacketType.SEND_SPEED_MESSAGE)

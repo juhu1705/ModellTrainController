@@ -1,11 +1,13 @@
 package de.noisruker.server.gui;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
 
-import de.noisruker.common.Train;
+import de.noisruker.common.ChatMessage;
+import de.noisruker.net.datapackets.Datapacket;
+import de.noisruker.net.datapackets.DatapacketType;
 import de.noisruker.server.ClientHandler;
 import de.noisruker.server.ClientHandler.PermissionLevel;
 import de.noisruker.server.Server;
@@ -16,19 +18,13 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.ComboBoxTableCell;
-import javafx.scene.image.Image;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 public class GUIServer implements Initializable {
 
@@ -42,6 +38,9 @@ public class GUIServer implements Initializable {
 	public TextField send;
 
 	@FXML
+	public TextArea messages;
+
+	@FXML
 	public TableView<ClientHandler> players;
 
 	@FXML
@@ -50,42 +49,19 @@ public class GUIServer implements Initializable {
 	@FXML
 	public TableColumn<ClientHandler, PermissionLevel> permissionlevel;
 
-	@FXML
-	public TableView<Train> trains;
+	public void onSend(ActionEvent ae) {
+		ChatMessage m = new ChatMessage(send.getText());
+		m.setName("SERVER");
+		m.setLevel("HOST");
 
-	@FXML
-	public TableColumn<Train, Byte> slot, speed;
+		GUIServer.getInstance().messages.appendText(m.getFormatted());
 
-	public void addTrain(ActionEvent event) {
-
-		Stage primaryStage = new Stage();
-
-		Image i;
-
-		if (new File("./resources/assets/textures/logo/logo.png").exists())
-			i = new Image(new File("./resources/assets/textures/logo/logo.png").toURI().toString());
-		else
-			i = new Image("/assets/textures/logo/logo.png");
-		Parent root = null;
-		try {
-			root = FXMLLoader.load(getClass().getResource("/assets/layouts/GUIAddTrain.fxml"), Ref.language);
-		} catch (IOException e) {
-			return;
-		}
-		Scene s = new Scene(root);
-
-		s.getStylesheets().add("/assets/styles/dark_theme.css");
-
-		primaryStage.setMinWidth(200);
-		primaryStage.setMinHeight(158);
-		primaryStage.setTitle("ERROR");
-		primaryStage.setScene(s);
-		primaryStage.initModality(Modality.WINDOW_MODAL);
-		primaryStage.initStyle(StageStyle.DECORATED);
-
-		primaryStage.getIcons().add(i);
-
-		primaryStage.show();
+		for (ClientHandler ch : Server.getClientHandlers())
+			try {
+				ch.sendDatapacket(new Datapacket(DatapacketType.SERVER_SEND_CHAT_MESSAGE, m));
+			} catch (IOException e) {
+				Ref.LOGGER.log(Level.SEVERE, "", e);
+			}
 	}
 
 	@Override
@@ -93,7 +69,7 @@ public class GUIServer implements Initializable {
 //		Thread modellRailroadController = new Thread(ModellRailroad.getInstance());
 //		modellRailroadController.start();
 
-		this.instance = this;
+		GUIServer.instance = this;
 
 		ObservableList<PermissionLevel> data = FXCollections.observableArrayList();
 
@@ -135,27 +111,6 @@ public class GUIServer implements Initializable {
 				e.printStackTrace();
 			}
 		}).start();
-
-		this.speed.setCellValueFactory(ch -> {
-			return new SimpleObjectProperty<Byte>(ch.getValue().getActualSpeed());
-		});
-
-		this.slot.setCellValueFactory(ch -> new SimpleObjectProperty<Byte>(ch.getValue().getSlot()));
-
-		this.speed.setCellFactory(ComboBoxTableCell.forTableColumn(bytes));
-
-		this.trains.setEditable(true);
-
-		this.speed.setOnEditCommit(event -> {
-			TablePosition<Train, Byte> pos = event.getTablePosition();
-
-			Byte newLevel = event.getNewValue();
-
-			int row = pos.getRow();
-			Train train = event.getTableView().getItems().get(row);
-
-			train.setActualSpeed(newLevel);
-		});
 
 	}
 

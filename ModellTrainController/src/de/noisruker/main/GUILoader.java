@@ -45,7 +45,7 @@ public class GUILoader extends Application {
 		else
 			i = new Image("/assets/textures/logo/logo.png");
 
-		Parent root = FXMLLoader.load(getClass().getResource("/assets/layouts/GUIStart.fxml"),
+		Parent root = FXMLLoader.load(getClass().getResource("/assets/layouts/ServerStart.fxml"),
 				Ref.language = new PropertyResourceBundle(
 						getClass().getResourceAsStream("/assets/language/de.properties")));
 		Scene s = new Scene(root);

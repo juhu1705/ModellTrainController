@@ -3,10 +3,10 @@ package de.noisruker.common.messages;
 import java.io.IOException;
 import java.io.Serializable;
 
-import de.noisruker.client.Client;
-import de.noisruker.net.Side;
 import de.noisruker.net.datapackets.Datapacket;
 import de.noisruker.net.datapackets.DatapacketType;
+import de.noisruker.server.ClientHandler;
+import de.noisruker.server.Server;
 import de.noisruker.server.loconet.messages.LocoNetMessage;
 import de.noisruker.server.loconet.messages.MessageType;
 import de.noisruker.util.Ref;
@@ -60,8 +60,8 @@ public class SensorMessage implements Serializable, AbstractMessage {
 
 	@Override
 	public void send() throws IOException {
-		if (Ref.side.equals(Side.SERVER))
-			Client.getConnectionHandler().sendDatapacket(new Datapacket(DatapacketType.SERVER_SEND_MESSAGE, this));
+		for (ClientHandler c : Server.getClientHandlers())
+			c.sendDatapacket(new Datapacket(DatapacketType.SERVER_SEND_MESSAGE, this));
 	}
 
 }

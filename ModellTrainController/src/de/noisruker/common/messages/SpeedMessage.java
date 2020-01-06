@@ -6,10 +6,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.logging.Level;
 
-import de.noisruker.client.Client;
 import de.noisruker.net.Side;
-import de.noisruker.net.datapackets.Datapacket;
-import de.noisruker.net.datapackets.DatapacketType;
 import de.noisruker.server.loconet.LocoNetConnection.PortNotOpenException;
 import de.noisruker.server.loconet.messages.LocoNetMessage;
 import de.noisruker.util.Ref;
@@ -45,8 +42,6 @@ public class SpeedMessage implements AbstractMessage, Serializable {
 			} catch (SerialPortException | PortNotOpenException e) {
 				Ref.LOGGER.log(Level.SEVERE, "Server not opened", e);
 			}
-		else
-			Client.getConnectionHandler().sendDatapacket(new Datapacket(DatapacketType.SEND_SPEED_MESSAGE, this));
 	}
 
 }
