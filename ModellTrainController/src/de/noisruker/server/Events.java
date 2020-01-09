@@ -12,10 +12,8 @@ import de.noisruker.net.datapackets.DatapacketType;
 import de.noisruker.net.datapackets.DatapacketVoid;
 import de.noisruker.net.datapackets.NetEvent;
 import de.noisruker.net.datapackets.NetEventHandler;
-import de.noisruker.server.gui.GUIServer;
 import de.noisruker.util.Ref;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
 
 public class Events {
 
@@ -37,7 +35,7 @@ public class Events {
 				.setName(((ClientHandler) netEvent.getSender()).getName())
 				.setLevel(((ClientHandler) netEvent.getSender()).getPermissionLevel().toString());
 
-		GUIServer.getInstance().messages.appendText(m.getFormatted());
+		Ref.LOGGER.fine(m.getFormatted());
 
 		for (ClientHandler ch : Server.getClientHandlers())
 			try {
@@ -88,7 +86,7 @@ public class Events {
 			}
 
 			Platform.runLater(() -> {
-				GUIServer.getInstance().players.setItems(FXCollections.observableArrayList(Server.getClientHandlers()));
+				// GUIServer.getInstance().players.setItems(FXCollections.observableArrayList(Server.getClientHandlers()));
 			});
 
 		} else

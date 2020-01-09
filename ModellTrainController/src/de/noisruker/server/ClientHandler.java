@@ -134,5 +134,12 @@ public class ClientHandler implements Runnable, DatapacketSender {
 		public boolean isEqualOrGreate(PermissionLevel plevel) {
 			return this.level >= plevel.level;
 		}
+
+		public static PermissionLevel getByLevel(int level) {
+			for (PermissionLevel pl : PermissionLevel.values())
+				if (pl.level == level)
+					return pl;
+			return SPECTATOR;
+		}
 	}
 }
