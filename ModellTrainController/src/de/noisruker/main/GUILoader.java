@@ -89,11 +89,26 @@ public class GUILoader {
 
 					break;
 				case "kick":
-					Ref.LOGGER.info("NO FUNKTION");
+
+					Ref.LOGGER.info("Type Playername:");
+
+					String name1 = scanner.next();
+
+					for (ClientHandler ch : Server.getClientHandlers()) {
+						if (ch.getName().equals(name1)) {
+							try {
+								ch.kick();
+							} catch (IOException e) {
+
+							}
+						}
+					}
 
 					break;
 				case "addTrain":
-					Ref.LOGGER.info("NO FUNKTION");
+					Ref.LOGGER.info("Type Address:");
+
+					int address = Integer.parseInt(scanner.next());
 
 					break;
 				case "speed":
