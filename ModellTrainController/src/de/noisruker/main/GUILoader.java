@@ -9,6 +9,8 @@ import java.util.Scanner;
 import java.util.logging.Level;
 
 import de.noisruker.common.ChatMessage;
+import de.noisruker.common.messages.SpeedMessage;
+import de.noisruker.common.messages.SwitchMessage;
 import de.noisruker.net.Side;
 import de.noisruker.net.datapackets.Datapacket;
 import de.noisruker.net.datapackets.DatapacketType;
@@ -16,6 +18,9 @@ import de.noisruker.server.ClientHandler;
 import de.noisruker.server.ClientHandler.PermissionLevel;
 import de.noisruker.server.Server;
 import de.noisruker.server.loconet.LocoNet;
+import de.noisruker.server.loconet.LocoNetConnection.PortNotOpenException;
+import de.noisruker.server.loconet.messages.LocoNetMessage;
+import de.noisruker.server.loconet.messages.MessageType;
 import de.noisruker.util.Ref;
 import jssc.SerialPortException;
 
@@ -108,15 +113,40 @@ public class GUILoader {
 				case "addTrain":
 					Ref.LOGGER.info("Type Address:");
 
-					int address = Integer.parseInt(scanner.next());
+					byte address = Byte.parseByte(scanner.next());
+
+					try {
+						new LocoNetMessage(MessageType.OPC_LOCO_ADR, (byte) 0, address).send();
+					} catch (SerialPortException | PortNotOpenException e1) {
+						e1.printStackTrace();
+					}
 
 					break;
 				case "speed":
-					Ref.LOGGER.info("NO FUNKTION");
+					Ref.LOGGER.info("Type Slot:");
+
+					byte slot = Byte.parseByte(scanner.next());
+					Ref.LOGGER.info("Type Speed:");
+
+					byte speed = Byte.parseByte(scanner.next());
+					try {
+						new SpeedMessage(slot, speed).send();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
 
 					break;
 				case "switch":
 					Ref.LOGGER.info("NO FUNKTION");
+
+					Ref.LOGGER.info("Type Address:");
+
+					byte address1 = Byte.parseByte(scanner.next());
+					Ref.LOGGER.info("Type Speed:");
+
+					boolean state = Boolean.parseBoolean(scanner.next());
+
+					new SwitchMessage(address1, state);
 
 					break;
 
@@ -144,7 +174,6 @@ public class GUILoader {
 				try {
 					Thread.sleep(100);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}

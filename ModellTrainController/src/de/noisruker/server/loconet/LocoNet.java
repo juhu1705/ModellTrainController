@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import de.noisruker.common.Track;
 import de.noisruker.common.Train;
+import de.noisruker.common.messages.TrainSlotMessage;
 import de.noisruker.net.datapackets.Datapacket;
 import de.noisruker.net.datapackets.DatapacketType;
 import de.noisruker.server.ClientHandler;
@@ -60,6 +61,10 @@ public class LocoNet {
 					ch.sendDatapacket(new Datapacket(DatapacketType.SERVER_SEND_MESSAGE, l));
 			} catch (IOException e) {
 				e.printStackTrace();
+			}
+
+			if (l instanceof TrainSlotMessage) {
+				Ref.LOGGER.info("Write requested Train to slot: " + ((TrainSlotMessage) l).getSlot());
 			}
 		});
 
