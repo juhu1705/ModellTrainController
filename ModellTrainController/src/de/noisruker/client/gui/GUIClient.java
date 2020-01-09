@@ -32,6 +32,7 @@ public class GUIClient implements Initializable {
 
 	public void onSend(ActionEvent event) {
 		try {
+			Ref.LOGGER.info("Send chat message: " + this.send.getText());
 			Client.getConnectionHandler().sendDatapacket(
 					new Datapacket(DatapacketType.CLIENT_SEND_CHAT_MESSAGE, new ChatMessage(this.send.getText())));
 		} catch (IOException e) {
