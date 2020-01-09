@@ -18,6 +18,16 @@ public class MessageConverters {
 		return new SpeedMessage(values[0], values[1]);
 	}
 
+	@MessageConverter(messageType = MessageType.OPC_LOCO_ADR)
+	public static RequestSlotMessage locoNetMessageToRequestSlotMessage(LocoNetMessage message) {
+//		Ref.LOGGER.config("Start Converting");
+		byte[] values = message.getValues();
+		if (values == null || values.length < 2)
+			return null;
+
+		return new RequestSlotMessage(values[1]);
+	}
+
 	@MessageConverter(messageType = MessageType.OPC_SW_REQ)
 	public static SwitchMessage locoNetMessageToSwitchMessage(LocoNetMessage message) {
 //		Ref.LOGGER.config("Start Converting");
