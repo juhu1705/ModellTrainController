@@ -5,6 +5,7 @@ import java.util.logging.Level;
 
 import de.noisruker.client.ClientPassword;
 import de.noisruker.common.ChatMessage;
+import de.noisruker.common.messages.RequestSlotMessage;
 import de.noisruker.common.messages.SpeedMessage;
 import de.noisruker.common.messages.SwitchMessage;
 import de.noisruker.net.datapackets.Datapacket;
@@ -63,10 +64,18 @@ public class Events {
 		}
 	}
 
+	@NetEventHandler(type = DatapacketType.SEND_REQUEST_SLOT_MESSAGE)
+	public static void clientSendRequestSlotMessage(NetEvent netEvent) {
+		try {
+			((RequestSlotMessage) netEvent.getDatapacket().getValue()).send();
+		} catch (IOException e) {
+			Ref.LOGGER.log(Level.SEVERE, "", e);
+		}
+
+	}
+
 	@NetEventHandler(type = DatapacketType.PASSWORD_ANSWER)
 	public static void passwordRequest(NetEvent netEvent) {
-		Ref.LOGGER.info("r");
-
 		ClientPassword password = (ClientPassword) netEvent.getDatapacket().getValue();
 		ClientHandler sender = (ClientHandler) netEvent.getSender();
 
