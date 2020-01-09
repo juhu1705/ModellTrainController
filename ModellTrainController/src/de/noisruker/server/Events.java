@@ -13,7 +13,6 @@ import de.noisruker.net.datapackets.DatapacketVoid;
 import de.noisruker.net.datapackets.NetEvent;
 import de.noisruker.net.datapackets.NetEventHandler;
 import de.noisruker.util.Ref;
-import javafx.application.Platform;
 
 public class Events {
 
@@ -85,9 +84,9 @@ public class Events {
 				}
 			}
 
-			Platform.runLater(() -> {
-				// GUIServer.getInstance().players.setItems(FXCollections.observableArrayList(Server.getClientHandlers()));
-			});
+//			Platform.runLater(() -> {
+//				// GUIServer.getInstance().players.setItems(FXCollections.observableArrayList(Server.getClientHandlers()));
+//			});
 
 		} else
 			Server.removeClient(sender);
