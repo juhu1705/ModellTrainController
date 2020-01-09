@@ -24,7 +24,7 @@
                   </SplitPane>
                </bottom>
                <center>
-                  <TextArea fx:id="messages" prefHeight="313.0" prefWidth="364.0" BorderPane.alignment="CENTER" />
+                  <TextArea fx:id="messages" editable="false" focusTraversable="false" prefHeight="313.0" prefWidth="364.0" BorderPane.alignment="CENTER" />
                </center>
             </BorderPane>
          </center>
