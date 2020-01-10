@@ -3,7 +3,7 @@
   <groupId>ModellTrainController</groupId>
   <artifactId>ModellTrainController</artifactId>
   <name>ModellTrainController</name>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>pi0.0.2</version>
   <!-- Dependencies -->
   <dependencies>
     <!-- https://mvnrepository.com/artifact/org.scream3r/jssc -->
