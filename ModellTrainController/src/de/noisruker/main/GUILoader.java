@@ -137,7 +137,6 @@ public class GUILoader {
 
 					break;
 				case "switch":
-					Ref.LOGGER.info("NO FUNKTION");
 
 					Ref.LOGGER.info("Type Address:");
 
