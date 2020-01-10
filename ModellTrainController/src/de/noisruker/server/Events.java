@@ -91,7 +91,7 @@ public class Events {
 						ch.sendDatapacket(
 								new Datapacket(DatapacketType.START_CLIENT_INTERFACE, DatapacketVoid.getDummy()));
 					} catch (IOException e) {
-						e.printStackTrace();
+						Ref.LOGGER.config("Failed to send Datapacket");
 					}
 				}
 			}
