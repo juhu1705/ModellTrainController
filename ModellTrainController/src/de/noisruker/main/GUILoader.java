@@ -146,7 +146,11 @@ public class GUILoader {
 
 					boolean state = Boolean.parseBoolean(scanner.next());
 
-					new SwitchMessage(address1, state);
+					try {
+						new SwitchMessage(address1, state).send();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
 
 					break;
 
