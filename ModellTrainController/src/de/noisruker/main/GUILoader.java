@@ -113,11 +113,7 @@ public class GUILoader {
 
 					for (ClientHandler ch : Server.getClientHandlers()) {
 						if (ch.getName().equals(name1)) {
-							try {
-								ch.kick();
-							} catch (IOException e) {
-
-							}
+							Server.removeClient(ch);
 						}
 					}
 
