@@ -80,6 +80,9 @@ public class Events {
 		ClientHandler sender = (ClientHandler) netEvent.getSender();
 
 		if (Ref.password.equals(password.getPassword())) {
+
+			Server.passwordOK = true;
+
 			Server.nonRegisteredClientHandler.clear();
 			for (ClientHandler ch : Server.getClientHandlers()) {
 				if (sender.equals(ch)) {

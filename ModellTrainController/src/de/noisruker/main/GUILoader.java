@@ -78,6 +78,11 @@ public class GUILoader {
 					break;
 
 				case "op":
+					Ref.LOGGER.info("Players:");
+
+					for (ClientHandler ch : Server.getClientHandlers())
+						Ref.LOGGER.info(ch != null ? ch.getName() : "");
+
 					Ref.LOGGER.info("Type Playername:");
 
 					String name = scanner.next();
@@ -87,6 +92,9 @@ public class GUILoader {
 					int level = Integer.parseInt(scanner.next());
 
 					for (ClientHandler ch : Server.getClientHandlers()) {
+						if (ch == null)
+							continue;
+
 						if (ch.getName().equals(name)) {
 							ch.setPermissionLevel(PermissionLevel.getByLevel(level));
 						}
@@ -94,6 +102,10 @@ public class GUILoader {
 
 					break;
 				case "kick":
+					Ref.LOGGER.info("Players:");
+
+					for (ClientHandler ch : Server.getClientHandlers())
+						Ref.LOGGER.info(ch != null ? ch.getName() : "");
 
 					Ref.LOGGER.info("Type Playername:");
 
