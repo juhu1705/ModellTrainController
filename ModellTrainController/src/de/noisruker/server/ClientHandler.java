@@ -103,6 +103,7 @@ public class ClientHandler implements Runnable, DatapacketSender {
 
 	public void kick() throws IOException {
 		this.end = true;
+		this.thread.interrupt();
 		this.clientSocket.close();
 	}
 
