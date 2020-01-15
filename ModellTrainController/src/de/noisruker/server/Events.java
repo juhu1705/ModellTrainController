@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 
 import de.noisruker.client.ClientPassword;
-import de.noisruker.common.ChatMessage;
+import de.noisruker.common.messages.ChatMessage;
 import de.noisruker.common.messages.RequestSlotMessage;
 import de.noisruker.common.messages.SpeedMessage;
 import de.noisruker.common.messages.SwitchMessage;

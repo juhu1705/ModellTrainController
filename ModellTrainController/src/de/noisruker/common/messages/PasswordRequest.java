@@ -1,4 +1,4 @@
-package de.noisruker.server;
+package de.noisruker.common.messages;
 
 import de.noisruker.util.Ref;
 

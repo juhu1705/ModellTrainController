@@ -10,6 +10,7 @@ import de.noisruker.net.datapackets.Datapacket;
 import de.noisruker.net.datapackets.DatapacketSender;
 import de.noisruker.net.datapackets.NetEvent;
 import de.noisruker.net.datapackets.NetEventDistributor;
+import de.noisruker.util.Ref;
 
 /**
  * Behandelt die serverseitige Verbindung zum Client
@@ -53,7 +54,7 @@ public class ClientHandler implements Runnable, DatapacketSender {
 			try {
 				dp = Datapacket.receive(this.objectIn);
 			} catch (ClassNotFoundException | IOException e) {
-				e.printStackTrace();
+				Ref.LOGGER.info("Client disconnect: " + this.name);
 			}
 
 			if (dp == null)

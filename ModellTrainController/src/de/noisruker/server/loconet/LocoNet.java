@@ -34,6 +34,11 @@ public class LocoNet {
 		this.trains.add(train);
 	}
 
+	public void stop() throws SerialPortException {
+		LocoNetMessageReciever.getInstance().removeConnection();
+		this.connection.close();
+	}
+
 	public void start(String port) throws SerialPortException {
 		this.connection = new LocoNetConnection(port);
 		this.connection.open();

@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.Scanner;
 import java.util.logging.Level;
 
-import de.noisruker.common.ChatMessage;
+import de.noisruker.common.messages.ChatMessage;
 import de.noisruker.common.messages.SpeedMessage;
 import de.noisruker.common.messages.SwitchMessage;
 import de.noisruker.net.Side;
@@ -24,7 +24,7 @@ import de.noisruker.server.loconet.messages.MessageType;
 import de.noisruker.util.Ref;
 import jssc.SerialPortException;
 
-public class GUILoader {
+public class Main {
 
 	public static void main(String[] args) {
 		Ref.side = Side.SERVER;
@@ -178,8 +178,17 @@ public class GUILoader {
 						}
 
 					break;
+				case "stop":
+					try {
+						LocoNet.getInstance().stop();
+					} catch (SerialPortException e1) {
+						Ref.LOGGER.info("Cannot stop regular");
+						System.exit(1);
+					}
+					System.exit(0);
 				default:
 					Ref.LOGGER.info("To get help type \"help\"");
+					break;
 				}
 
 				try {
