@@ -186,6 +186,7 @@ public class Main {
 						System.exit(1);
 					}
 					System.exit(0);
+					break;
 				default:
 					Ref.LOGGER.info("To get help type \"help\"");
 					break;
