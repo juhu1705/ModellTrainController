@@ -7,12 +7,12 @@ import de.noisruker.client.gui.GUIClient;
 import de.noisruker.client.gui.GUIConnect;
 import de.noisruker.common.ChatMessage;
 import de.noisruker.common.messages.AbstractMessage;
+import de.noisruker.common.messages.PasswordRequest;
 import de.noisruker.net.datapackets.Datapacket;
 import de.noisruker.net.datapackets.DatapacketSender;
 import de.noisruker.net.datapackets.DatapacketType;
 import de.noisruker.net.datapackets.NetEvent;
 import de.noisruker.net.datapackets.NetEventHandler;
-import de.noisruker.server.PasswordRequest;
 import de.noisruker.util.Ref;
 
 public class Events {

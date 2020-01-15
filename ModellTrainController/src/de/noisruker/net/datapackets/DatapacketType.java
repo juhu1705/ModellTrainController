@@ -9,11 +9,11 @@ import java.io.Serializable;
 import de.noisruker.client.ClientPassword;
 import de.noisruker.common.ChatMessage;
 import de.noisruker.common.messages.AbstractMessage;
+import de.noisruker.common.messages.PasswordRequest;
 import de.noisruker.common.messages.SpeedMessage;
 import de.noisruker.common.messages.SwitchMessage;
 import de.noisruker.net.Side;
 import de.noisruker.server.ClientHandler.PermissionLevel;
-import de.noisruker.server.PasswordRequest;
 
 /**
  * Typen von Datenpaketen

@@ -5,6 +5,7 @@ import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.noisruker.common.messages.PasswordRequest;
 import de.noisruker.net.datapackets.Datapacket;
 import de.noisruker.net.datapackets.DatapacketType;
 import de.noisruker.net.datapackets.NetEventDistributor;
