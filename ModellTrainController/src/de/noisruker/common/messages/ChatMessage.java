@@ -1,4 +1,4 @@
-package de.noisruker.common;
+package de.noisruker.common.messages;
 
 import java.io.Serializable;
 

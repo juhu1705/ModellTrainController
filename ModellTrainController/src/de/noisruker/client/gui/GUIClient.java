@@ -6,7 +6,7 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 
 import de.noisruker.client.Client;
-import de.noisruker.common.ChatMessage;
+import de.noisruker.common.messages.ChatMessage;
 import de.noisruker.net.datapackets.Datapacket;
 import de.noisruker.net.datapackets.DatapacketType;
 import de.noisruker.util.Ref;

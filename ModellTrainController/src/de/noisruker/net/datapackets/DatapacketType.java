@@ -7,9 +7,10 @@ import static de.noisruker.server.ClientHandler.PermissionLevel.SPECTATOR;
 import java.io.Serializable;
 
 import de.noisruker.client.ClientPassword;
-import de.noisruker.common.ChatMessage;
 import de.noisruker.common.messages.AbstractMessage;
+import de.noisruker.common.messages.ChatMessage;
 import de.noisruker.common.messages.PasswordRequest;
+import de.noisruker.common.messages.RequestSlotMessage;
 import de.noisruker.common.messages.SpeedMessage;
 import de.noisruker.common.messages.SwitchMessage;
 import de.noisruker.net.Side;
@@ -29,6 +30,7 @@ public enum DatapacketType {
 	START_CLIENT_INTERFACE(Side.SERVER, DatapacketVoid.class, SPECTATOR),
 	SEND_SWITCH_MESSAGE(Side.CLIENT, SwitchMessage.class, MEMBER),
 	SEND_SPEED_MESSAGE(Side.CLIENT, SpeedMessage.class, MEMBER),
+	SEND_REQUEST_SLOT_MESSAGE(Side.CLIENT, RequestSlotMessage.class, MEMBER),
 	SERVER_SEND_MESSAGE(Side.SERVER, AbstractMessage.class, MEMBER), SEND_COMMAND(Side.CLIENT, String.class, ADMIN);
 
 	private final Class<? extends Serializable> requiredValueType;

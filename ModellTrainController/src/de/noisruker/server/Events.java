@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.logging.Level;
 
 import de.noisruker.client.ClientPassword;
+import de.noisruker.common.messages.ChatMessage;
+import de.noisruker.common.messages.RequestSlotMessage;
 import de.noisruker.common.messages.SpeedMessage;
 import de.noisruker.common.messages.SwitchMessage;
 import de.noisruker.net.datapackets.Datapacket;
@@ -11,10 +13,7 @@ import de.noisruker.net.datapackets.DatapacketType;
 import de.noisruker.net.datapackets.DatapacketVoid;
 import de.noisruker.net.datapackets.NetEvent;
 import de.noisruker.net.datapackets.NetEventHandler;
-import de.noisruker.server.gui.GUIServer;
 import de.noisruker.util.Ref;
-import javafx.application.Platform;
-import javafx.collections.FXCollections;
 
 public class Events {
 
@@ -31,9 +30,20 @@ public class Events {
 
 	@NetEventHandler(type = DatapacketType.CLIENT_SEND_CHAT_MESSAGE)
 	public static void clientMessage(NetEvent netEvent) {
-		for (ClientHandler ch : Server.getClientHandlers()) {
+		Ref.LOGGER.info("Message");
+		ChatMessage m = ((ChatMessage) netEvent.getDatapacket().getValue())
+				.setName(((ClientHandler) netEvent.getSender()).getName())
+				.setLevel(((ClientHandler) netEvent.getSender()).getPermissionLevel().toString());
 
-		}
+		Ref.LOGGER.fine(m.getFormatted());
+
+		for (ClientHandler ch : Server.getClientHandlers())
+			try {
+				ch.sendDatapacket(new Datapacket(DatapacketType.SERVER_SEND_CHAT_MESSAGE, m));
+			} catch (IOException e) {
+				Ref.LOGGER.log(Level.SEVERE, "", e);
+			}
+
 	}
 
 	@NetEventHandler(type = DatapacketType.SEND_SPEED_MESSAGE)
@@ -54,14 +64,25 @@ public class Events {
 		}
 	}
 
+	@NetEventHandler(type = DatapacketType.SEND_REQUEST_SLOT_MESSAGE)
+	public static void clientSendRequestSlotMessage(NetEvent netEvent) {
+		try {
+			((RequestSlotMessage) netEvent.getDatapacket().getValue()).send();
+		} catch (IOException e) {
+			Ref.LOGGER.log(Level.SEVERE, "", e);
+		}
+
+	}
+
 	@NetEventHandler(type = DatapacketType.PASSWORD_ANSWER)
 	public static void passwordRequest(NetEvent netEvent) {
-		Ref.LOGGER.info("r");
-
 		ClientPassword password = (ClientPassword) netEvent.getDatapacket().getValue();
 		ClientHandler sender = (ClientHandler) netEvent.getSender();
 
 		if (Ref.password.equals(password.getPassword())) {
+
+			Server.passwordOK = true;
+
 			Server.nonRegisteredClientHandler.clear();
 			for (ClientHandler ch : Server.getClientHandlers()) {
 				if (sender.equals(ch)) {
@@ -70,14 +91,14 @@ public class Events {
 						ch.sendDatapacket(
 								new Datapacket(DatapacketType.START_CLIENT_INTERFACE, DatapacketVoid.getDummy()));
 					} catch (IOException e) {
-						e.printStackTrace();
+						Ref.LOGGER.config("Failed to send Datapacket");
 					}
 				}
 			}
 
-			Platform.runLater(() -> {
-				GUIServer.getInstance().players.setItems(FXCollections.observableArrayList(Server.getClientHandlers()));
-			});
+//			Platform.runLater(() -> {
+//				// GUIServer.getInstance().players.setItems(FXCollections.observableArrayList(Server.getClientHandlers()));
+//			});
 
 		} else
 			Server.removeClient(sender);

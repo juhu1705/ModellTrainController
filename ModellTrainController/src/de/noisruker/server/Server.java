@@ -18,6 +18,7 @@ import de.noisruker.util.Ref;
  */
 public final class Server implements Runnable {
 
+	static boolean passwordOK = false;
 	public static List<ClientHandler> nonRegisteredClientHandler = new ArrayList<>();
 	private static List<ClientHandler> clientHandlers = new ArrayList<>();
 	private static ServerSocket serverSocket;
@@ -60,7 +61,7 @@ public final class Server implements Runnable {
 		try {
 			client.kick();
 		} catch (IOException e) {
-			e.printStackTrace();
+			Ref.LOGGER.config("Client left!");
 		}
 	}
 
@@ -85,7 +86,20 @@ public final class Server implements Runnable {
 				Ref.LOGGER.info("Client try to join");
 
 				client.sendDatapacket(new Datapacket(DatapacketType.PASSWORD_REQUEST, new PasswordRequest()));
-			} catch (IOException e) {
+
+				passwordOK = false;
+
+				for (int i = 0; i <= 1000; i++) {
+					Thread.sleep(100);
+
+					if (passwordOK)
+						break;
+
+					if (i == 1000)
+						client.kick();
+				}
+
+			} catch (IOException | InterruptedException e) {
 				e.printStackTrace();
 			}
 		}

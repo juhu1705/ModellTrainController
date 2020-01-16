@@ -5,8 +5,8 @@ import java.util.logging.Level;
 
 import de.noisruker.client.gui.GUIClient;
 import de.noisruker.client.gui.GUIConnect;
-import de.noisruker.common.ChatMessage;
 import de.noisruker.common.messages.AbstractMessage;
+import de.noisruker.common.messages.ChatMessage;
 import de.noisruker.common.messages.PasswordRequest;
 import de.noisruker.net.datapackets.Datapacket;
 import de.noisruker.net.datapackets.DatapacketSender;

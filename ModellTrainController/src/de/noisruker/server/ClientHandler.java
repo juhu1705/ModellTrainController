@@ -10,6 +10,7 @@ import de.noisruker.net.datapackets.Datapacket;
 import de.noisruker.net.datapackets.DatapacketSender;
 import de.noisruker.net.datapackets.NetEvent;
 import de.noisruker.net.datapackets.NetEventDistributor;
+import de.noisruker.util.Ref;
 
 /**
  * Behandelt die serverseitige Verbindung zum Client
@@ -53,7 +54,7 @@ public class ClientHandler implements Runnable, DatapacketSender {
 			try {
 				dp = Datapacket.receive(this.objectIn);
 			} catch (ClassNotFoundException | IOException e) {
-				e.printStackTrace();
+				Ref.LOGGER.info("Client disconnect: " + this.name);
 			}
 
 			if (dp == null)
@@ -103,7 +104,6 @@ public class ClientHandler implements Runnable, DatapacketSender {
 
 	public void kick() throws IOException {
 		this.end = true;
-		this.thread.interrupt();
 		this.clientSocket.close();
 	}
 
@@ -134,6 +134,13 @@ public class ClientHandler implements Runnable, DatapacketSender {
 
 		public boolean isEqualOrGreate(PermissionLevel plevel) {
 			return this.level >= plevel.level;
+		}
+
+		public static PermissionLevel getByLevel(int level) {
+			for (PermissionLevel pl : PermissionLevel.values())
+				if (pl.level == level)
+					return pl;
+			return SPECTATOR;
 		}
 	}
 }
