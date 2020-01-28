@@ -4,6 +4,7 @@
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.StackPane?>
 
@@ -16,10 +17,11 @@
          <center>
             <BorderPane prefHeight="200.0" prefWidth="200.0">
                <bottom>
-                  <SplitPane dividerPositions="0.5" prefHeight="33.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+                  <SplitPane fx:id="setTo" dividerPositions="0.5, 0.5" prefHeight="33.0" prefWidth="600.0" BorderPane.alignment="CENTER">
                      <items>
                         <TextField fx:id="send" />
                         <Button mnemonicParsing="false" onAction="#onSend" text="%send.text" />
+                        <ImageView fx:id="stream" fitHeight="232.0" fitWidth="440.0" pickOnBounds="true" preserveRatio="true" />
                      </items>
                   </SplitPane>
                </bottom>
