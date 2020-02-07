@@ -147,10 +147,10 @@ public class Main {
 					Ref.LOGGER.info("Type Slot:");
 
 					byte slot = Byte.parseByte(scanner.next());
-					Ref.LOGGER.info("Type Speed: (0 - 255)");
+					Ref.LOGGER.info("Type Speed: (0 - 254)");
 
-					byte speed = Byte.parseByte(scanner.next());
 					try {
+						byte speed = Byte.parseByte(scanner.next());
 						new SpeedMessage(slot, speed).send();
 					} catch (IOException e1) {
 						e1.printStackTrace();
