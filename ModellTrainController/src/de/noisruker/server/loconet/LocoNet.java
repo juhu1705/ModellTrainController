@@ -3,8 +3,9 @@ package de.noisruker.server.loconet;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import de.noisruker.common.Track;
+import de.noisruker.common.Sensor;
 import de.noisruker.common.Train;
+import de.noisruker.common.messages.SensorMessage;
 import de.noisruker.common.messages.TrainSlotMessage;
 import de.noisruker.net.datapackets.Datapacket;
 import de.noisruker.net.datapackets.DatapacketType;
@@ -19,7 +20,7 @@ public class LocoNet {
 	private static LocoNet instance;
 
 	private ArrayList<Train> trains = new ArrayList<>();
-	private ArrayList<Track> tracks = new ArrayList<>();
+	private ArrayList<Sensor> sensors = new ArrayList<>();
 
 	public static LocoNet getInstance() {
 		return instance == null ? instance = new LocoNet() : instance;
@@ -32,6 +33,24 @@ public class LocoNet {
 
 	private void addTrain(Train train) {
 		this.trains.add(train);
+	}
+
+	public ArrayList<Train> getTrains() {
+		return this.trains;
+	}
+
+	public ArrayList<Sensor> getSensors() {
+		return this.sensors;
+	}
+
+	private void updateOrCreateSensor(int address, boolean state) {
+		Sensor dummy = new Sensor(address, state);
+
+		if (this.sensors.contains(dummy))
+			this.sensors.get(this.sensors.indexOf(dummy)).setState(state);
+		else
+			this.sensors.add(dummy);
+
 	}
 
 	public void stop() throws SerialPortException {
@@ -69,7 +88,17 @@ public class LocoNet {
 			}
 
 			if (l instanceof TrainSlotMessage) {
-				Ref.LOGGER.info("Write requested Train to slot: " + ((TrainSlotMessage) l).getSlot());
+				TrainSlotMessage m = ((TrainSlotMessage) l);
+
+				Ref.LOGGER.info("Write requested Train to slot: " + m.getSlot());
+
+				this.addTrain(new Train(m.getAddress(), m.getSlot()));
+			}
+
+			if (l instanceof SensorMessage) {
+				SensorMessage s = (SensorMessage) l;
+
+				this.updateOrCreateSensor(s.getAddress(), s.getState());
 			}
 		});
 

@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import de.noisruker.server.loconet.LocoNetConnection.PortNotOpenException;
 import de.noisruker.server.loconet.messages.LocoNetMessage;
 import de.noisruker.server.loconet.messages.MessageType;
-import de.noisruker.util.Ref;
 import de.noisruker.util.Util;
 
 public class LocoNetMessageReciever {
@@ -53,8 +52,6 @@ public class LocoNetMessageReciever {
 				if (message == null)
 					continue;
 
-				Ref.LOGGER.config(message[0] + "");
-
 				MessageType type = Util.getMessageType(message[0]);
 
 				byte[] values = new byte[message.length - 2];
@@ -64,7 +61,6 @@ public class LocoNetMessageReciever {
 
 				for (LocoNetMessageListener listener : this.listeners)
 					try {
-						Ref.LOGGER.config("Mist: " + type + " " + message[0]);
 
 						listener.progressMessage(new LocoNetMessage(type, values).toMessage());
 					} catch (IllegalAccessException e) {

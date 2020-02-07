@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.util.Scanner;
 import java.util.logging.Level;
 
+import de.noisruker.common.Sensor;
+import de.noisruker.common.Train;
 import de.noisruker.common.messages.ChatMessage;
 import de.noisruker.common.messages.SpeedMessage;
 import de.noisruker.common.messages.SwitchMessage;
@@ -73,10 +75,17 @@ public class Main {
 					Ref.LOGGER.info("addTrain");
 					Ref.LOGGER.info("speed");
 					Ref.LOGGER.info("switch");
+					Ref.LOGGER.info("sensors");
 					Ref.LOGGER.info("message");
 
 					break;
 
+				case "sensors":
+					Ref.LOGGER.info("Sensors:");
+					for (Sensor s : LocoNet.getInstance().getSensors())
+						Ref.LOGGER.info("Address: " + Integer.toString(s.getAddress()) + "Slot: "
+								+ Boolean.toString(s.getState()));
+					break;
 				case "op":
 					Ref.LOGGER.info("Players:");
 
@@ -131,10 +140,14 @@ public class Main {
 
 					break;
 				case "speed":
+					Ref.LOGGER.info("Trains:");
+					for (Train t : LocoNet.getInstance().getTrains())
+						Ref.LOGGER.info(
+								"Address: " + Byte.toString(t.getAddress()) + "Slot: " + Byte.toString(t.getSlot()));
 					Ref.LOGGER.info("Type Slot:");
 
 					byte slot = Byte.parseByte(scanner.next());
-					Ref.LOGGER.info("Type Speed:");
+					Ref.LOGGER.info("Type Speed: (0 - 255)");
 
 					byte speed = Byte.parseByte(scanner.next());
 					try {

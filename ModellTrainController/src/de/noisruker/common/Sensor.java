@@ -2,29 +2,37 @@ package de.noisruker.common;
 
 public class Sensor {
 
-	private byte address;
-	private int address1;
-	private boolean state1;
-	private byte state;
+	private int address;
+	private boolean state;
 
-	private Track parent;
-
-	public Sensor(byte address, byte state) {
-
+	public Sensor(int address, boolean state) {
 		this.address = address;
 		this.state = state;
 	}
 
-	public boolean isAddress(byte address, byte b) {
+	public boolean isAddress(int address, boolean b) {
 		return this.address == address && this.state == b;
 	}
 
-	public void onTrainDriveIn(Train t) {
-		this.parent.onTrainDriveIn(t, this);
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof Sensor))
+			return false;
+		Sensor s = (Sensor) obj;
+
+		return s.address == this.address;
 	}
 
-	public void onTrainDriveOut(Train t) {
-		this.parent.onTrainDriveOut(t, this);
+	public void setState(boolean state) {
+		this.state = state;
+	}
+
+	public int getAddress() {
+		return this.address;
+	}
+
+	public boolean getState() {
+		return this.state;
 	}
 
 }
