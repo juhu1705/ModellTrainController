@@ -9,7 +9,6 @@ import de.noisruker.server.ClientHandler;
 import de.noisruker.server.Server;
 import de.noisruker.server.loconet.messages.LocoNetMessage;
 import de.noisruker.server.loconet.messages.MessageType;
-import de.noisruker.util.Ref;
 
 public class SensorMessage implements Serializable, AbstractMessage {
 
@@ -24,8 +23,6 @@ public class SensorMessage implements Serializable, AbstractMessage {
 		this.buffer1 = address;
 		this.buffer2 = state;
 
-		Ref.LOGGER.config(address + " " + state);
-
 		byte state5 = state;
 
 		state <<= 4;
@@ -37,8 +34,6 @@ public class SensorMessage implements Serializable, AbstractMessage {
 		state5 >>>= 7;
 
 		i |= state;
-
-		Ref.LOGGER.config(i + " " + state5);
 
 		this.state = state5;
 		this.address = i;

@@ -83,7 +83,7 @@ public class Main {
 				case "sensors":
 					Ref.LOGGER.info("Sensors:");
 					for (Sensor s : LocoNet.getInstance().getSensors())
-						Ref.LOGGER.info("Address: " + Integer.toString(s.getAddress()) + "Slot: "
+						Ref.LOGGER.info("Address: " + Integer.toString(s.getAddress()) + "; Slot: "
 								+ Boolean.toString(s.getState()));
 					break;
 				case "op":
@@ -143,7 +143,7 @@ public class Main {
 					Ref.LOGGER.info("Trains:");
 					for (Train t : LocoNet.getInstance().getTrains())
 						Ref.LOGGER.info(
-								"Address: " + Byte.toString(t.getAddress()) + "Slot: " + Byte.toString(t.getSlot()));
+								"Address: " + Byte.toString(t.getAddress()) + "; Slot: " + Byte.toString(t.getSlot()));
 					Ref.LOGGER.info("Type Slot:");
 
 					byte slot = Byte.parseByte(scanner.next());

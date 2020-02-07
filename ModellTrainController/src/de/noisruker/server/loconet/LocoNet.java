@@ -71,14 +71,14 @@ public class LocoNet {
 			if (l == null)
 				return;
 
-			String params = "[";
-
-			for (byte b : l.toLocoNetMessage().getValues())
-				params += Byte.toString(b) + "|";
-
-			params += "]";
-			Ref.LOGGER.config(
-					"Message Recieved: Type=" + l.toLocoNetMessage().getType().toString() + "; Parameter=" + params);
+//			String params = "[";
+//
+//			for (byte b : l.toLocoNetMessage().getValues())
+//				params += Byte.toString(b) + "|";
+//
+//			params += "]";
+//			Ref.LOGGER.config(
+//					"Message Recieved: Type=" + l.toLocoNetMessage().getType().toString() + "; Parameter=" + params);
 
 			try {
 				for (ClientHandler ch : Server.getClientHandlers())
@@ -99,6 +99,8 @@ public class LocoNet {
 				SensorMessage s = (SensorMessage) l;
 
 				this.updateOrCreateSensor(s.getAddress(), s.getState());
+
+				Ref.LOGGER.fine("Sensor " + s.getAddress() + " changed state to " + s.getState() + ".");
 			}
 		});
 
