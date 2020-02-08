@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import de.noisruker.common.Sensor;
 import de.noisruker.common.Train;
 import de.noisruker.common.messages.ChatMessage;
+import de.noisruker.common.messages.DirectionMessage;
 import de.noisruker.common.messages.SpeedMessage;
 import de.noisruker.common.messages.SwitchMessage;
 import de.noisruker.net.Side;
@@ -77,6 +78,7 @@ public class Main {
 						Ref.LOGGER.info("speed");
 						Ref.LOGGER.info("switch");
 						Ref.LOGGER.info("sensors");
+						Ref.LOGGER.info("direction");
 						Ref.LOGGER.info("message");
 
 						break;
@@ -152,6 +154,24 @@ public class Main {
 						try {
 							byte speed = Byte.parseByte(scanner.next());
 							new SpeedMessage(slot, speed).send();
+						} catch (Exception e1) {
+							Ref.LOGGER.severe("Failed to set speed, please try again!");
+						}
+
+						break;
+					case "direction":
+						Ref.LOGGER.info("Trains:");
+						for (Train t : LocoNet.getInstance().getTrains())
+							Ref.LOGGER.info("Address: " + Byte.toString(t.getAddress()) + "; Slot: "
+									+ Byte.toString(t.getSlot()));
+						Ref.LOGGER.info("Type Slot:");
+
+						byte train_slot = Byte.parseByte(scanner.next());
+						Ref.LOGGER.info("Type Foreward: (boolean)");
+
+						try {
+							boolean direction = Boolean.parseBoolean(scanner.next());
+							new DirectionMessage(train_slot, direction).send();
 						} catch (Exception e1) {
 							Ref.LOGGER.severe("Failed to set speed, please try again!");
 						}
