@@ -130,12 +130,11 @@ public class Main {
 				case "addTrain":
 					Ref.LOGGER.info("Type Address:");
 
-					byte address = Byte.parseByte(scanner.next());
-
 					try {
+						byte address = Byte.parseByte(scanner.next());
 						new LocoNetMessage(MessageType.OPC_LOCO_ADR, (byte) 0, address).send();
-					} catch (SerialPortException | PortNotOpenException e1) {
-						e1.printStackTrace();
+					} catch (Exception | PortNotOpenException e1) {
+						Ref.LOGGER.severe("Failed to add Train, please try again!");
 					}
 
 					break;
@@ -147,13 +146,13 @@ public class Main {
 					Ref.LOGGER.info("Type Slot:");
 
 					byte slot = Byte.parseByte(scanner.next());
-					Ref.LOGGER.info("Type Speed: (0 - 254)");
+					Ref.LOGGER.info("Type Speed: (0 - 225)");
 
 					try {
 						byte speed = Byte.parseByte(scanner.next());
 						new SpeedMessage(slot, speed).send();
-					} catch (IOException e1) {
-						e1.printStackTrace();
+					} catch (Exception e1) {
+						Ref.LOGGER.severe("Failed to set speed, please try again!");
 					}
 
 					break;
@@ -162,7 +161,7 @@ public class Main {
 					Ref.LOGGER.info("Type Address:");
 
 					byte address1 = Byte.parseByte(scanner.next());
-					Ref.LOGGER.info("Type Speed:");
+					Ref.LOGGER.info("Type Direction: (boolean)");
 
 					boolean state = Boolean.parseBoolean(scanner.next());
 
