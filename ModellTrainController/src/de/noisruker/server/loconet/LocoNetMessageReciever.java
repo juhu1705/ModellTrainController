@@ -61,7 +61,6 @@ public class LocoNetMessageReciever {
 
 				for (LocoNetMessageListener listener : this.listeners)
 					try {
-
 						listener.progressMessage(new LocoNetMessage(type, values).toMessage());
 					} catch (IllegalAccessException e) {
 						e.printStackTrace();

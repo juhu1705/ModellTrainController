@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import de.noisruker.common.Sensor;
 import de.noisruker.common.Train;
+import de.noisruker.common.messages.DirectionMessage;
 import de.noisruker.common.messages.SensorMessage;
 import de.noisruker.common.messages.TrainSlotMessage;
 import de.noisruker.net.datapackets.Datapacket;
@@ -93,6 +94,10 @@ public class LocoNet {
 				Ref.LOGGER.info("Write requested Train to slot: " + m.getSlot());
 
 				this.addTrain(new Train(m.getAddress(), m.getSlot()));
+			}
+
+			if (l instanceof DirectionMessage) {
+				Ref.LOGGER.info("Set direction to: " + ((DirectionMessage) l).getFunktion());
 			}
 
 			if (l instanceof SensorMessage) {

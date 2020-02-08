@@ -25,13 +25,15 @@ public class SensorMessage implements Serializable, AbstractMessage {
 
 		byte state5 = state;
 
-		state <<= 4;
+		state >>= 5;
 
 		int i = address;
 
 		state5 >>>= 4;
 		state5 <<= 7;
 		state5 >>>= 7;
+
+		i <<= 2;
 
 		i |= state;
 
