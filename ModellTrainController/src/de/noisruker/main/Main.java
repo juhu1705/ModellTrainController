@@ -63,151 +63,155 @@ public class Main {
 			}
 
 			while (true) {
-				String command = scanner.next();
-
-				switch (command) {
-				case "help":
-					Ref.LOGGER.info("Aviable Commands:");
-
-					Ref.LOGGER.info("help");
-					Ref.LOGGER.info("op");
-					Ref.LOGGER.info("kick");
-					Ref.LOGGER.info("addTrain");
-					Ref.LOGGER.info("speed");
-					Ref.LOGGER.info("switch");
-					Ref.LOGGER.info("sensors");
-					Ref.LOGGER.info("message");
-
-					break;
-
-				case "sensors":
-					Ref.LOGGER.info("Sensors:");
-					for (Sensor s : LocoNet.getInstance().getSensors())
-						Ref.LOGGER.info("Address: " + Integer.toString(s.getAddress()) + "; Slot: "
-								+ Boolean.toString(s.getState()));
-					break;
-				case "op":
-					Ref.LOGGER.info("Players:");
-
-					for (ClientHandler ch : Server.getClientHandlers())
-						Ref.LOGGER.info(ch != null ? ch.getName() : "");
-
-					Ref.LOGGER.info("Type Playername:");
-
-					String name = scanner.next();
-
-					Ref.LOGGER.info("Type Permissionlevel:");
-
-					int level = Integer.parseInt(scanner.next());
-
-					for (ClientHandler ch : Server.getClientHandlers()) {
-						if (ch == null)
-							continue;
-
-						if (ch.getName().equals(name)) {
-							ch.setPermissionLevel(PermissionLevel.getByLevel(level));
-						}
-					}
-
-					break;
-				case "kick":
-					Ref.LOGGER.info("Players:");
-
-					for (ClientHandler ch : Server.getClientHandlers())
-						Ref.LOGGER.info(ch != null ? ch.getName() : "");
-
-					Ref.LOGGER.info("Type Playername:");
-
-					String name1 = scanner.next();
-
-					for (ClientHandler ch : Server.getClientHandlers()) {
-						if (ch.getName().equals(name1)) {
-							Server.removeClient(ch);
-						}
-					}
-
-					break;
-				case "addTrain":
-					Ref.LOGGER.info("Type Address:");
-
-					try {
-						byte address = Byte.parseByte(scanner.next());
-						new LocoNetMessage(MessageType.OPC_LOCO_ADR, (byte) 0, address).send();
-					} catch (Exception | PortNotOpenException e1) {
-						Ref.LOGGER.severe("Failed to add Train, please try again!");
-					}
-
-					break;
-				case "speed":
-					Ref.LOGGER.info("Trains:");
-					for (Train t : LocoNet.getInstance().getTrains())
-						Ref.LOGGER.info(
-								"Address: " + Byte.toString(t.getAddress()) + "; Slot: " + Byte.toString(t.getSlot()));
-					Ref.LOGGER.info("Type Slot:");
-
-					byte slot = Byte.parseByte(scanner.next());
-					Ref.LOGGER.info("Type Speed: (0 - 225)");
-
-					try {
-						byte speed = Byte.parseByte(scanner.next());
-						new SpeedMessage(slot, speed).send();
-					} catch (Exception e1) {
-						Ref.LOGGER.severe("Failed to set speed, please try again!");
-					}
-
-					break;
-				case "switch":
-
-					Ref.LOGGER.info("Type Address:");
-
-					byte address1 = Byte.parseByte(scanner.next());
-					Ref.LOGGER.info("Type Direction: (boolean)");
-
-					boolean state = Boolean.parseBoolean(scanner.next());
-
-					try {
-						new SwitchMessage(address1, state).send();
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					}
-
-					break;
-
-				case "message":
-					Ref.LOGGER.info("Type Message:");
-
-					String message = scanner.next();
-
-					ChatMessage m = new ChatMessage(message);
-					m.setName("SERVER");
-					m.setLevel("HOST");
-
-					for (ClientHandler ch : Server.getClientHandlers())
-						try {
-							ch.sendDatapacket(new Datapacket(DatapacketType.SERVER_SEND_CHAT_MESSAGE, m));
-						} catch (IOException e) {
-							Ref.LOGGER.log(Level.SEVERE, "", e);
-						}
-
-					break;
-				case "stop":
-					try {
-						LocoNet.getInstance().stop();
-					} catch (SerialPortException e1) {
-						Ref.LOGGER.info("Cannot stop regular");
-						System.exit(1);
-					}
-					System.exit(0);
-					break;
-				default:
-					Ref.LOGGER.info("To get help type \"help\"");
-					break;
-				}
-
 				try {
-					Thread.sleep(100);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
+					String command = scanner.next();
+
+					switch (command) {
+					case "help":
+						Ref.LOGGER.info("Aviable Commands:");
+
+						Ref.LOGGER.info("help");
+						Ref.LOGGER.info("op");
+						Ref.LOGGER.info("kick");
+						Ref.LOGGER.info("addTrain");
+						Ref.LOGGER.info("speed");
+						Ref.LOGGER.info("switch");
+						Ref.LOGGER.info("sensors");
+						Ref.LOGGER.info("message");
+
+						break;
+
+					case "sensors":
+						Ref.LOGGER.info("Sensors:");
+						for (Sensor s : LocoNet.getInstance().getSensors())
+							Ref.LOGGER.info("Address: " + Integer.toString(s.getAddress()) + "; Slot: "
+									+ Boolean.toString(s.getState()));
+						break;
+					case "op":
+						Ref.LOGGER.info("Players:");
+
+						for (ClientHandler ch : Server.getClientHandlers())
+							Ref.LOGGER.info(ch != null ? ch.getName() : "");
+
+						Ref.LOGGER.info("Type Playername:");
+
+						String name = scanner.next();
+
+						Ref.LOGGER.info("Type Permissionlevel:");
+
+						int level = Integer.parseInt(scanner.next());
+
+						for (ClientHandler ch : Server.getClientHandlers()) {
+							if (ch == null)
+								continue;
+
+							if (ch.getName().equals(name)) {
+								ch.setPermissionLevel(PermissionLevel.getByLevel(level));
+							}
+						}
+
+						break;
+					case "kick":
+						Ref.LOGGER.info("Players:");
+
+						for (ClientHandler ch : Server.getClientHandlers())
+							Ref.LOGGER.info(ch != null ? ch.getName() : "");
+
+						Ref.LOGGER.info("Type Playername:");
+
+						String name1 = scanner.next();
+
+						for (ClientHandler ch : Server.getClientHandlers()) {
+							if (ch.getName().equals(name1)) {
+								Server.removeClient(ch);
+							}
+						}
+
+						break;
+					case "addTrain":
+						Ref.LOGGER.info("Type Address:");
+
+						try {
+							byte address = Byte.parseByte(scanner.next());
+							new LocoNetMessage(MessageType.OPC_LOCO_ADR, (byte) 0, address).send();
+						} catch (Exception | PortNotOpenException e1) {
+							Ref.LOGGER.severe("Failed to add Train, please try again!");
+						}
+
+						break;
+					case "speed":
+						Ref.LOGGER.info("Trains:");
+						for (Train t : LocoNet.getInstance().getTrains())
+							Ref.LOGGER.info("Address: " + Byte.toString(t.getAddress()) + "; Slot: "
+									+ Byte.toString(t.getSlot()));
+						Ref.LOGGER.info("Type Slot:");
+
+						byte slot = Byte.parseByte(scanner.next());
+						Ref.LOGGER.info("Type Speed: (0 - 125)");
+
+						try {
+							byte speed = Byte.parseByte(scanner.next());
+							new SpeedMessage(slot, speed).send();
+						} catch (Exception e1) {
+							Ref.LOGGER.severe("Failed to set speed, please try again!");
+						}
+
+						break;
+					case "switch":
+
+						Ref.LOGGER.info("Type Address:");
+
+						byte address1 = Byte.parseByte(scanner.next());
+						Ref.LOGGER.info("Type Direction: (boolean)");
+
+						boolean state = Boolean.parseBoolean(scanner.next());
+
+						try {
+							new SwitchMessage(address1, state).send();
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						}
+
+						break;
+
+					case "message":
+						Ref.LOGGER.info("Type Message:");
+
+						String message = scanner.next();
+
+						ChatMessage m = new ChatMessage(message);
+						m.setName("SERVER");
+						m.setLevel("HOST");
+
+						for (ClientHandler ch : Server.getClientHandlers())
+							try {
+								ch.sendDatapacket(new Datapacket(DatapacketType.SERVER_SEND_CHAT_MESSAGE, m));
+							} catch (IOException e) {
+								Ref.LOGGER.log(Level.SEVERE, "", e);
+							}
+
+						break;
+					case "stop":
+						try {
+							LocoNet.getInstance().stop();
+						} catch (SerialPortException e1) {
+							Ref.LOGGER.info("Cannot stop regular");
+							System.exit(1);
+						}
+						System.exit(0);
+						break;
+					default:
+						Ref.LOGGER.info("To get help type \"help\"");
+						break;
+					}
+
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				} catch (Exception e) {
+					Ref.LOGGER.severe("Invalid action, please try again!");
 				}
 			}
 		}).start();
