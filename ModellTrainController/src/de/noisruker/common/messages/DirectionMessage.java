@@ -25,7 +25,7 @@ public class DirectionMessage implements AbstractMessage, Serializable {
 
 	public DirectionMessage(byte slot, byte funktion) {
 		this.slot = slot;
-		this.foreward = funktion == 0 ? true : false;
+		this.foreward = (funktion == 0 ? true : false);
 		this.funktion = funktion;
 	}
 

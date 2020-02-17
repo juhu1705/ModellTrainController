@@ -4,12 +4,13 @@ import static de.noisruker.util.Ref.LOGGER;
 import static de.noisruker.util.Ref.PROJECT_NAME;
 import static de.noisruker.util.Ref.VERSION;
 
+import java.io.Console;
 import java.io.IOException;
-import java.util.Scanner;
 import java.util.logging.Level;
 
 import de.noisruker.common.Sensor;
 import de.noisruker.common.Train;
+import de.noisruker.common.messages.AbstractMessage;
 import de.noisruker.common.messages.ChatMessage;
 import de.noisruker.common.messages.DirectionMessage;
 import de.noisruker.common.messages.SpeedMessage;
@@ -17,6 +18,7 @@ import de.noisruker.common.messages.SwitchMessage;
 import de.noisruker.net.Side;
 import de.noisruker.net.datapackets.Datapacket;
 import de.noisruker.net.datapackets.DatapacketType;
+import de.noisruker.server.Action;
 import de.noisruker.server.ClientHandler;
 import de.noisruker.server.ClientHandler.PermissionLevel;
 import de.noisruker.server.Server;
@@ -44,11 +46,11 @@ public class Main {
 		}).start();
 
 		new Thread(() -> {
-			Scanner scanner = new Scanner(System.in);
+			Console scanner = System.console();
 
 			Ref.LOGGER.info("Password:");
 
-			Ref.password = scanner.next();
+			Ref.password = new String(System.console().readPassword());
 
 			Ref.LOGGER.info("Aviable Ports:");
 
@@ -58,14 +60,14 @@ public class Main {
 			Ref.LOGGER.info("Connection Port:");
 
 			try {
-				LocoNet.getInstance().start(scanner.next());
+				LocoNet.getInstance().start(scanner.readLine());
 			} catch (SerialPortException e1) {
 				e1.printStackTrace();
 			}
 
 			while (true) {
 				try {
-					String command = scanner.next();
+					String command = scanner.readLine();
 
 					switch (command) {
 					case "help":
@@ -80,6 +82,11 @@ public class Main {
 						Ref.LOGGER.info("sensors");
 						Ref.LOGGER.info("direction");
 						Ref.LOGGER.info("message");
+						Ref.LOGGER.info("drive");
+						Ref.LOGGER.info("record");
+						Ref.LOGGER.info("addEvent");
+						Ref.LOGGER.info("clear");
+						Ref.LOGGER.info("actions");
 
 						break;
 
@@ -97,11 +104,11 @@ public class Main {
 
 						Ref.LOGGER.info("Type Playername:");
 
-						String name = scanner.next();
+						String name = scanner.readLine();
 
 						Ref.LOGGER.info("Type Permissionlevel:");
 
-						int level = Integer.parseInt(scanner.next());
+						int level = Integer.parseInt(scanner.readLine());
 
 						for (ClientHandler ch : Server.getClientHandlers()) {
 							if (ch == null)
@@ -121,7 +128,7 @@ public class Main {
 
 						Ref.LOGGER.info("Type Playername:");
 
-						String name1 = scanner.next();
+						String name1 = scanner.readLine();
 
 						for (ClientHandler ch : Server.getClientHandlers()) {
 							if (ch.getName().equals(name1)) {
@@ -134,7 +141,7 @@ public class Main {
 						Ref.LOGGER.info("Type Address:");
 
 						try {
-							byte address = Byte.parseByte(scanner.next());
+							byte address = Byte.parseByte(scanner.readLine());
 							new LocoNetMessage(MessageType.OPC_LOCO_ADR, (byte) 0, address).send();
 						} catch (Exception | PortNotOpenException e1) {
 							Ref.LOGGER.severe("Failed to add Train, please try again!");
@@ -148,11 +155,11 @@ public class Main {
 									+ Byte.toString(t.getSlot()));
 						Ref.LOGGER.info("Type Slot:");
 
-						byte slot = Byte.parseByte(scanner.next());
+						byte slot = Byte.parseByte(scanner.readLine());
 						Ref.LOGGER.info("Type Speed: (0 - 125)");
 
 						try {
-							byte speed = Byte.parseByte(scanner.next());
+							byte speed = Byte.parseByte(scanner.readLine());
 							new SpeedMessage(slot, speed).send();
 						} catch (Exception e1) {
 							Ref.LOGGER.severe("Failed to set speed, please try again!");
@@ -166,25 +173,117 @@ public class Main {
 									+ Byte.toString(t.getSlot()));
 						Ref.LOGGER.info("Type Slot:");
 
-						byte train_slot = Byte.parseByte(scanner.next());
+						byte train_slot = Byte.parseByte(scanner.readLine());
 						Ref.LOGGER.info("Type Foreward: (boolean)");
 
 						try {
-							boolean direction = Boolean.parseBoolean(scanner.next());
+							boolean direction = Boolean.parseBoolean(scanner.readLine());
 							new DirectionMessage(train_slot, direction).send();
 						} catch (Exception e1) {
 							Ref.LOGGER.severe("Failed to set speed, please try again!");
 						}
 
 						break;
+					case "drive":
+						Ref.LOGGER.info("Type drive automatic: (boolean)");
+
+						try {
+							LocoNet.drive = Boolean.parseBoolean(scanner.readLine());
+						} catch (Exception e1) {
+							Ref.LOGGER.severe("Failed to set speed, please try again!");
+						}
+
+						break;
+					case "record":
+						Ref.LOGGER.info("Type record: (boolean)");
+
+						try {
+							LocoNet.record = Boolean.parseBoolean(scanner.readLine());
+						} catch (Exception e1) {
+							Ref.LOGGER.severe("Failed to set speed, please try again!");
+						}
+
+						break;
+					case "actions":
+
+						try {
+							for (Action e : LocoNet.getInstance().actions) {
+								Ref.LOGGER.info(e.toString());
+							}
+						} catch (Exception e1) {
+							Ref.LOGGER.severe("Failed to set speed, please try again!");
+						}
+
+						break;
+					case "addAction":
+
+						Ref.LOGGER.info("Not implemented yet!");
+
+						break;
+					case "addEvent":
+
+						try {
+							AbstractMessage message = null;
+
+							Ref.LOGGER.info("Choose Message Type:");
+							Ref.LOGGER.info("1 - SpeedMessage");
+							Ref.LOGGER.info("2 - SwitchMessage");
+
+							switch (Integer.valueOf(scanner.readLine())) {
+							case 1:
+								Ref.LOGGER.info("Trains:");
+								for (Train t : LocoNet.getInstance().getTrains())
+									Ref.LOGGER.info("Address: " + Byte.toString(t.getAddress()) + "; Slot: "
+											+ Byte.toString(t.getSlot()));
+								Ref.LOGGER.info("Type Slot:");
+
+								byte slot1 = Byte.parseByte(scanner.readLine());
+								Ref.LOGGER.info("Type Speed: (0 - 125)");
+
+								try {
+									byte speed = Byte.parseByte(scanner.readLine());
+									message = new SpeedMessage(slot1, speed);
+								} catch (Exception e1) {
+									Ref.LOGGER.severe("Failed to set speed, please try again!");
+								}
+								break;
+							case 2:
+								Ref.LOGGER.info("Type Address:");
+
+								byte address1 = Byte.parseByte(scanner.readLine());
+								Ref.LOGGER.info("Type Direction: (boolean)");
+
+								boolean state = Boolean.parseBoolean(scanner.readLine());
+
+								message = new SwitchMessage(address1, state);
+
+								break;
+							default:
+								message = null;
+								break;
+							}
+
+							LocoNet.getInstance().actions.get(LocoNet.getInstance().actions.size() - 1)
+									.addEvent(message);
+
+						} catch (Exception e1) {
+							Ref.LOGGER.severe("Failed to set speed, please try again!");
+						}
+
+						break;
+					case "clear":
+
+						LocoNet.getInstance().actions.clear();
+
+						break;
 					case "switch":
 
 						Ref.LOGGER.info("Type Address:");
 
-						byte address1 = Byte.parseByte(scanner.next());
+						byte address1 = Byte.parseByte(scanner.readLine());
 						Ref.LOGGER.info("Type Direction: (boolean)");
 
-						boolean state = Boolean.parseBoolean(scanner.next());
+						boolean state = Boolean.parseBoolean(scanner.readLine());
 
 						try {
 							new SwitchMessage(address1, state).send();
@@ -197,7 +296,7 @@ public class Main {
 					case "message":
 						Ref.LOGGER.info("Type Message:");
 
-						String message = scanner.next();
+						String message = scanner.readLine();
 
 						ChatMessage m = new ChatMessage(message);
 						m.setName("SERVER");

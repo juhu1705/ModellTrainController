@@ -40,4 +40,9 @@ public class SwitchMessage implements AbstractMessage, Serializable {
 			return new LocoNetMessage(OPC_SW_REQ, address, (byte) 48);
 	}
 
+	@Override
+	public String toString() {
+		return "[SwitchMessage: Switch switch " + address + " to " + on + "]";
+	}
+
 }

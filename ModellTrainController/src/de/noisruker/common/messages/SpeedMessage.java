@@ -44,4 +44,9 @@ public class SpeedMessage implements AbstractMessage, Serializable {
 			}
 	}
 
+	@Override
+	public String toString() {
+		return "[SpeedMessage for Train " + slot + " to speed " + speed + "]";
+	}
+
 }

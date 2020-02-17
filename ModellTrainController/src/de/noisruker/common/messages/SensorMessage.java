@@ -61,4 +61,9 @@ public class SensorMessage implements Serializable, AbstractMessage {
 			c.sendDatapacket(new Datapacket(DatapacketType.SERVER_SEND_MESSAGE, this));
 	}
 
+	@Override
+	public String toString() {
+		return "[SensorMessage from Sensor " + address + " changed to state " + state + "]";
+	}
+
 }

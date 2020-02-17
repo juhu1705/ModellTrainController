@@ -10,6 +10,7 @@ import de.noisruker.common.messages.SensorMessage;
 import de.noisruker.common.messages.TrainSlotMessage;
 import de.noisruker.net.datapackets.Datapacket;
 import de.noisruker.net.datapackets.DatapacketType;
+import de.noisruker.server.Action;
 import de.noisruker.server.ClientHandler;
 import de.noisruker.server.Server;
 import de.noisruker.server.loconet.messages.LocoNetMessage;
@@ -20,8 +21,13 @@ public class LocoNet {
 
 	private static LocoNet instance;
 
+	public static boolean record;
+	public static boolean drive;
+
 	private ArrayList<Train> trains = new ArrayList<>();
 	private ArrayList<Sensor> sensors = new ArrayList<>();
+
+	public ArrayList<Action> actions = new ArrayList<>();
 
 	public static LocoNet getInstance() {
 		return instance == null ? instance = new LocoNet() : instance;
@@ -69,6 +75,32 @@ public class LocoNet {
 		LocoNetMessage.registerStandart();
 
 		LocoNetMessageReciever.getInstance().registerListener(l -> {
+			if (record) {
+				if (l instanceof SensorMessage) {
+					SensorMessage s = (SensorMessage) l;
+
+					this.actions.add(new Action(s));
+				} else if (!this.actions.isEmpty()) {
+					this.actions.get(this.actions.size() - 1).addEvent(l);
+				}
+			} else if (drive && !this.actions.isEmpty()) {
+				if (l instanceof SensorMessage) {
+					while (this.actions.get(0).isEmpty())
+						this.actions.remove(0);
+
+					if (this.actions.get(0).isAction((SensorMessage) l))
+						try {
+							Action a;
+							(a = this.actions.remove(0)).fireEvents();
+							this.actions.add(a);
+						} catch (IOException | InterruptedException e) {
+							Ref.LOGGER.severe("Error occurs!");
+						}
+				}
+			}
+		});
+
+		LocoNetMessageReciever.getInstance().registerListener(l -> {
 			if (l == null)
 				return;
 
@@ -91,13 +123,13 @@ public class LocoNet {
 			if (l instanceof TrainSlotMessage) {
 				TrainSlotMessage m = ((TrainSlotMessage) l);
 
-				Ref.LOGGER.info("Write requested Train to slot: " + m.getSlot());
+//				Ref.LOGGER.info("Write requested Train to slot: " + m.getSlot());
 
 				this.addTrain(new Train(m.getAddress(), m.getSlot()));
 			}
 
 			if (l instanceof DirectionMessage) {
-				Ref.LOGGER.info("Set direction to: " + ((DirectionMessage) l).getFunktion());
+//				Ref.LOGGER.info("Set direction to: " + ((DirectionMessage) l).getFunktion());
 			}
 
 			if (l instanceof SensorMessage) {
