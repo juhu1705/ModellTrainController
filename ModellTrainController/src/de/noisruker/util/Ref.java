@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.PropertyResourceBundle;
+import java.util.Random;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,6 +28,10 @@ public class Ref {
 	public static PropertyResourceBundle language;
 
 	public static Side side;
+
+	public static int autoDriveNumber = 1;
+
+	public static final Random rand = new Random();
 
 	public static final Logger LOGGER;
 	public static final String VERSION;

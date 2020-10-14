@@ -8,6 +8,7 @@ import java.io.Console;
 import java.io.IOException;
 import java.util.logging.Level;
 
+import de.noisruker.common.Railroad;
 import de.noisruker.common.Sensor;
 import de.noisruker.common.Train;
 import de.noisruker.common.messages.AbstractMessage;
@@ -87,6 +88,8 @@ public class Main {
 						Ref.LOGGER.info("addEvent");
 						Ref.LOGGER.info("clear");
 						Ref.LOGGER.info("actions");
+						Ref.LOGGER.info("auto");
+						Ref.LOGGER.info("exitAuto");
 
 						break;
 
@@ -145,6 +148,29 @@ public class Main {
 							new LocoNetMessage(MessageType.OPC_LOCO_ADR, (byte) 0, address).send();
 						} catch (Exception | PortNotOpenException e1) {
 							Ref.LOGGER.severe("Failed to add Train, please try again!");
+						}
+
+						break;
+					case "editTrain":
+						Ref.LOGGER.info("Trains:");
+						for (Train t : LocoNet.getInstance().getTrains())
+							Ref.LOGGER.info("Address: " + Byte.toString(t.getAddress()) + "; Slot: "
+									+ Byte.toString(t.getSlot()));
+
+						Ref.LOGGER.info("Type address:");
+						byte address = Byte.parseByte(scanner.readLine());
+
+						Ref.LOGGER.info("Type position:");
+						int position = Integer.parseInt(scanner.readLine());
+
+						Ref.LOGGER.info("Type last position:");
+						int lposition = Integer.parseInt(scanner.readLine());
+
+						for(Train t: LocoNet.getInstance().getTrains()) {
+							if (t.getAddress() == address) {
+								t.setPosition(position);
+								t.setLastPosition(lposition);
+							}
 						}
 
 						break;
@@ -293,6 +319,15 @@ public class Main {
 
 						break;
 
+					case "auto":
+						LocoNet.getInstance().activateDriveAuto();
+
+						break;
+
+					case "exitAuto":
+						LocoNet.getInstance().stopAutoDrive();
+						break;
+
 					case "message":
 						Ref.LOGGER.info("Type Message:");
 
@@ -318,6 +353,16 @@ public class Main {
 							System.exit(1);
 						}
 						System.exit(0);
+						break;
+					case "trains":
+						for(Train t: LocoNet.getInstance().getTrains()) {
+							LOGGER.info("Train " + t.getAddress() + "[" + t.actualPosition + "|" + t.lastPosition + "]");
+						}
+						break;
+					case "sensor":
+						for(Railroad.RailroadNode r: LocoNet.getRailroad().nodes) {
+							LOGGER.info("Sensor " + r.getAddress() + "[" + (r.getReservated() == null ? -1 : r.getReservated().getAddress()) + "]");
+						}
 						break;
 					default:
 						Ref.LOGGER.info("To get help type \"help\"");

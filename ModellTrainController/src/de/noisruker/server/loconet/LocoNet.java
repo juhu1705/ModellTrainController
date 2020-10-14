@@ -3,10 +3,12 @@ package de.noisruker.server.loconet;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import de.noisruker.common.Railroad;
 import de.noisruker.common.Sensor;
 import de.noisruker.common.Train;
 import de.noisruker.common.messages.DirectionMessage;
 import de.noisruker.common.messages.SensorMessage;
+import de.noisruker.common.messages.SwitchMessage;
 import de.noisruker.common.messages.TrainSlotMessage;
 import de.noisruker.net.datapackets.Datapacket;
 import de.noisruker.net.datapackets.DatapacketType;
@@ -20,17 +22,24 @@ import jssc.SerialPortException;
 public class LocoNet {
 
 	private static LocoNet instance;
+	private static Railroad railroad;
 
 	public static boolean record;
 	public static boolean drive;
 
-	private ArrayList<Train> trains = new ArrayList<>();
+	private static ArrayList<Train> trains = new ArrayList<>();
 	private ArrayList<Sensor> sensors = new ArrayList<>();
+
+	private boolean stopAutoDrive = false;
 
 	public ArrayList<Action> actions = new ArrayList<>();
 
 	public static LocoNet getInstance() {
 		return instance == null ? instance = new LocoNet() : instance;
+	}
+
+	public static Railroad getRailroad() {
+		return railroad == null ? railroad = new Railroad() : railroad;
 	}
 
 	private LocoNetConnection connection;
@@ -40,6 +49,82 @@ public class LocoNet {
 
 	private void addTrain(Train train) {
 		this.trains.add(train);
+	}
+
+	public void stopAutoDrive() {
+		stopAutoDrive = true;
+	}
+
+	public void activateDriveAuto() {
+		stopAutoDrive = false;
+		new Thread(() -> {
+			Railroad r = LocoNet.getRailroad();
+			r.init();
+
+			try {
+				Thread.sleep(1000 * 30);
+			} catch (InterruptedException ignored) {
+
+			}
+
+			try {
+				new SwitchMessage((byte)8, true).send();
+			} catch (IOException ignored) {
+
+			}
+
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException ignored) {
+
+			}
+
+			try {
+				new SwitchMessage((byte)8, false).send();
+			} catch (IOException ignored) {
+
+			}
+
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException ignored) {
+
+			}
+
+			try {
+				new SwitchMessage((byte)8, true).send();
+			} catch (IOException ignored) {
+
+			}
+
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException ignored) {
+
+			}
+
+			try {
+				new SwitchMessage((byte)8, false).send();
+			} catch (IOException ignored) {
+
+			}
+
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException ignored) {
+
+			}
+
+			while (!stopAutoDrive) {
+				r.update();
+
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException ignored) {
+
+				}
+			}
+		}).start();
 	}
 
 	public ArrayList<Train> getTrains() {
@@ -119,6 +204,9 @@ public class LocoNet {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			if (l instanceof SwitchMessage) {
+				Ref.LOGGER.info(l.toString());
+			}
 
 			if (l instanceof TrainSlotMessage) {
 				TrainSlotMessage m = ((TrainSlotMessage) l);
@@ -137,7 +225,7 @@ public class LocoNet {
 
 				this.updateOrCreateSensor(s.getAddress(), s.getState());
 
-				Ref.LOGGER.fine("Sensor " + s.getAddress() + " changed state to " + s.getState() + ".");
+				//Ref.LOGGER.fine("Sensor " + s.getAddress() + " changed state to " + s.getState() + ".");
 			}
 		});
 
