@@ -360,7 +360,7 @@ public class Main {
 						}
 						break;
 					case "sensor":
-						for(Railroad.RailroadNode r: LocoNet.getRailroad().nodes) {
+						for(Railroad.Section r: LocoNet.getRailroad().nodes) {
 							LOGGER.info("Sensor " + r.getAddress() + "[" + (r.getReservated() == null ? -1 : r.getReservated().getAddress()) + "]");
 						}
 						break;

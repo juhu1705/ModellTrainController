@@ -9,6 +9,7 @@ import de.noisruker.server.ClientHandler;
 import de.noisruker.server.Server;
 import de.noisruker.server.loconet.messages.LocoNetMessage;
 import de.noisruker.server.loconet.messages.MessageType;
+import de.noisruker.util.Ref;
 
 public class SensorMessage implements Serializable, AbstractMessage {
 

@@ -34,7 +34,7 @@ public class Train implements Serializable {
 	}
 
 	public Train(byte address, byte slot, byte speed) {
-		this(address, slot, speed, (byte) 124, (byte) 60, (byte) 20, true);
+		this(address, slot, speed, (byte) 124, (byte) 90, (byte) 35, true);
 	}
 
 	public Train(byte address, byte slot, byte speed, byte maxSpeed, byte normalSpeed, byte minSpeed,
@@ -131,10 +131,13 @@ public class Train implements Serializable {
 	}
 
 	public void trainEnter(int nodeAddress) {
-		Railroad.RailroadNode position = LocoNet.getRailroad().getNodeByAddress(actualPosition);
+		Railroad.Section position = LocoNet.getRailroad().getNodeByAddress(actualPosition);
 
 		if(this.way != null && (this.way.containsKey(position) || (this.startWay != -1 && this.startPos != -1))) {
-			if (this.actualPosition != nodeAddress && ((position.address == this.startPos && position.nodeConnections.get(this.startWay).to == nodeAddress) || (this.startWay == -1 && this.startPos == -1 && position.nodeConnections.get(this.way.get(position)).to == nodeAddress))) {
+			if (this.actualPosition != nodeAddress && ((position.address == this.startPos &&
+					position.nodeConnections.get(this.startWay).to == nodeAddress) ||
+					(this.startWay == -1 && this.startPos == -1 &&
+							position.nodeConnections.get(this.way.get(position)).to == nodeAddress))) {
 				this.lastPosition = this.actualPosition;
 				this.actualPosition = nodeAddress;
 
@@ -148,7 +151,7 @@ public class Train implements Serializable {
 				Ref.LOGGER.info("Train " + this.getAddress() + " enter sensor " + nodeAddress);
 
 
-				Railroad.RailroadNode node = LocoNet.getRailroad().getNodeByAddress(nodeAddress);
+				Railroad.Section node = LocoNet.getRailroad().getNodeByAddress(nodeAddress);
 
 				if (node != null && way != null && way.containsKey(node))
 					node.nodeConnections.get(way.get(node)).activate();
@@ -184,7 +187,7 @@ public class Train implements Serializable {
 		Railroad r = LocoNet.getRailroad();
 		int trainsDriving = r.trainsWithDestination();
 
-		Railroad.RailroadNode node = r.getNodeByAddress(actualPosition);
+		Railroad.Section node = r.getNodeByAddress(actualPosition);
 
 		if(way != null && actualSpeed == 0) {
 			if(!way.containsKey(node)) {
@@ -193,13 +196,13 @@ public class Train implements Serializable {
 				return;
 			}
 
-			Railroad.RailroadNode next = r.getNodeByAddress(node.nodeConnections.get(way.get(node)).to);
+			Railroad.Section next = r.getNodeByAddress(node.nodeConnections.get(way.get(node)).to);
 
 			if(next.reservated == null)
 				next.reservated = this;
 
 			if(next.reservated == this && way.containsKey(next)) {
-				Railroad.RailroadNode toReserve = r.getNodeByAddress(next.nodeConnections.get(way.get(next)).to);
+				Railroad.Section toReserve = r.getNodeByAddress(next.nodeConnections.get(way.get(next)).to);
 
 				if (toReserve.reservated == null)
 					toReserve.reservated = this;
@@ -209,7 +212,10 @@ public class Train implements Serializable {
 					this.stopNext = false;
 				}
 			}
-		} else if(waiting == 0 && way == null && destination == -1 && trainsDriving < Ref.autoDriveNumber && Ref.rand.nextInt(trainsDriving == 0 ? 4 : trainsDriving == 1 ? 55 : 100) == 1) {
+		} else if(waiting == 0 && way == null && destination == -1 && trainsDriving < Ref.autoDriveNumber &&
+				Ref.rand.nextInt(trainsDriving == 0 ? 4 : trainsDriving == 1 ? 55 : 100) == 1) {
+			Ref.LOGGER.info("Train " + this.address + " is ready to drive!");
+
 			if(this.actualPosition == -1)
 				this.actualPosition = 7;
 			if(this.lastPosition == -1)
@@ -225,12 +231,16 @@ public class Train implements Serializable {
 
 			LocoNet.getRailroad().calculateRailway(this.lastPosition, this.actualPosition, newPosition, this);
 
-			Ref.LOGGER.info("Start Auto Driving: ");
-			Ref.LOGGER.info("Train " + this.getAddress() + " drive from " + this.actualPosition + " to " + (newPosition));
+			if(way != null) {
+				Ref.LOGGER.info("Start Auto Driving: ");
+				Ref.LOGGER.info("Train " + this.getAddress() + " drive from " + this.actualPosition + " to " + (newPosition));
 
-			if(way != null)
-				this.setMaxSpeed();
+				this.setNormalSpeed();
+			}
 		}
+
+		if(way == null)
+			destination = -1;
 
 		if(waiting > 0) {
 			waiting--;
@@ -239,7 +249,7 @@ public class Train implements Serializable {
 
 	}
 
-	public HashMap<Railroad.RailroadNode, Integer> way = null;
+	public HashMap<Railroad.Section, Integer> way = null;
 
 
 
@@ -249,7 +259,7 @@ public class Train implements Serializable {
 
 		Railroad r = LocoNet.getRailroad();
 
-		Railroad.RailroadNode node = r.getNodeByAddress(actualPosition);
+		Railroad.Section node = r.getNodeByAddress(actualPosition);
 
 		if(node.reservated != this && node.reservated != null) {
 			this.stop();
@@ -264,8 +274,8 @@ public class Train implements Serializable {
 		} else if(node.reservated == null)
 			node.reservated = this;
 
-		if(actualPosition != destination) {
-			Railroad.RailroadNode next = r.getNodeByAddress(node.nodeConnections.get(way.get(node)).to);
+		if(actualPosition != destination && way.containsKey(node)) {
+			Railroad.Section next = r.getNodeByAddress(node.nodeConnections.get(way.get(node)).to);
 
 			if(next.reservated != this && next.reservated != null) {
 				this.stopNext = true;
@@ -278,7 +288,7 @@ public class Train implements Serializable {
 				next.reservated = this;
 
 			if(next.address != destination) {
-				Railroad.RailroadNode toReserve = r.getNodeByAddress(next.nodeConnections.get(way.get(next)).to);
+				Railroad.Section toReserve = r.getNodeByAddress(next.nodeConnections.get(way.get(next)).to);
 
 				Train conflict;
 

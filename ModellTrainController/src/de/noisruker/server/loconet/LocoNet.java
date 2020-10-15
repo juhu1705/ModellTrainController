@@ -225,7 +225,7 @@ public class LocoNet {
 
 				this.updateOrCreateSensor(s.getAddress(), s.getState());
 
-				//Ref.LOGGER.fine("Sensor " + s.getAddress() + " changed state to " + s.getState() + ".");
+				Ref.LOGGER.fine("Sensor " + s.getAddress() + " changed state to " + s.getState() + ".");
 			}
 		});
 

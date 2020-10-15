@@ -13,26 +13,26 @@ import java.util.HashMap;
 
 public class Railroad {
 
-    public ArrayList<RailroadNode> nodes;
-    public HashMap<RailroadNode, Integer> way = null;
+    public ArrayList<Section> nodes;
+    public HashMap<Section, Integer> way = null;
     public Train drive = null;
 
     public int destination;
 
     public Railroad() {
-        nodes = new ArrayList<RailroadNode>();
+        nodes = new ArrayList<Section>();
 
         this.createRailroad();
     }
 
     public void createRailroad() {
         nodes.addAll(Arrays.asList(
-                new RailroadNode(6, false),
-                new RailroadNode(11, false),
-                new RailroadNode(7, false),
-                new RailroadNode(10, false),
-                new RailroadNode(15, false),
-                new RailroadNode(14, false)));
+                new Section(6, false),
+                new Section(11, false),
+                new Section(7, false),
+                new Section(10, false),
+                new Section(15, false),
+                new Section(14, false)));
 
         nodes.get(0).nodeConnections.addAll(Arrays.asList(
                 new Connection(14, 7),
@@ -52,6 +52,14 @@ public class Railroad {
         nodes.get(0).nodeConnections.get(2).addCommand((byte) 17, false);
         nodes.get(0).nodeConnections.get(3).addCommand((byte) 16, false);
         nodes.get(0).nodeConnections.get(3).addCommand((byte) 17, true);
+        nodes.get(0).nodeConnections.get(4).addCommand((byte) 16, false);
+        nodes.get(0).nodeConnections.get(4).addCommand((byte) 17, false);
+        nodes.get(0).nodeConnections.get(5).addCommand((byte) 16, false);
+        nodes.get(0).nodeConnections.get(5).addCommand((byte) 17, false);
+        nodes.get(0).nodeConnections.get(6).addCommand((byte) 16, true);
+        nodes.get(0).nodeConnections.get(6).addCommand((byte) 17, false);
+        nodes.get(0).nodeConnections.get(7).addCommand((byte) 16, false);
+        nodes.get(0).nodeConnections.get(7).addCommand((byte) 17, true);
 
         nodes.get(1).nodeConnections.addAll(Arrays.asList(
                 new Connection(7, 14),
@@ -131,8 +139,8 @@ public class Railroad {
         LocoNet.getInstance().getTrains().forEach(Train::update);
     }
 
-    public RailroadNode getNodeByAddress(int address) {
-        for(RailroadNode node: this.nodes) {
+    public Section getNodeByAddress(int address) {
+        for(Section node: this.nodes) {
             if(node.address == address)
                 return node;
         }
@@ -140,8 +148,8 @@ public class Railroad {
     }
 
     public void calculateRailway(int tFrom, int from, int to, Train t) {
-        RailroadNode rFrom = getNodeByAddress(from);
-        RailroadNode rTo = getNodeByAddress(to);
+        Section rFrom = getNodeByAddress(from);
+        Section rTo = getNodeByAddress(to);
         if(rFrom == null || rTo == null)
             return;
 
@@ -153,13 +161,18 @@ public class Railroad {
 
         state++;
 
-        RailroadNode actual = rFrom;
-
-        int aFrom = actual.address;
+        int aFrom = rFrom.address;
 
         initCalculation();
 
-        HashMap<RailroadNode, Integer> connection = calculateFromTo(aFrom, actual.nodeConnections.get(getWayFor(tFrom, actual)).to, to, state, t);
+        int wayFor = getWayFor(tFrom, rFrom);
+
+        Ref.LOGGER.info(wayFor + " ");
+
+        if(wayFor == -1)
+            return;
+
+        HashMap<Section, Integer> connection = calculateFromTo(aFrom, rFrom.nodeConnections.get(wayFor).to, to, state, t);
 
         if(connection == null) {
             t.destination = -1;
@@ -167,9 +180,12 @@ public class Railroad {
         }
 
         t.way = connection;
-        t.startWay = getWayFor(tFrom, actual);
-        t.startPos = actual.address;
+        t.startWay = getWayFor(tFrom, rFrom);
+        t.startPos = rFrom.address;
 
+        if(t.startWay == -1) {
+            t.way = null;
+        }
 
         Ref.LOGGER.info("Found way: " + t.way.toString());
     }
@@ -180,14 +196,13 @@ public class Railroad {
         });
     }
 
-    public int getWayFor(int from, RailroadNode node) {
+    public int getWayFor(int from, Section node) {
         for(int i = 0; i < node.nodeConnections.size(); i++) {
             if (from == node.nodeConnections.get(i).from) {
                 if (getNodeByAddress(node.nodeConnections.get(i).to).reservated == null) {
                     boolean wayIsFree = true;
-                    int lastAddress = node.nodeConnections.get(i).from;
-                    RailroadNode toCheck = getNodeByAddress(node.nodeConnections.get(i).to);
-
+                    int lastAddress = node.address;
+                    Section toCheck = getNodeByAddress(node.nodeConnections.get(i).to);
 
                     while(toCheck.nodeConnections.size() == 2 &&
                             toCheck.nodeConnections.get(0).to == toCheck.nodeConnections.get(1).from &&
@@ -200,24 +215,27 @@ public class Railroad {
 
                         toCheck = getNodeByAddress(toCheck.nodeConnections.get(lastAddress == toCheck.nodeConnections.get(0).from ? 0 : 1).to);
                     }
+
                     if(wayIsFree)
                         return i;
                 }
             }
         }
-        return 0;
+
+        return -1;
     }
 
-    public boolean checkRailway(RailroadNode node, int wayUsed) {
+    public boolean checkRailway(Section node, int wayUsed) {
         boolean wayIsFree = true;
         int lastAddress = node.nodeConnections.get(wayUsed).from;
 
-        RailroadNode toCheck = getNodeByAddress(node.nodeConnections.get(wayUsed).to);
+        Section toCheck = getNodeByAddress(node.nodeConnections.get(wayUsed).to);
 
 
-        while(toCheck.nodeConnections.size() == 2 &&
+        while((toCheck.nodeConnections.size() == 2 &&
                 toCheck.nodeConnections.get(0).to == toCheck.nodeConnections.get(1).from &&
-                toCheck.nodeConnections.get(1).to == toCheck.nodeConnections.get(0).from) {
+                toCheck.nodeConnections.get(1).to == toCheck.nodeConnections.get(0).from) ||
+                toCheck.nodeConnections.size() == 1) {
             if (getNodeByAddress(toCheck.nodeConnections.get(lastAddress == toCheck.nodeConnections.get(0).from ? 0 : 1).to).reservated != null)
                 wayIsFree = false;
 
@@ -231,19 +249,26 @@ public class Railroad {
         return wayIsFree;
     }
 
-    public HashMap<RailroadNode, Integer> calculateFromTo(int from, int actual, int to, int value, Train t) {
+    public HashMap<Section, Integer> calculateFromTo(int from, int actual, int to, int value, Train t) {
         if(actual == to) {
-            HashMap<RailroadNode, Integer> way = new HashMap<RailroadNode, Integer>();
+            HashMap<Section, Integer> way = new HashMap<Section, Integer>();
 
-            way.put(getNodeByAddress(actual), getWayFor(from, getNodeByAddress(actual)));
+            int wayForActual = getWayFor(from, getNodeByAddress(actual));
 
-            if(!checkRailway(getNodeByAddress(actual), getWayFor(from, getNodeByAddress(actual))))
+            Ref.LOGGER.info("Hey I found " + (wayForActual != -1 ? "a" : "no") + " way!");
+
+            if(wayForActual == -1)
+                return null;
+
+            way.put(getNodeByAddress(actual), wayForActual);
+
+            if(!checkRailway(getNodeByAddress(actual), wayForActual))
                 return null;
 
             return way;
         }
 
-        RailroadNode rActual = getNodeByAddress(actual), rTo = getNodeByAddress(to);
+        Section rActual = getNodeByAddress(actual), rTo = getNodeByAddress(to);
 
         if(rActual == null || rTo == null || rActual.forCalculation <= value)
             return null;
@@ -251,7 +276,7 @@ public class Railroad {
         rActual.forCalculation = value;
         value++;
 
-        HashMap<RailroadNode, Integer> nodes = null;
+        HashMap<Section, Integer> nodes = null;
 
         int connection = 0;
 
@@ -274,7 +299,7 @@ public class Railroad {
         return nodes;
     }
 
-    public void manageConflict(Train conflict1, Train conflict2, RailroadNode position) {
+    public void manageConflict(Train conflict1, Train conflict2, Section position) {
         conflict2.setBreakSpeed();
         conflict2.stopNext = true;
 
@@ -285,12 +310,12 @@ public class Railroad {
         }
 
 
-        RailroadNode node = getNodeByAddress(conflict2.actualPosition);
+        Section node = getNodeByAddress(conflict2.actualPosition);
         int to = node.nodeConnections.get(conflict2.way.get(node)).to;
         if(conflict1.actualPosition == to) {
-            RailroadNode node1 = getNodeByAddress(conflict1.actualPosition);
+            Section node1 = getNodeByAddress(conflict1.actualPosition);
 
-            for(RailroadNode n: this.nodes) {
+            for(Section n: this.nodes) {
                 if(n.reservated == conflict1 && (conflict1.actualPosition != n.address || conflict1.lastPosition != n.address))
                     n.reservated = null;
             }
@@ -300,7 +325,7 @@ public class Railroad {
             if(conflict1.way == null) {
                 conflict1.destination = -1;
 
-                for(RailroadNode n: this.nodes) {
+                for(Section n: this.nodes) {
                     if(n.reservated == conflict2 && (conflict2.actualPosition != n.address || conflict2.lastPosition != n.address))
                         n.reservated = null;
                 }
@@ -308,7 +333,7 @@ public class Railroad {
                 this.calculateRailway(conflict2.lastPosition, conflict2.actualPosition, conflict2.destination, conflict2);
 
                 if(conflict2.way == null) {
-                    for(RailroadNode n: this.nodes) {
+                    for(Section n: this.nodes) {
                         if(n.reservated == conflict1 && (conflict1.actualPosition != n.address || conflict1.lastPosition != n.address))
                             n.reservated = null;
                         if(n.reservated == conflict2 && (conflict2.actualPosition != n.address || conflict2.lastPosition != n.address))
@@ -334,11 +359,11 @@ public class Railroad {
         }
     }
 
-    public ArrayList<RailroadNode> getNodes() {
+    public ArrayList<Section> getNodes() {
         return this.nodes;
     }
 
-    public class RailroadNode {
+    public class Section {
         int forCalculation;
 
         Train reservated;
@@ -350,7 +375,7 @@ public class Railroad {
 
         ArrayList<Connection> nodeConnections;
 
-        public RailroadNode(int address, boolean state) {
+        public Section(int address, boolean state) {
             this.address = address;
             this.state = state;
             trainFrom = -1;
