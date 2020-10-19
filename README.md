@@ -1,6 +1,6 @@
 # ModellTrainController
 
-## _Project paused_
+__Es ist Winter, Zeit an diesem Projekt weiter zu arbeiten.__
 
 Der ModellTrainController ist ein Programm zur einfachen Steuerung einer Modellbahn mit mehreren Computern über einen Server-PC. Dadurch kann man eine Modellbahn von fern über das Internet steuern.
 
