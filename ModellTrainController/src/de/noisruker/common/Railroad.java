@@ -27,76 +27,179 @@ public class Railroad {
 
     public void createRailroad() {
         nodes.addAll(Arrays.asList(
+                new Section(1, false),
+                new Section(2, false),
+                new Section(3, false),
+                new Section(4, false),
+                new Section(5, false),
                 new Section(6, false),
-                new Section(11, false),
                 new Section(7, false),
-                new Section(10, false),
-                new Section(15, false),
-                new Section(14, false)));
+                new Section(8, false)));
 
-        nodes.get(0).nodeConnections.addAll(Arrays.asList(
-                new Connection(14, 7),
-                new Connection(15, 10),
-                new Connection(15, 7),
-                new Connection(14, 10),
-                new Connection(7, 14),
-                new Connection(10, 15),
-                new Connection(7, 15),
-                new Connection(10, 14)
+        getNodeByAddress(1).nodeConnections.addAll(Arrays.asList(
+                new Connection(2, 3),
+                new Connection(3, 2)
         ));
-        nodes.get(0).nodeConnections.get(0).addCommand((byte) 16, false);
-        nodes.get(0).nodeConnections.get(0).addCommand((byte) 17, false);
-        nodes.get(0).nodeConnections.get(1).addCommand((byte) 16, false);
-        nodes.get(0).nodeConnections.get(1).addCommand((byte) 17, false);
-        nodes.get(0).nodeConnections.get(2).addCommand((byte) 16, true);
-        nodes.get(0).nodeConnections.get(2).addCommand((byte) 17, false);
-        nodes.get(0).nodeConnections.get(3).addCommand((byte) 16, false);
-        nodes.get(0).nodeConnections.get(3).addCommand((byte) 17, true);
-        nodes.get(0).nodeConnections.get(4).addCommand((byte) 16, false);
-        nodes.get(0).nodeConnections.get(4).addCommand((byte) 17, false);
-        nodes.get(0).nodeConnections.get(5).addCommand((byte) 16, false);
-        nodes.get(0).nodeConnections.get(5).addCommand((byte) 17, false);
-        nodes.get(0).nodeConnections.get(6).addCommand((byte) 16, true);
-        nodes.get(0).nodeConnections.get(6).addCommand((byte) 17, false);
-        nodes.get(0).nodeConnections.get(7).addCommand((byte) 16, false);
-        nodes.get(0).nodeConnections.get(7).addCommand((byte) 17, true);
 
-        nodes.get(1).nodeConnections.addAll(Arrays.asList(
-                new Connection(7, 14),
-                new Connection(10, 15),
-                new Connection(7, 15),
-                new Connection(10, 14),
-                new Connection(14, 7),
-                new Connection(15, 10),
-                new Connection(15, 7),
-                new Connection(14, 10)
+        getNodeByAddress(2).nodeConnections.addAll(Arrays.asList(
+                new Connection(1,1),
+                new Connection(3, 1)
         ));
-        nodes.get(1).nodeConnections.get(0).addCommand((byte) 8, true);
-        nodes.get(1).nodeConnections.get(0).addCommand((byte) 9, true);
-        nodes.get(1).nodeConnections.get(1).addCommand((byte) 8, false);
-        nodes.get(1).nodeConnections.get(1).addCommand((byte) 9, false);
-        nodes.get(1).nodeConnections.get(2).addCommand((byte) 8, false);
-        nodes.get(1).nodeConnections.get(2).addCommand((byte) 9, true);
-        nodes.get(1).nodeConnections.get(3).addCommand((byte) 8, true);
-        nodes.get(1).nodeConnections.get(3).addCommand((byte) 9, false);
-        nodes.get(1).nodeConnections.get(4).addCommand((byte) 8, true);
-        nodes.get(1).nodeConnections.get(4).addCommand((byte) 9, true);
-        nodes.get(1).nodeConnections.get(5).addCommand((byte) 8, false);
-        nodes.get(1).nodeConnections.get(5).addCommand((byte) 9, false);
-        nodes.get(1).nodeConnections.get(6).addCommand((byte) 8, false);
-        nodes.get(1).nodeConnections.get(6).addCommand((byte) 9, true);
-        nodes.get(1).nodeConnections.get(7).addCommand((byte) 8, true);
-        nodes.get(1).nodeConnections.get(7).addCommand((byte) 9, false);
 
-        nodes.get(2).nodeConnections.add(new Connection(6, 11));
-        nodes.get(3).nodeConnections.add(new Connection(6, 11));
-        nodes.get(4).nodeConnections.add(new Connection(11, 6));
-        nodes.get(5).nodeConnections.add(new Connection(11, 6));
+        getNodeByAddress(2).nodeConnections.get(0).addCommand((byte) 10, false);
+        getNodeByAddress(2).nodeConnections.get(0).addCommand((byte) 11, false);
+        getNodeByAddress(2).nodeConnections.get(1).addCommand((byte) 10, false);
+        getNodeByAddress(2).nodeConnections.get(1).addCommand((byte) 11, true);
 
-        nodes.get(2).nodeConnections.add(new Connection(11, 6));
-        nodes.get(3).nodeConnections.add(new Connection(11, 6));
-        nodes.get(4).nodeConnections.add(new Connection(6, 11));
-        nodes.get(5).nodeConnections.add(new Connection(6, 11));
+
+        getNodeByAddress(3).nodeConnections.addAll(Arrays.asList(
+                new Connection(7, 4),
+                new Connection(8, 5),
+                new Connection(8, 4),
+                new Connection(7, 5),
+                new Connection(4, 7),
+                new Connection(5, 8),
+                new Connection(4, 8),
+                new Connection(5, 7),
+                new Connection(1, 4),
+                new Connection(1, 5),
+                new Connection(1, 7),
+                new Connection(1, 8),
+                new Connection(4, 1),
+                new Connection(5, 1),
+                new Connection(7, 2),
+                new Connection(8, 2),
+                new Connection(1, 2)
+        ));
+        getNodeByAddress(3).nodeConnections.get(0).addCommand((byte) 16, false);
+        getNodeByAddress(3).nodeConnections.get(0).addCommand((byte) 17, false);
+        getNodeByAddress(3).nodeConnections.get(0).addCommand((byte) 14, false);
+        getNodeByAddress(3).nodeConnections.get(0).addCommand((byte) 15, false);
+
+        getNodeByAddress(3).nodeConnections.get(1).addCommand((byte) 16, false);
+        getNodeByAddress(3).nodeConnections.get(1).addCommand((byte) 17, false);
+        getNodeByAddress(3).nodeConnections.get(1).addCommand((byte) 14, false);
+        getNodeByAddress(3).nodeConnections.get(1).addCommand((byte) 15, false);
+
+        getNodeByAddress(3).nodeConnections.get(2).addCommand((byte) 16, true);
+        getNodeByAddress(3).nodeConnections.get(2).addCommand((byte) 17, false);
+        getNodeByAddress(3).nodeConnections.get(2).addCommand((byte) 14, false);
+        getNodeByAddress(3).nodeConnections.get(2).addCommand((byte) 15, false);
+
+        getNodeByAddress(3).nodeConnections.get(3).addCommand((byte) 16, false);
+        getNodeByAddress(3).nodeConnections.get(3).addCommand((byte) 17, true);
+        getNodeByAddress(3).nodeConnections.get(3).addCommand((byte) 14, false);
+        getNodeByAddress(3).nodeConnections.get(3).addCommand((byte) 15, false);
+
+        getNodeByAddress(3).nodeConnections.get(4).addCommand((byte) 16, false);
+        getNodeByAddress(3).nodeConnections.get(4).addCommand((byte) 17, false);
+        getNodeByAddress(3).nodeConnections.get(4).addCommand((byte) 14, false);
+        getNodeByAddress(3).nodeConnections.get(4).addCommand((byte) 15, false);
+
+        getNodeByAddress(3).nodeConnections.get(5).addCommand((byte) 16, false);
+        getNodeByAddress(3).nodeConnections.get(5).addCommand((byte) 17, false);
+        getNodeByAddress(3).nodeConnections.get(5).addCommand((byte) 14, false);
+        getNodeByAddress(3).nodeConnections.get(5).addCommand((byte) 15, false);
+
+        getNodeByAddress(3).nodeConnections.get(6).addCommand((byte) 16, true);
+        getNodeByAddress(3).nodeConnections.get(6).addCommand((byte) 17, false);
+        getNodeByAddress(3).nodeConnections.get(6).addCommand((byte) 14, false);
+        getNodeByAddress(3).nodeConnections.get(6).addCommand((byte) 15, false);
+
+        getNodeByAddress(3).nodeConnections.get(7).addCommand((byte) 16, false);
+        getNodeByAddress(3).nodeConnections.get(7).addCommand((byte) 17, true);
+        getNodeByAddress(3).nodeConnections.get(7).addCommand((byte) 14, false);
+        getNodeByAddress(3).nodeConnections.get(7).addCommand((byte) 15, false);
+
+        getNodeByAddress(3).nodeConnections.get(8).addCommand((byte) 16, true);
+        getNodeByAddress(3).nodeConnections.get(8).addCommand((byte) 17, false);
+        getNodeByAddress(3).nodeConnections.get(8).addCommand((byte) 14, false);
+        getNodeByAddress(3).nodeConnections.get(8).addCommand((byte) 15, true);
+        getNodeByAddress(3).nodeConnections.get(8).addCommand((byte) 10, true);
+        getNodeByAddress(3).nodeConnections.get(8).addCommand((byte) 11, false);
+
+        getNodeByAddress(3).nodeConnections.get(9).addCommand((byte) 16, false);
+        getNodeByAddress(3).nodeConnections.get(9).addCommand((byte) 17, false);
+        getNodeByAddress(3).nodeConnections.get(9).addCommand((byte) 14, false);
+        getNodeByAddress(3).nodeConnections.get(9).addCommand((byte) 15, true);
+        getNodeByAddress(3).nodeConnections.get(9).addCommand((byte) 10, true);
+        getNodeByAddress(3).nodeConnections.get(9).addCommand((byte) 11, false);
+
+        getNodeByAddress(3).nodeConnections.get(10).addCommand((byte) 16, false);
+        getNodeByAddress(3).nodeConnections.get(10).addCommand((byte) 17, true);
+        getNodeByAddress(3).nodeConnections.get(10).addCommand((byte) 14, true);
+        getNodeByAddress(3).nodeConnections.get(10).addCommand((byte) 15, false);
+        getNodeByAddress(3).nodeConnections.get(10).addCommand((byte) 10, true);
+        getNodeByAddress(3).nodeConnections.get(10).addCommand((byte) 11, true);
+
+        getNodeByAddress(3).nodeConnections.get(11).addCommand((byte) 16, false);
+        getNodeByAddress(3).nodeConnections.get(11).addCommand((byte) 17, false);
+        getNodeByAddress(3).nodeConnections.get(11).addCommand((byte) 14, true);
+        getNodeByAddress(3).nodeConnections.get(11).addCommand((byte) 15, false);
+        getNodeByAddress(3).nodeConnections.get(11).addCommand((byte) 10, true);
+        getNodeByAddress(3).nodeConnections.get(11).addCommand((byte) 11, true);
+
+        getNodeByAddress(3).nodeConnections.get(12).addCommand((byte) 16, true);
+        getNodeByAddress(3).nodeConnections.get(12).addCommand((byte) 17, false);
+        getNodeByAddress(3).nodeConnections.get(12).addCommand((byte) 14, false);
+        getNodeByAddress(3).nodeConnections.get(12).addCommand((byte) 15, true);
+
+        getNodeByAddress(3).nodeConnections.get(13).addCommand((byte) 16, false);
+        getNodeByAddress(3).nodeConnections.get(13).addCommand((byte) 17, false);
+        getNodeByAddress(3).nodeConnections.get(13).addCommand((byte) 14, false);
+        getNodeByAddress(3).nodeConnections.get(13).addCommand((byte) 15, true);
+
+        getNodeByAddress(3).nodeConnections.get(14).addCommand((byte) 16, false);
+        getNodeByAddress(3).nodeConnections.get(14).addCommand((byte) 17, true);
+        getNodeByAddress(3).nodeConnections.get(14).addCommand((byte) 14, true);
+        getNodeByAddress(3).nodeConnections.get(14).addCommand((byte) 15, false);
+
+        getNodeByAddress(3).nodeConnections.get(15).addCommand((byte) 16, false);
+        getNodeByAddress(3).nodeConnections.get(15).addCommand((byte) 17, false);
+        getNodeByAddress(3).nodeConnections.get(15).addCommand((byte) 14, true);
+        getNodeByAddress(3).nodeConnections.get(15).addCommand((byte) 15, false);
+
+        getNodeByAddress(3).nodeConnections.get(16).addCommand((byte) 16, false);
+        getNodeByAddress(3).nodeConnections.get(16).addCommand((byte) 17, false);
+        getNodeByAddress(3).nodeConnections.get(16).addCommand((byte) 14, true);
+        getNodeByAddress(3).nodeConnections.get(16).addCommand((byte) 15, true);
+
+        getNodeByAddress(6).nodeConnections.addAll(Arrays.asList(
+                new Connection(4, 7),
+                new Connection(5, 8),
+                new Connection(4, 8),
+                new Connection(5, 7),
+                new Connection(7, 4),
+                new Connection(8, 5),
+                new Connection(8, 4),
+                new Connection(7, 5)
+        ));
+        getNodeByAddress(6).nodeConnections.get(0).addCommand((byte) 8, true);
+        getNodeByAddress(6).nodeConnections.get(0).addCommand((byte) 9, true);
+        getNodeByAddress(6).nodeConnections.get(1).addCommand((byte) 8, false);
+        getNodeByAddress(6).nodeConnections.get(1).addCommand((byte) 9, false);
+        getNodeByAddress(6).nodeConnections.get(2).addCommand((byte) 8, false);
+        getNodeByAddress(6).nodeConnections.get(2).addCommand((byte) 9, true);
+        getNodeByAddress(6).nodeConnections.get(3).addCommand((byte) 8, true);
+        getNodeByAddress(6).nodeConnections.get(3).addCommand((byte) 9, false);
+        getNodeByAddress(6).nodeConnections.get(4).addCommand((byte) 8, true);
+        getNodeByAddress(6).nodeConnections.get(4).addCommand((byte) 9, true);
+        getNodeByAddress(6).nodeConnections.get(5).addCommand((byte) 8, false);
+        getNodeByAddress(6).nodeConnections.get(5).addCommand((byte) 9, false);
+        getNodeByAddress(6).nodeConnections.get(6).addCommand((byte) 8, false);
+        getNodeByAddress(6).nodeConnections.get(6).addCommand((byte) 9, true);
+        getNodeByAddress(6).nodeConnections.get(7).addCommand((byte) 8, true);
+        getNodeByAddress(6).nodeConnections.get(7).addCommand((byte) 9, false);
+
+        getNodeByAddress(7).nodeConnections.add(new Connection(3, 6));
+        getNodeByAddress(8).nodeConnections.add(new Connection(3, 6));
+        getNodeByAddress(4).nodeConnections.add(new Connection(6, 3));
+        getNodeByAddress(5).nodeConnections.add(new Connection(6, 3));
+
+        getNodeByAddress(7).nodeConnections.add(new Connection(6, 3));
+        getNodeByAddress(8).nodeConnections.add(new Connection(6, 3));
+        getNodeByAddress(4).nodeConnections.add(new Connection(3, 6));
+        getNodeByAddress(5).nodeConnections.add(new Connection(3, 6));
     }
 
 
@@ -105,6 +208,8 @@ public class Railroad {
 
             if (l instanceof SensorMessage) {
                 SensorMessage s = (SensorMessage) l;
+
+                Ref.LOGGER.info("Sensor " + s.getAddress() + "; State: " + s.getState());
 
                 if(s.getState())
                     trainEnter(s.getAddress());
@@ -165,7 +270,7 @@ public class Railroad {
 
         initCalculation();
 
-        int wayFor = getWayFor(tFrom, rFrom);
+        int wayFor = t.useConnection != -1 ? t.useConnection : getWayFor(tFrom, rFrom);
 
         Ref.LOGGER.info(wayFor + " ");
 
@@ -180,7 +285,7 @@ public class Railroad {
         }
 
         t.way = connection;
-        t.startWay = getWayFor(tFrom, rFrom);
+        t.startWay = wayFor;
         t.startPos = rFrom.address;
 
         if(t.startWay == -1) {
@@ -364,6 +469,7 @@ public class Railroad {
     }
 
     public class Section {
+        public boolean left = false;
         int forCalculation;
 
         Train reservated;

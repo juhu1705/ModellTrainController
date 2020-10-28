@@ -29,6 +29,7 @@ import de.noisruker.server.loconet.messages.LocoNetMessage;
 import de.noisruker.server.loconet.messages.MessageType;
 import de.noisruker.util.Ref;
 import jssc.SerialPortException;
+import jssc.SerialPortList;
 
 public class Main {
 
@@ -49,23 +50,30 @@ public class Main {
 		new Thread(() -> {
 			Console scanner = System.console();
 
-			Ref.LOGGER.info("Password:");
+			//Ref.LOGGER.info("Password:");
 
-			Ref.password = new String(System.console().readPassword());
+			//Ref.password = new String(System.console().readPassword());
 
-			Ref.LOGGER.info("Aviable Ports:");
+			if(SerialPortList.getPortNames().length != 1) {
+				Ref.LOGGER.info("Aviable Ports:");
 
-			for (String s : jssc.SerialPortList.getPortNames())
-				Ref.LOGGER.info(s);
+				for (String s : jssc.SerialPortList.getPortNames())
+					Ref.LOGGER.info(s);
 
-			Ref.LOGGER.info("Connection Port:");
+				Ref.LOGGER.info("Connection Port:");
 
-			try {
-				LocoNet.getInstance().start(scanner.readLine());
-			} catch (SerialPortException e1) {
-				e1.printStackTrace();
+				try {
+					LocoNet.getInstance().start(scanner.readLine());
+				} catch (SerialPortException e1) {
+					e1.printStackTrace();
+				}
+			} else {
+				try {
+					LocoNet.getInstance().start(SerialPortList.getPortNames()[0]);
+				} catch (SerialPortException e) {
+					e.printStackTrace();
+				}
 			}
-
 			while (true) {
 				try {
 					String command = scanner.readLine();

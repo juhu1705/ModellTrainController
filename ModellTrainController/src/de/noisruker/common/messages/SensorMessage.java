@@ -13,7 +13,7 @@ import de.noisruker.util.Ref;
 
 public class SensorMessage implements Serializable, AbstractMessage {
 
-	private byte state, buffer1, buffer2;
+	private byte state, buffer1, buffer2, sensor, sensorSection;
 	private int address;
 
 	/**
@@ -26,20 +26,20 @@ public class SensorMessage implements Serializable, AbstractMessage {
 
 		byte state5 = state;
 
-		state >>= 5;
+		state <<= 2;
+		state >>>= 7;
 
-		int i = address;
+		state *= -1;
+
+		this.sensor = address;
+		this.sensorSection = state;
 
 		state5 >>>= 4;
 		state5 <<= 7;
 		state5 >>>= 7;
 
-		i <<= 2;
-
-		i |= state;
-
 		this.state = state5;
-		this.address = i;
+		this.address = (this.sensor * 2) + this.sensorSection + 1;
 
 	}
 

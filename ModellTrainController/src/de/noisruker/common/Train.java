@@ -21,7 +21,7 @@ public class Train implements Serializable {
 	private byte speed, maxSpeed, normalSpeed, minSpeed, actualSpeed;
 	boolean foreward, standartForeward, stopNext = false;
 
-	public int lastPosition = -1, actualPosition = -1, destination = -1, startWay = -1, startPos = -1, waiting = 0;
+	public int lastPosition = -1, actualPosition = -1, destination = -1, startWay = -1, startPos = -1, waiting = 0, useConnection = -1;
 
 	/**
 	 * Generiert einen neuen {@link Train Zug} mit der entsprechenden addresse. Es
@@ -131,6 +131,8 @@ public class Train implements Serializable {
 	}
 
 	public void trainEnter(int nodeAddress) {
+		Ref.LOGGER.info("Train: " + this.getAddress());
+
 		Railroad.Section position = LocoNet.getRailroad().getNodeByAddress(actualPosition);
 
 		if(this.way != null && (this.way.containsKey(position) || (this.startWay != -1 && this.startPos != -1))) {
@@ -138,8 +140,12 @@ public class Train implements Serializable {
 					position.nodeConnections.get(this.startWay).to == nodeAddress) ||
 					(this.startWay == -1 && this.startPos == -1 &&
 							position.nodeConnections.get(this.way.get(position)).to == nodeAddress))) {
+				LocoNet.getRailroad().getNodeByAddress(this.lastPosition).reservated = null;
+
 				this.lastPosition = this.actualPosition;
 				this.actualPosition = nodeAddress;
+
+				LocoNet.getRailroad().getNodeByAddress(nodeAddress).left = false;
 
 				if(this.startPos != -1 && this.startWay != -1) {
 					LocoNet.getRailroad().getNodeByAddress(startPos).nodeConnections.get(startWay).activate();
@@ -160,9 +166,25 @@ public class Train implements Serializable {
 					this.setBreakSpeed();
 
 					this.stopNext = true;
+
+					if (node != null && way != null && way.containsKey(node))
+						this.useConnection = way.get(node);
+
+					if(LocoNet.getRailroad().getNodeByAddress(this.lastPosition).left) {
+						this.stop();
+						this.stopNext = false;
+						way = null;
+						destination = -1;
+						waiting = 10;
+						LocoNet.getRailroad().getNodeByAddress(this.lastPosition).left = false;
+						LocoNet.getRailroad().getNodeByAddress(this.lastPosition).reservated = null;
+					}
 				}
 
 				this.reservateNext();
+			} else if(this.actualPosition == nodeAddress && (position.reservated == null || position.left)) {
+				position.reservated = this;
+				position.left = false;
 			}
 		}
 	}
@@ -175,11 +197,15 @@ public class Train implements Serializable {
 			destination = -1;
 			waiting = 10;
 		}
-		if(nodeAddress == this.lastPosition) {
+		if(nodeAddress == this.lastPosition && LocoNet.getRailroad().getNodeByAddress(this.lastPosition).reservated != null &&
+				LocoNet.getRailroad().getNodeByAddress(this.lastPosition).reservated.equals(this)) {
 			Ref.LOGGER.info("Train " + this.getAddress() + " left sensor " + nodeAddress);
 
-			Railroad r = LocoNet.getRailroad();
-			r.getNodeByAddress(this.lastPosition).reservated = null;
+			LocoNet.getRailroad().getNodeByAddress(lastPosition).reservated = null;
+		}
+
+		if(nodeAddress == this.actualPosition) {
+			LocoNet.getRailroad().getNodeByAddress(nodeAddress).left = true;
 		}
 	}
 
@@ -246,7 +272,6 @@ public class Train implements Serializable {
 			waiting--;
 		} else if(waiting < 0)
 			waiting = 0;
-
 	}
 
 	public HashMap<Railroad.Section, Integer> way = null;

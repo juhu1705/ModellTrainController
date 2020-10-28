@@ -62,12 +62,6 @@ public class LocoNet {
 			r.init();
 
 			try {
-				Thread.sleep(1000 * 30);
-			} catch (InterruptedException ignored) {
-
-			}
-
-			try {
 				new SwitchMessage((byte)8, true).send();
 			} catch (IOException ignored) {
 
