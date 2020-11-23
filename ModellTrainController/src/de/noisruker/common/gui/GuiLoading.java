@@ -86,8 +86,7 @@ public class GuiLoading implements Initializable {
             }
             try {
                 Thread.sleep(1000);
-            } catch (InterruptedException e) {
-            }
+            } catch (InterruptedException ignored) { }
 
             Progress.getInstance().setProgressDescription("Checking Connection");
 
@@ -102,8 +101,7 @@ public class GuiLoading implements Initializable {
                 }
                 try {
                     Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                }
+                } catch (InterruptedException ignored) { }
                 Progress.getInstance().setProgress(((double) i + 1) / 5);
             }
 
@@ -123,18 +121,19 @@ public class GuiLoading implements Initializable {
                     }
                     try {
                         Thread.sleep(100);
-                    } catch (InterruptedException e) {
+                    } catch (InterruptedException ignored) {
                     }
                 }
             }
 
             try {
                 Thread.sleep(1000);
-            } catch (InterruptedException e) {
-            }
+            } catch (InterruptedException ignored) { }
 
             Progress.getInstance().setProgress(1);
             Progress.getInstance().setProgressDescription("Finished");
+
+            Util.updateWindow(GUILoader.getPrimaryStage(), "/assets/layouts/GuiTrains.fxml", Theme.LIGHT);
         }).start();
     }
 }
