@@ -205,7 +205,7 @@ public class LocoNet {
 			if (l instanceof TrainSlotMessage) {
 				TrainSlotMessage m = ((TrainSlotMessage) l);
 
-//				Ref.LOGGER.info("Write requested Train to slot: " + m.getSlot());
+				Ref.LOGGER.info("Write requested Train to slot: " + m.getSlot());
 
 				this.addTrain(new Train(m.getAddress(), m.getSlot()));
 			}

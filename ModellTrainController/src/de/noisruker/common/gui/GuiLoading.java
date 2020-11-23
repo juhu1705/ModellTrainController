@@ -94,13 +94,13 @@ public class GuiLoading implements Initializable {
 
             for (int i = 0; i < 5; i++) {
                 try {
-                    new SwitchMessage((byte) 0, true).send();
+                    new SwitchMessage((byte) i, true).send();
                 } catch (IOException e) {
                     Progress.getInstance().setProgressDescription("LocoNet connection closed! Restart and try again!");
                     return;
                 }
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(10000);
                 } catch (InterruptedException ignored) { }
                 Progress.getInstance().setProgress(((double) i + 1) / 5);
             }
@@ -111,8 +111,8 @@ public class GuiLoading implements Initializable {
             if (Config.addTrainsFirst) {
                 Progress.getInstance().setProgressDescription("Searching Trains");
                 Progress.getInstance().setProgress(0);
-                for (int i = 1; i <= 50; i++) {
-                    Progress.getInstance().setProgress(((double) i) / 50);
+                for (int i = 1; i <= 10; i++) {
+                    Progress.getInstance().setProgress(((double) i) / 10);
                     try {
                         new LocoNetMessage(MessageType.OPC_LOCO_ADR, (byte) 0, (byte) i).send();
                     } catch (SerialPortException | LocoNetConnection.PortNotOpenException e) {
@@ -120,7 +120,7 @@ public class GuiLoading implements Initializable {
                         return;
                     }
                     try {
-                        Thread.sleep(100);
+                        Thread.sleep(10000);
                     } catch (InterruptedException ignored) {
                     }
                 }
@@ -133,7 +133,7 @@ public class GuiLoading implements Initializable {
             Progress.getInstance().setProgress(1);
             Progress.getInstance().setProgressDescription("Finished");
 
-            Util.updateWindow(GUILoader.getPrimaryStage(), "/assets/layouts/GuiTrains.fxml", Theme.LIGHT);
+            Platform.runLater(() -> {Util.updateWindow(GUILoader.getPrimaryStage(), "/assets/layouts/GuiTrains.fxml", Theme.LIGHT);});
         }).start();
     }
 }
