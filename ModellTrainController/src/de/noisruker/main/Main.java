@@ -40,7 +40,6 @@ public class Main {
 		new Thread(() -> {
 			try {
 				Ref.password = "Standart";
-
 				Server.start();
 			} catch (IOException e) {
 				e.printStackTrace();

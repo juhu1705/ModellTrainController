@@ -1,7 +1,6 @@
 package de.noisruker.util;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -36,6 +35,12 @@ public class Ref {
 	public static final Logger LOGGER;
 	public static final String VERSION;
 	public static final String PROJECT_NAME;
+	public static Theme theme = Theme.LIGHT;
+	public static final String HOME_FOLDER;
+	static {
+		HOME_FOLDER = System.getProperty("user.home") + "/.TrainController/";
+	}
+
 
 	static {
 		LOGGER = Logger.getLogger("schiffespiel");
@@ -57,13 +62,8 @@ public class Ref {
 			else
 				model = reader.read(new InputStreamReader(Ref.class
 						.getResourceAsStream("/META-INF/maven/ModellTrainController/ModellTrainController/pom.xml")));
-		} catch (FileNotFoundException e) {
+		} catch (IOException | NullPointerException | XmlPullParserException e) {
 
-		} catch (IOException e) {
-
-		} catch (XmlPullParserException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 
 		if (model == null)
@@ -83,12 +83,8 @@ public class Ref {
 			else
 				model = reader.read(new InputStreamReader(Ref.class
 						.getResourceAsStream("/META-INF/maven/ModellTrainController/ModellTrainController/pom.xml")));
-		} catch (FileNotFoundException e) {
-			LOGGER.log(Level.SEVERE, "Error while reading pom.xml", e);
-		} catch (IOException e) {
-			LOGGER.log(Level.SEVERE, "Error while reading pom.xml", e);
-		} catch (XmlPullParserException e) {
-			LOGGER.log(Level.SEVERE, "Error while reading pom.xml", e);
+		} catch (IOException | NullPointerException | XmlPullParserException e) {
+			//LOGGER.log(Level.SEVERE, "Error while reading pom.xml", e);
 		}
 		if (model == null)
 			PROJECT_NAME = "ModellTrainController";
