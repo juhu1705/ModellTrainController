@@ -2,6 +2,7 @@ package de.noisruker.common.gui;
 
 import de.noisruker.common.Train;
 import de.noisruker.server.loconet.LocoNet;
+import de.noisruker.util.Ref;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -28,6 +29,8 @@ public class GuiTrains implements Initializable {
 
         slot.setCellValueFactory(train ->
                 new SimpleStringProperty(String.valueOf(train.getValue().getSlot())));
+
+        Ref.LOGGER.info("Trains: " + LocoNet.getInstance().getTrains().toString());
 
         this.trains.setItems(FXCollections.observableArrayList(LocoNet.getInstance().getTrains()));
     }

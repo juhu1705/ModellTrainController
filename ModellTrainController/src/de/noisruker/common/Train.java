@@ -335,4 +335,12 @@ public class Train implements Serializable {
 	public void setLastPosition(int lposition) {
 		this.lastPosition = lposition;
 	}
+
+	@Override
+	public String toString() {
+		return "Train{" +
+				"address=" + address +
+				", slot=" + slot +
+				'}';
+	}
 }
