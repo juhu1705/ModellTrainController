@@ -6,7 +6,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="277.0" prefWidth="602.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.noisruker.common.gui.StartGUI">
+<AnchorPane prefHeight="277.0" prefWidth="602.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.noisruker.gui.StartGUI">
    <children>
       <Label alignment="CENTER" layoutX="230.0" layoutY="31.0" prefHeight="17.0" prefWidth="142.0" text="%label.connectionport" textAlignment="CENTER" AnchorPane.leftAnchor="230.0" AnchorPane.rightAnchor="228.0" AnchorPane.topAnchor="31.0" />
       <CheckBox fx:id="searchTrains" layoutX="189.0" layoutY="260.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="222.0" text="%checkbox.searchtrains" AnchorPane.bottomAnchor="123.0" AnchorPane.leftAnchor="189.0" AnchorPane.rightAnchor="189.0" />

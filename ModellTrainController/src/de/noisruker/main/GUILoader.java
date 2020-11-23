@@ -1,8 +1,8 @@
 package de.noisruker.main;
 
 
-import de.noisruker.common.gui.GuiLoading;
-import de.noisruker.common.gui.StartGUI;
+import de.noisruker.gui.GuiLoading;
+import de.noisruker.gui.StartGUI;
 import de.noisruker.util.Config;
 import de.noisruker.util.Ref;
 import de.noisruker.util.Util;
@@ -15,7 +15,6 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.util.PropertyResourceBundle;
 

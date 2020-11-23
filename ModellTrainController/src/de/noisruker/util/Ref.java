@@ -14,19 +14,13 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import de.noisruker.net.Side;
-
 public class Ref {
 
 	public static final long UNIVERSAL_SERIAL_VERSION_UID = 983475897014889764L;
 
-	public static final int STANDARD_HOST_PORT = 12346;
-
 	public static String password = "1";
 
 	public static PropertyResourceBundle language;
-
-	public static Side side;
 
 	public static int autoDriveNumber = 1;
 

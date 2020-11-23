@@ -1,7 +1,7 @@
 package de.noisruker.util;
 
 import de.noisruker.config.ConfigManager;
-import de.noisruker.server.loconet.messages.MessageType;
+import de.noisruker.loconet.messages.MessageType;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;

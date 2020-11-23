@@ -6,27 +6,19 @@ import static de.noisruker.util.Ref.VERSION;
 
 import java.io.Console;
 import java.io.IOException;
-import java.util.logging.Level;
 
-import de.noisruker.common.Railroad;
-import de.noisruker.common.Sensor;
-import de.noisruker.common.Train;
-import de.noisruker.common.messages.AbstractMessage;
-import de.noisruker.common.messages.ChatMessage;
-import de.noisruker.common.messages.DirectionMessage;
-import de.noisruker.common.messages.SpeedMessage;
-import de.noisruker.common.messages.SwitchMessage;
-import de.noisruker.net.Side;
-import de.noisruker.net.datapackets.Datapacket;
-import de.noisruker.net.datapackets.DatapacketType;
-import de.noisruker.server.Action;
-import de.noisruker.server.ClientHandler;
-import de.noisruker.server.ClientHandler.PermissionLevel;
-import de.noisruker.server.Server;
-import de.noisruker.server.loconet.LocoNet;
-import de.noisruker.server.loconet.LocoNetConnection.PortNotOpenException;
-import de.noisruker.server.loconet.messages.LocoNetMessage;
-import de.noisruker.server.loconet.messages.MessageType;
+import de.noisruker.railroad.Railroad;
+import de.noisruker.railroad.Sensor;
+import de.noisruker.railroad.Train;
+import de.noisruker.loconet.messages.AbstractMessage;
+import de.noisruker.loconet.messages.DirectionMessage;
+import de.noisruker.loconet.messages.SpeedMessage;
+import de.noisruker.loconet.messages.SwitchMessage;
+import de.noisruker.loconet.Action;
+import de.noisruker.loconet.LocoNet;
+import de.noisruker.loconet.LocoNetConnection.PortNotOpenException;
+import de.noisruker.loconet.messages.LocoNetMessage;
+import de.noisruker.loconet.messages.MessageType;
 import de.noisruker.util.Ref;
 import jssc.SerialPortException;
 import jssc.SerialPortList;
@@ -34,17 +26,8 @@ import jssc.SerialPortList;
 public class Main {
 
 	public static void main(String[] args) {
-		Ref.side = Side.SERVER;
 
 		LOGGER.info("Starte: " + PROJECT_NAME + " | Version: " + VERSION);
-		new Thread(() -> {
-			try {
-				Ref.password = "Standart";
-				Server.start();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}).start();
 
 		new Thread(() -> {
 			Console scanner = System.console();
@@ -105,47 +88,6 @@ public class Main {
 						for (Sensor s : LocoNet.getInstance().getSensors())
 							Ref.LOGGER.info("Address: " + Integer.toString(s.getAddress()) + "; Slot: "
 									+ Boolean.toString(s.getState()));
-						break;
-					case "op":
-						Ref.LOGGER.info("Players:");
-
-						for (ClientHandler ch : Server.getClientHandlers())
-							Ref.LOGGER.info(ch != null ? ch.getName() : "");
-
-						Ref.LOGGER.info("Type Playername:");
-
-						String name = scanner.readLine();
-
-						Ref.LOGGER.info("Type Permissionlevel:");
-
-						int level = Integer.parseInt(scanner.readLine());
-
-						for (ClientHandler ch : Server.getClientHandlers()) {
-							if (ch == null)
-								continue;
-
-							if (ch.getName().equals(name)) {
-								ch.setPermissionLevel(PermissionLevel.getByLevel(level));
-							}
-						}
-
-						break;
-					case "kick":
-						Ref.LOGGER.info("Players:");
-
-						for (ClientHandler ch : Server.getClientHandlers())
-							Ref.LOGGER.info(ch != null ? ch.getName() : "");
-
-						Ref.LOGGER.info("Type Playername:");
-
-						String name1 = scanner.readLine();
-
-						for (ClientHandler ch : Server.getClientHandlers()) {
-							if (ch.getName().equals(name1)) {
-								Server.removeClient(ch);
-							}
-						}
-
 						break;
 					case "addTrain":
 						Ref.LOGGER.info("Type Address:");
@@ -333,24 +275,6 @@ public class Main {
 
 					case "exitAuto":
 						LocoNet.getInstance().stopAutoDrive();
-						break;
-
-					case "message":
-						Ref.LOGGER.info("Type Message:");
-
-						String message = scanner.readLine();
-
-						ChatMessage m = new ChatMessage(message);
-						m.setName("SERVER");
-						m.setLevel("HOST");
-
-						for (ClientHandler ch : Server.getClientHandlers())
-							try {
-								ch.sendDatapacket(new Datapacket(DatapacketType.SERVER_SEND_CHAT_MESSAGE, m));
-							} catch (IOException e) {
-								Ref.LOGGER.log(Level.SEVERE, "", e);
-							}
-
 						break;
 					case "stop":
 						try {
