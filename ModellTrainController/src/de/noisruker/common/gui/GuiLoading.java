@@ -75,47 +75,66 @@ public class GuiLoading implements Initializable {
     }
 
     public static void startLocoNet() {
-        Progress.getInstance().setProgressDescription("Starting LocoNet Connection");
-        Progress.getInstance().setProgress(-1);
-        try {
-            LocoNet.getInstance().start(Config.port);
-        } catch (SerialPortException e) {
-            Progress.getInstance().setProgressDescription("LocoNet connection failed! Restart and try again!");
-            return;
-        }
-
-        Progress.getInstance().setProgressDescription("Checking Connection");
-
-        Progress.getInstance().setProgress(0);
-
-        for(int i = 0; i < 5; i++) {
+        new Thread(() -> {
+            Progress.getInstance().setProgressDescription("Starting LocoNet Connection");
+            Progress.getInstance().setProgress(-1);
             try {
-                new SwitchMessage((byte) 0, true).send();
-            } catch (IOException e) {
-                Progress.getInstance().setProgressDescription("LocoNet connection closed! Restart and try again!");
+                LocoNet.getInstance().start(Config.port);
+            } catch (SerialPortException e) {
+                Progress.getInstance().setProgressDescription("LocoNet connection failed! Restart and try again!");
                 return;
             }
-            Progress.getInstance().setProgress(((double)i + 1) / 5);
-        }
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+            }
 
-        Progress.getInstance().setProgressDescription("Connection checked");
-        Progress.getInstance().setProgress(-1);
+            Progress.getInstance().setProgressDescription("Checking Connection");
 
-        if(Config.addTrainsFirst) {
-            Progress.getInstance().setProgressDescription("Searching Trains");
             Progress.getInstance().setProgress(0);
-            for(int i = 1; i <= 50; i++) {
-                Progress.getInstance().setProgress(((double)i) / 50);
+
+            for (int i = 0; i < 5; i++) {
                 try {
-                    new LocoNetMessage(MessageType.OPC_LOCO_ADR, (byte) 0, (byte) i).send();
-                } catch (SerialPortException | LocoNetConnection.PortNotOpenException e) {
+                    new SwitchMessage((byte) 0, true).send();
+                } catch (IOException e) {
                     Progress.getInstance().setProgressDescription("LocoNet connection closed! Restart and try again!");
                     return;
                 }
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                }
+                Progress.getInstance().setProgress(((double) i + 1) / 5);
             }
-        }
 
-        Progress.getInstance().setProgress(1);
-        Progress.getInstance().setProgressDescription("Finished");
+            Progress.getInstance().setProgressDescription("Connection checked");
+            Progress.getInstance().setProgress(-1);
+
+            if (Config.addTrainsFirst) {
+                Progress.getInstance().setProgressDescription("Searching Trains");
+                Progress.getInstance().setProgress(0);
+                for (int i = 1; i <= 50; i++) {
+                    Progress.getInstance().setProgress(((double) i) / 50);
+                    try {
+                        new LocoNetMessage(MessageType.OPC_LOCO_ADR, (byte) 0, (byte) i).send();
+                    } catch (SerialPortException | LocoNetConnection.PortNotOpenException e) {
+                        Progress.getInstance().setProgressDescription("LocoNet connection closed! Restart and try again!");
+                        return;
+                    }
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                    }
+                }
+            }
+
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+            }
+
+            Progress.getInstance().setProgress(1);
+            Progress.getInstance().setProgressDescription("Finished");
+        }).start();
     }
 }
