@@ -1,0 +1,2 @@
+Fahre: -96
+Richtung ändern: -95

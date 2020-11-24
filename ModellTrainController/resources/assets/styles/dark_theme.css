@@ -1,0 +1,214 @@
+/*
+ * Dark Theme Texture Pack by Juhu1705
+ */
+ 
+/* Colors */
+* {
+    dark1: #616161;
+    default1: #9E9E9E;
+    light1: #F5F5F5;
+    text1: #212121;
+    accent1: #607D8B;
+    primary1: #212121;
+    secondary1: #757575;
+    divider1: #BDBDBD;
+}
+ 
+/*Root Color*/
+*.root {
+     -fx-color:lightgrey;
+     
+     -fx-background-color:dark1;
+}
+ 
+/*Tab */
+ 
+*.tab {
+     -fx-background-color:lightgrey;
+}
+ 
+*.tab:hover {
+     -fx-background-color:default1;
+}
+ 
+*.tab:selected {
+     -fx-background-color:dark1;
+     -fx-focus-color: divider1;
+}
+ 
+*.tab-header-background {
+    -fx-background-color:light1;
+}
+ 
+ /*Menu */
+ 
+*.menu-bar {
+     -fx-color: secondary;
+     -fx-background-color:default1;
+}
+ 
+*.menu:showing {
+    -fx-background-color: dark1;
+    -fx-background-radius: 6;
+}
+
+*.menu:hover {
+    -fx-color: default1;
+    -fx-font-fill: default1;
+    -fx-background-color: dark1;
+    -fx-background-radius: 6;
+}
+
+/*Menu Bar */
+*.menu-bar:focused {
+    -fx-background-color: dark1;
+    -fx-background-radius: 6;
+}
+ 
+/*Menu Item */
+*.menu-item>*.label {
+    -fx-text-fill:black;
+}
+
+*.menu-item:focused {
+    -fx-background-color: dark1;
+    -fx-background-radius: 6;
+}
+
+*.menu-item:hover {
+    -fx-color: light1;
+    -fx-background-color: default1;
+    -fx-background-radius: 6;
+}
+
+/*Menu Seperator */
+*.menu-seperator:hover {
+    -fx-background-color: default1;
+    -fx-background-radius: 6;
+}
+
+/*Menu Button */
+*.menu-button {
+    -fx-text-fill: light1;
+    -fx-background-color:default1
+}
+
+*.menu-button>*.label {
+    -fx-text-fill: light1;
+}
+
+/*Text Area */
+*.text-area {
+    -fx-text-fill: primary1;
+}
+
+/*VBox */
+*.vbox {
+    -fx-background-color:transparent;
+}
+
+/*Scroll Pane */
+*.scroll-pane {
+    -fx-background-color: default1;
+}
+
+.scroll-pane > .viewport {
+   -fx-background-color: dark1;
+}
+
+*.scroll-bar:vertical, *.scroll-bar:horizontal{
+    -fx-background-color:transparent;
+    -fx-background-radius: 5em;
+}
+
+*.increment-button, *.decrement-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+*.scroll-bar:vertical *.track,
+*.scroll-bar:horizontal *.track{
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-background-radius: 0em;
+}
+
+*.scroll-bar:vertical *.thumb,
+*.scroll-bar:horizontal *.thumb {
+    -fx-background-color: white;
+    -fx-background-radius: 5em;
+}
+
+*.scroll-pane > *.corner {
+    -fx-background-color: default1;
+}
+
+/*Label */
+*.label {
+    -fx-text-fill: white;
+}
+
+/*Table */
+.table-view{
+    -fx-base: transparent;
+   -fx-background-color: transparent;
+}
+
+
+
+.table-view:focused{
+    -fx-background-color: transparent;
+}
+
+.table-view .column-header-background{
+    -fx-background-color: linear-gradient(#131313 0%, #424141 100%);
+}
+
+.table-view .column-header-background .label{
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+}
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+}
+
+.table-view .column-header .filler,
+.table-view > .column-header-background > .show-hide-columns-button,
+.table-view .column-header-background .filler {
+    -fx-base: transparent;
+    -fx-background-color: transparent;
+}
+
+.table-view .placeholder {
+    -fx-background-color: transparent;
+}
+
+.table-view .table-cell{
+    -fx-text-fill: white;
+}
+
+.table-row-cell{
+    -fx-background-color: -fx-table-cell-border-color, #616161;
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0.0em; /* 0 */
+}
+
+.table-row-cell:odd{
+    -fx-background-color: -fx-table-cell-border-color, #424242;
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0.0em; /* 0 */  
+}
+
+.table-row-cell:selected {
+    -fx-background-color: #005797;
+    -fx-background-insets: 0;
+    -fx-background-radius: 1;
+}
+
+.table-view .show-hide-column-image,
+.tree-table-view .show-hide-column-image {
+    -fx-background-color: -fx-mark-color;
+    -fx-padding: 0.25em; /* 3px */
+    -fx-shape: "M398.902,298.045c0.667,0,1.333,0,2,0c0,0.667,0,1.333,0,2c0.667,0,1.333,0,2,0c0,0.667,0,1.333,0,2c-0.667,0-1.333,0-2,0c0,0.666,0,1.332,0,1.999c-0.667,0-1.333,0-2,0c0-0.667,0-1.333,0-1.999c-0.666,0-1.333,0-1.999,0c0-0.667,0-1.334,0-2c0.666,0,1.333,0,1.999,0C398.902,299.378,398.902,298.711,398.902,298.045z";
+}
