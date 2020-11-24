@@ -1,4 +1,4 @@
-package de.noisruker.gui;
+package de.noisruker.gui.progress;
 
 import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;

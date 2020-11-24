@@ -2,7 +2,7 @@ package de.noisruker.main;
 
 
 import de.noisruker.gui.GuiLoading;
-import de.noisruker.gui.StartGUI;
+import de.noisruker.gui.GuiStart;
 import de.noisruker.util.Config;
 import de.noisruker.util.Ref;
 import de.noisruker.util.Util;
@@ -32,7 +32,7 @@ public class GUILoader extends Application {
         PropertyResourceBundle language = new PropertyResourceBundle(r = new InputStreamReader(GUILoader.class.getResourceAsStream("/assets/language/de.properties")));
         r.close();
 
-        Parent root = FXMLLoader.load(GUILoader.class.getResource("/assets/layouts/Loading.fxml"), language);
+        Parent root = FXMLLoader.load(GUILoader.class.getResource("/assets/layouts/loading.fxml"), language);
         Ref.language = language;
 
         Scene s = new Scene(root);
@@ -54,7 +54,7 @@ public class GUILoader extends Application {
         stage.show();
         GUILoader.primaryStage = stage;
 
-        StartGUI.stage = primaryStage;
+        GuiStart.stage = primaryStage;
 
         GuiLoading.checkForUpdates();
     }

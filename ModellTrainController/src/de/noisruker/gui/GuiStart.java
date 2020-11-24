@@ -16,7 +16,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
-public class StartGUI implements Initializable {
+public class GuiStart implements Initializable {
 
     public static Stage stage = null;
 
@@ -36,9 +36,9 @@ public class StartGUI implements Initializable {
         ConfigManager.getInstance().onConfigChanged();
 
         if(stage == null)
-            Util.openWindow("/assets/layouts/Loading.fxml", "Loading", GUILoader.getPrimaryStage(), Theme.LIGHT);
+            Util.openWindow("/assets/layouts/loading.fxml", "Loading", GUILoader.getPrimaryStage(), Theme.LIGHT);
         else
-            Util.updateWindow(stage, "/assets/layouts/Loading.fxml", Theme.LIGHT);
+            Util.updateWindow(stage, "/assets/layouts/loading.fxml", Theme.LIGHT);
 
         GuiLoading.startLocoNet();
     }

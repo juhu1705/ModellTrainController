@@ -3,6 +3,7 @@ package de.noisruker.loconet;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import de.noisruker.gui.tables.BasicTrains;
 import de.noisruker.railroad.Railroad;
 import de.noisruker.railroad.Sensor;
 import de.noisruker.railroad.Train;
@@ -198,6 +199,8 @@ public class LocoNet {
 				Ref.LOGGER.info("Write requested Train to slot: " + m.getSlot());
 
 				this.addTrain(new Train(m.getAddress(), m.getSlot()));
+
+				BasicTrains.getInstance().setTrains(this.getTrains());
 			}
 
 			if (l instanceof DirectionMessage) {

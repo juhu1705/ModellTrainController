@@ -1,5 +1,6 @@
 package de.noisruker.gui;
 
+import de.noisruker.gui.progress.Progress;
 import de.noisruker.loconet.messages.SwitchMessage;
 import de.noisruker.main.GUILoader;
 import de.noisruker.loconet.LocoNet;
@@ -69,7 +70,7 @@ public class GuiLoading implements Initializable {
             Ref.LOGGER.info("Finished");
             Platform.runLater(() -> {
                 Ref.LOGGER.info("Starting Init Page");
-                Util.updateWindow(GUILoader.getPrimaryStage(), "/assets/layouts/InitSettings.fxml", Theme.LIGHT);
+                Util.updateWindow(GUILoader.getPrimaryStage(), "/assets/layouts/init_settings.fxml", Theme.LIGHT);
             });
         }).start();
     }
@@ -108,7 +109,8 @@ public class GuiLoading implements Initializable {
             Progress.getInstance().setProgressDescription("Connection checked");
             Progress.getInstance().setProgress(-1);
 
-            if (Config.addTrainsFirst) {
+
+            /*if (Config.addTrainsFirst) {
                 Progress.getInstance().setProgressDescription("Searching Trains");
                 Progress.getInstance().setProgress(0);
                 for (int i = 1; i <= 10; i++) {
@@ -124,7 +126,7 @@ public class GuiLoading implements Initializable {
                     } catch (InterruptedException ignored) {
                     }
                 }
-            }
+            }*/
 
             try {
                 Thread.sleep(1000);
@@ -133,7 +135,10 @@ public class GuiLoading implements Initializable {
             Progress.getInstance().setProgress(1);
             Progress.getInstance().setProgressDescription("Finished");
 
-            Platform.runLater(() -> {Util.updateWindow(GUILoader.getPrimaryStage(), "/assets/layouts/GuiTrains.fxml", Theme.LIGHT);});
+            Platform.runLater(() -> {
+                Util.updateWindow(GUILoader.getPrimaryStage(), "/assets/layouts/trains.fxml", Theme.LIGHT);
+                Util.openWindow("/assets/layouts/add_train.fxml", "Add Train", GUILoader.getPrimaryStage(), Theme.LIGHT);
+            });
         }).start();
     }
 }
