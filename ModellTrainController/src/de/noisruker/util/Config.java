@@ -17,9 +17,6 @@ public class Config {
     @ConfigElement(defaultValue = "false", type = "check", description = "startImmediately.description", name = "startImmediately.text", location = "config", visible = true)
     public static boolean startImmediately;
 
-    @ConfigElement(defaultValue = "false", type = "check", description = "addTrainsFirst.description", name = "addTrainsFirst.text", location = "config", visible = true)
-    public static boolean addTrainsFirst;
-
     @ConfigElement(defaultValue = "", type = "choose", description = "port.description", name = "port.text", location = "config", visible = true)
     public static String port;
 

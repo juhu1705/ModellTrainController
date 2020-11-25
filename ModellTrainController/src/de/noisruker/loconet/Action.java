@@ -8,9 +8,9 @@ import de.noisruker.loconet.messages.SensorMessage;
 
 public class Action {
 
-	private SensorMessage action;
+	private final SensorMessage action;
 
-	private ArrayList<AbstractMessage> events = new ArrayList<>();
+	private final ArrayList<AbstractMessage> events = new ArrayList<>();
 
 	public Action(SensorMessage action) {
 		this.action = action;
@@ -45,8 +45,7 @@ public class Action {
 
 	@Override
 	public String toString() {
-		String s = this.action.toString() + ": Actions: " + events.toString();
-		return s;
+		return this.action.toString() + ": Actions: " + events.toString();
 	}
 
 	public boolean isEmpty() {

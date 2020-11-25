@@ -29,7 +29,7 @@ public class Ref {
 	public static final Logger LOGGER;
 	public static final String VERSION;
 	public static final String PROJECT_NAME;
-	public static Theme theme = Theme.LIGHT;
+	public static Theme theme = Theme.NORMAL;
 	public static final String HOME_FOLDER;
 	static {
 		HOME_FOLDER = System.getProperty("user.home") + "/.TrainController/";

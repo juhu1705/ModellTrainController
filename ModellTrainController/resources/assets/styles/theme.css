@@ -46,7 +46,11 @@
      -fx-color: secondary;
      -fx-background-color:default1;
 }
- 
+
+.menu {
+    -fx-background-radius: 6;
+}
+
 *.menu:showing {
     -fx-background-color: dark1;
     -fx-background-radius: 6;
@@ -63,6 +67,7 @@
 *.menu-bar:focused {
     -fx-background-color: dark1;
     -fx-background-radius: 6;
+    -fx-border-radius: 6;
 }
  
 /*Menu Item */
@@ -144,17 +149,17 @@
 }
 
 /*Label */
+
 *.label {
     -fx-text-fill: white;
 }
 
 /*Table */
+
 .table-view{
     -fx-base: transparent;
    -fx-background-color: transparent;
 }
-
-
 
 .table-view:focused{
     -fx-background-color: transparent;
@@ -211,4 +216,79 @@
     -fx-background-color: -fx-mark-color;
     -fx-padding: 0.25em; /* 3px */
     -fx-shape: "M398.902,298.045c0.667,0,1.333,0,2,0c0,0.667,0,1.333,0,2c0.667,0,1.333,0,2,0c0,0.667,0,1.333,0,2c-0.667,0-1.333,0-2,0c0,0.666,0,1.332,0,1.999c-0.667,0-1.333,0-2,0c0-0.667,0-1.333,0-1.999c-0.666,0-1.333,0-1.999,0c0-0.667,0-1.334,0-2c0.666,0,1.333,0,1.999,0C398.902,299.378,398.902,298.711,398.902,298.045z";
+}
+
+/* Checkbox */
+
+.check-box .box {
+    -fx-background-radius: 0.5rem;
+    -fx-background-color: white;
+}
+
+.check-box::before {
+
+}
+
+.check-box:checked .box {
+    -fx-background-color: lightgreen;
+}
+
+.check-box:checked::before {
+
+}
+
+/* Combo Box */
+
+.combo-box {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+}
+
+.combo-box-base:showing {
+    -fx-background-radius: 10 10 0 0;
+    -fx-background-color: default1;
+}
+
+.combo-box-popup .list-view {
+    -fx-background-radius: 0 0 10 10;
+}
+
+.combo-box-popup .list-view .list-cell {
+    -fx-padding: 1rem;
+    -fx-background-radius: 10;
+}
+
+.combo-box-popup .list-view .placeholder {
+    -fx-max-height: 0;
+    visibility: false;
+}
+
+.combo-box-popup .list-view .list-cell:filled:selected, .combo-box-popup .list-view .list-cell:filled:selected:hover {
+    -fx-background-color: dark1;
+}
+
+.combo-box-popup .list-view .list-cell:filled:hover {
+    -fx-background-color: default1;
+}
+
+/* Buttons */
+
+.button {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+}
+
+.button:hover {
+    -fx-background-color: default1;
+}
+
+/* Progress Indicator */
+
+.progress-indicator {
+    -fx-progress-color: default1;
+    -fx-background-color: dark1;
+}
+
+.progress-indicator .percentage {
+    -fx-fill: white;
 }

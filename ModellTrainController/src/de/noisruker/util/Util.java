@@ -9,6 +9,8 @@ import javafx.scene.image.Image;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import jfxtras.styles.jmetro.JMetro;
+import jfxtras.styles.jmetro.Style;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -16,6 +18,7 @@ import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
+import java.util.ArrayList;
 import java.util.logging.Level;
 
 public class Util {
@@ -53,7 +56,7 @@ public class Util {
 		return null;
 	}
 
-	public static Stage openWindow(String resourceLocation, String title, Stage parent, Theme theme) {
+	public static Stage openWindow(String resourceLocation, String title, Stage parent) {
 		Stage primaryStage = new Stage();
 		Image i;
 
@@ -70,8 +73,12 @@ public class Util {
 			return null;
 		}
 		Scene s = new Scene(root);
-		if (!theme.getLocation().equalsIgnoreCase("remove")) {
-			s.getStylesheets().add(theme.getLocation());
+		if (!Ref.theme.getLocation().equalsIgnoreCase("remove")) {
+			if(Ref.theme.equals(Theme.LIGHT) || Ref.theme.equals(Theme.DARK)) {
+				JMetro m = new JMetro(Ref.theme == Theme.DARK ? Style.DARK : Style.LIGHT);
+				m.setScene(s);
+			} else
+				s.getStylesheets().add(Ref.theme.getLocation());
 		}
 
 		primaryStage.setMinWidth(200);
@@ -90,7 +97,7 @@ public class Util {
 		return primaryStage;
 	}
 
-	public static Stage updateWindow(Stage stage, String resourceLocation, Theme theme) {
+	public static Stage updateWindow(Stage stage, String resourceLocation) {
 		Parent root;
 
 		try {
@@ -101,8 +108,12 @@ public class Util {
 		}
 
 		Scene s = new Scene(root);
-		if (!theme.getLocation().equalsIgnoreCase("remove")) {
-			s.getStylesheets().add(theme.getLocation());
+		if (!Ref.theme.getLocation().equalsIgnoreCase("remove")) {
+			if(Ref.theme.equals(Theme.LIGHT) || Ref.theme.equals(Theme.DARK)) {
+				JMetro m = new JMetro(Ref.theme == Theme.DARK ? Style.DARK : Style.LIGHT);
+				m.setScene(s);
+			} else
+				s.getStylesheets().add(Ref.theme.getLocation());
 		}
 
 		stage.setScene(s);
@@ -110,6 +121,32 @@ public class Util {
 		stage.show();
 		return stage;
 	}
+
+	private static ArrayList<Runnable> runnables = new ArrayList<>();
+	private static boolean isRunning = false;
+
+	public static void runNext(Runnable runnable) {
+		runnables.add(runnable);
+		if(!isRunning)
+			threadRunner();
+	}
+
+	private static void threadRunner() {
+		if(isRunning)
+			return;
+
+		new Thread(() -> {
+			isRunning = true;
+			while (!runnables.isEmpty()) {
+				Runnable r = runnables.remove(0);
+				r.run();
+			}
+			isRunning = false;
+		}).start();
+
+	}
+
+
 
 	public static void onClose(ActionEvent e) {
 		closeConfig();

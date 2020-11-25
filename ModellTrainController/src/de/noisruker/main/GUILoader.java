@@ -5,6 +5,7 @@ import de.noisruker.gui.GuiLoading;
 import de.noisruker.gui.GuiStart;
 import de.noisruker.util.Config;
 import de.noisruker.util.Ref;
+import de.noisruker.util.Theme;
 import de.noisruker.util.Util;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -13,6 +14,8 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import jfxtras.styles.jmetro.JMetro;
+import jfxtras.styles.jmetro.Style;
 
 import java.io.File;
 import java.io.InputStreamReader;
@@ -36,6 +39,13 @@ public class GUILoader extends Application {
         Ref.language = language;
 
         Scene s = new Scene(root);
+
+        if (!Ref.theme.getLocation().equalsIgnoreCase("remove")) {
+            if(Ref.theme.equals(Theme.LIGHT) || Ref.theme.equals(Theme.DARK)) {
+                JMetro m = new JMetro(s, Ref.theme == Theme.DARK ? Style.DARK : Style.LIGHT);
+            } else
+                s.getStylesheets().add(Ref.theme.getLocation());
+        }
         stage.setTitle(Ref.PROJECT_NAME);
         stage.setScene(s);
         stage.centerOnScreen();

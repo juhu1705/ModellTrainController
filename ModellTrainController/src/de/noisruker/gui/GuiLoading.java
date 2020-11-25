@@ -43,12 +43,12 @@ public class GuiLoading implements Initializable {
                 Progress.getInstance().setProgressDescription("Checking for Updates");
                 Progress.getInstance().setProgress(0);
 
-                Thread.sleep(1000);
+
 
                 Progress.getInstance().setProgressDescription("Connect to Server");
                 Progress.getInstance().setProgress(0.25);
 
-                Thread.sleep(1000);
+
 
                 Progress.getInstance().setProgressDescription("Searching for updates");
                 Progress.getInstance().setProgress(0.5);
@@ -58,7 +58,7 @@ public class GuiLoading implements Initializable {
                 Progress.getInstance().setProgressDescription("Waiting");
                 Progress.getInstance().setProgress(0.75);
 
-                Thread.sleep(1000);
+
 
                 Progress.getInstance().setProgressDescription("Finished");
                 Progress.getInstance().setProgress(1);
@@ -70,7 +70,7 @@ public class GuiLoading implements Initializable {
             Ref.LOGGER.info("Finished");
             Platform.runLater(() -> {
                 Ref.LOGGER.info("Starting Init Page");
-                Util.updateWindow(GUILoader.getPrimaryStage(), "/assets/layouts/init_settings.fxml", Theme.LIGHT);
+                Util.updateWindow(GUILoader.getPrimaryStage(), "/assets/layouts/init_settings.fxml");
             });
         }).start();
     }
@@ -101,7 +101,7 @@ public class GuiLoading implements Initializable {
                     return;
                 }
                 try {
-                    Thread.sleep(10000);
+                    Thread.sleep(100);
                 } catch (InterruptedException ignored) { }
                 Progress.getInstance().setProgress(((double) i + 1) / 5);
             }
@@ -136,8 +136,8 @@ public class GuiLoading implements Initializable {
             Progress.getInstance().setProgressDescription("Finished");
 
             Platform.runLater(() -> {
-                Util.updateWindow(GUILoader.getPrimaryStage(), "/assets/layouts/trains.fxml", Theme.LIGHT);
-                Util.openWindow("/assets/layouts/add_train.fxml", "Add Train", GUILoader.getPrimaryStage(), Theme.LIGHT);
+                Util.updateWindow(GUILoader.getPrimaryStage(), "/assets/layouts/trains.fxml");
+                Util.openWindow("/assets/layouts/add_train.fxml", "Add Train", GUILoader.getPrimaryStage());
             });
         }).start();
     }
