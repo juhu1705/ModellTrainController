@@ -3,7 +3,7 @@ package de.noisruker.railroad;
 import de.noisruker.loconet.messages.SensorMessage;
 import de.noisruker.loconet.messages.SwitchMessage;
 import de.noisruker.loconet.LocoNet;
-import de.noisruker.loconet.LocoNetMessageReciever;
+import de.noisruker.loconet.LocoNetMessageReceiver;
 import de.noisruker.util.Ref;
 
 import java.io.IOException;
@@ -204,7 +204,7 @@ public class Railroad {
 
 
     public void init() {
-        LocoNetMessageReciever.getInstance().registerListener(l -> {
+        LocoNetMessageReceiver.getInstance().registerListener(l -> {
 
             if (l instanceof SensorMessage) {
                 SensorMessage s = (SensorMessage) l;

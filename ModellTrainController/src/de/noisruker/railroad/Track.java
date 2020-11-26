@@ -5,19 +5,20 @@ import java.util.LinkedList;
 
 public class Track {
 
-	private Sensor sensor;
+	private final Sensor sensor;
 
-	private String name;
+	private final String name;
 
-	private Track actualNext = null, actualPrevious = null;
+	private final Track actualNext = null;
+    private final Track actualPrevious = null;
 
-	private ArrayList<SwitchWay> switchWays = new ArrayList<>();
+	private final ArrayList<SwitchWay> switchWays = new ArrayList<>();
 
-	private ArrayList<Switch> switches = new ArrayList<>();
+	private final ArrayList<Switch> switches = new ArrayList<>();
 
 	private Train train = null;
 
-	private LinkedList<Train> trainsWaiting = new LinkedList<>();
+	private final LinkedList<Train> trainsWaiting = new LinkedList<>();
 
 	public Track(String name, Sensor sensor, Switch... switchs) {
 		this.sensor = sensor;

@@ -12,10 +12,10 @@ public class LocoNetConnection {
 	/**
 	 * Der serielle Port, über den die Modellbahn angesprochen wird.
 	 */
-	private SerialPort connectionPort;
+	private final SerialPort connectionPort;
 	private boolean isOpen = false;
 
-	private LinkedList<byte[]> recievedMessages = new LinkedList<byte[]>();
+	private final LinkedList<byte[]> receivedMessages = new LinkedList<byte[]>();
 
 	public LocoNetConnection(String port) {
 		this.connectionPort = new SerialPort(port);
@@ -32,7 +32,7 @@ public class LocoNetConnection {
 		if (!this.isOpen)
 			throw new PortNotOpenException();
 
-		return this.recievedMessages.poll();
+		return this.receivedMessages.poll();
 	}
 
 	public void open() throws SerialPortException {
@@ -66,7 +66,7 @@ public class LocoNetConnection {
 
 					bytes = newBytes;
 
-					this.recievedMessages.add(bytes.clone());
+					this.receivedMessages.add(bytes.clone());
 
 					bytes = new byte[0];
 				} else {

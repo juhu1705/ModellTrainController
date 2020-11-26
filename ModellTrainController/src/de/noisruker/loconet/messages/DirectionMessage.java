@@ -12,9 +12,9 @@ import jssc.SerialPortException;
 
 public class DirectionMessage implements AbstractMessage, Serializable {
 
-	private boolean foreward;
+	private final boolean foreward;
 	private byte funktion;
-	private byte slot;
+	private final byte slot;
 
 	public DirectionMessage(byte slot, boolean foreward) {
 		this.slot = slot;
@@ -23,7 +23,7 @@ public class DirectionMessage implements AbstractMessage, Serializable {
 
 	public DirectionMessage(byte slot, byte funktion) {
 		this.slot = slot;
-		this.foreward = (funktion == 0 ? true : false);
+		this.foreward = (funktion == 0);
 		this.funktion = funktion;
 	}
 

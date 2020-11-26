@@ -12,7 +12,8 @@ import jssc.SerialPortException;
 
 public class SpeedMessage implements AbstractMessage, Serializable {
 
-	private byte speed, slot;
+	private final byte speed;
+    private final byte slot;
 
 	public SpeedMessage(byte slot, byte speed) {
 		this.speed = speed;

@@ -10,9 +10,9 @@ import jssc.SerialPortException;
 
 public class LocoNetMessage {
 
-	private MessageType messageType;
+	private final MessageType messageType;
 
-	private byte[] values;
+	private final byte[] values;
 
 	public LocoNetMessage(MessageType type, byte... values) {
 		this.messageType = type;
@@ -55,7 +55,7 @@ public class LocoNetMessage {
 		LocoNetMessageSender.getInstance().sendMessage(this.messageType.opCode, values);
 	}
 
-	private static ArrayList<Method> converters = new ArrayList<>();
+	private static final ArrayList<Method> converters = new ArrayList<>();
 
 	public static boolean registerMessageConverter(Method converter) {
 		if (converter == null || converter.getAnnotation(MessageConverter.class) == null)

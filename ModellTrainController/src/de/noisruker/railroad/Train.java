@@ -17,7 +17,8 @@ public class Train implements Serializable {
 	/**
 	 * Die eindeutige Addresse unter der ein Zug eingespeichert ist.
 	 */
-	private byte address, slot;
+	private final byte address;
+	private final byte slot;
 	private byte speed, maxSpeed, normalSpeed, minSpeed, actualSpeed;
 	boolean foreward, standartForeward, stopNext = false;
 

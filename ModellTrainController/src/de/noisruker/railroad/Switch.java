@@ -7,7 +7,7 @@ import jssc.SerialPortException;
 public class Switch {
 
 	private boolean state;
-	private byte address;
+	private final byte address;
 
 	public Switch(byte address) {
 		this.address = address;

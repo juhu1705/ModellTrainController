@@ -8,12 +8,12 @@ import de.noisruker.loconet.messages.LocoNetMessage;
 import de.noisruker.loconet.messages.MessageType;
 import de.noisruker.util.Util;
 
-public class LocoNetMessageReciever {
+public class LocoNetMessageReceiver {
 
 	/**
 	 * Die aktuelle Instanz dieser Klasse.
 	 */
-	private static LocoNetMessageReciever instance;
+	private static LocoNetMessageReceiver instance;
 
 	/**
 	 * Gibt die aktuelle Instanz dieser Klasse zurück
@@ -21,25 +21,24 @@ public class LocoNetMessageReciever {
 	 * @return {@link #instance Die aktive Instanz dieser Klasse}, oder eine neue,
 	 *         wenn keine Instanz vorhanden ist.
 	 */
-	public static LocoNetMessageReciever getInstance() {
-		return LocoNetMessageReciever.instance == null ? LocoNetMessageReciever.instance = new LocoNetMessageReciever()
-				: LocoNetMessageReciever.instance;
+	public static LocoNetMessageReceiver getInstance() {
+		return LocoNetMessageReceiver.instance == null ? LocoNetMessageReceiver.instance = new LocoNetMessageReceiver()
+				: LocoNetMessageReceiver.instance;
 	}
 
 	private LocoNetConnection connection = null;
-	private boolean shouldRunn = true;
+	private boolean shouldRun = true;
 
-	protected LocoNetMessageReciever() {
+	protected LocoNetMessageReceiver() {
 	}
 
 	public void start() {
-		this.shouldRunn = true;
+		this.shouldRun = true;
 		new Thread(() -> {
-			while (shouldRunn) {
+			while (shouldRun) {
 				try {
 					Thread.sleep(10);
-				} catch (InterruptedException e1) {
-				}
+				} catch (InterruptedException ignored) { }
 
 				byte[] message = null;
 
@@ -56,17 +55,12 @@ public class LocoNetMessageReciever {
 
 				byte[] values = new byte[message.length - 2];
 
-				for (int i = 0; i < values.length; i++)
-					values[i] = message[i + 1];
+				if (values.length >= 0) System.arraycopy(message, 1, values, 0, values.length);
 
 				for (LocoNetMessageListener listener : this.listeners)
 					try {
 						listener.progressMessage(new LocoNetMessage(type, values).toMessage());
-					} catch (IllegalAccessException e) {
-						e.printStackTrace();
-					} catch (IllegalArgumentException e) {
-						e.printStackTrace();
-					} catch (InvocationTargetException e) {
+					} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 						e.printStackTrace();
 					}
 
@@ -74,18 +68,18 @@ public class LocoNetMessageReciever {
 		}).start();
 	}
 
-	public LocoNetMessageReciever useConnection(LocoNetConnection connection) {
+	public LocoNetMessageReceiver useConnection(LocoNetConnection connection) {
 		if (connection != null)
 			this.connection = connection;
 		return this;
 	}
 
 	public void removeConnection() {
-		this.shouldRunn = false;
+		this.shouldRun = false;
 		this.connection = null;
 	}
 
-	private ArrayList<LocoNetMessageListener> listeners = new ArrayList<>();
+	private final ArrayList<LocoNetMessageListener> listeners = new ArrayList<>();
 
 	public void registerListener(LocoNetMessageListener listener) {
 		this.listeners.add(listener);

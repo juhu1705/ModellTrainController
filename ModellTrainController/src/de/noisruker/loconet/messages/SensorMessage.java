@@ -5,8 +5,12 @@ import java.io.Serializable;
 
 public class SensorMessage implements Serializable, AbstractMessage {
 
-	private byte state, buffer1, buffer2, sensor, sensorSection;
-	private int address;
+	private final byte state;
+    private final byte buffer1;
+    private final byte buffer2;
+    private final byte sensor;
+    private final byte sensorSection;
+	private final int address;
 
 	/**
 	 * @param address

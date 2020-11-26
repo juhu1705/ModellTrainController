@@ -10,6 +10,6 @@ import java.lang.annotation.Target;
 @Target(METHOD)
 public @interface MessageConverter {
 
-	public MessageType messageType();
+	MessageType messageType();
 
 }

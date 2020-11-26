@@ -52,7 +52,7 @@ public class ConfigManager {
 	/**
 	 * Alle {@link ConfigElement Konfigurations-Elemente}, die registriert wurden.
 	 */
-	private ArrayList<Field> fields = new ArrayList<>();
+	private final ArrayList<Field> fields = new ArrayList<>();
 
 	/**
 	 * Gibt das erste {@code Field} aus {@link #fields der Liste aller
@@ -247,7 +247,7 @@ public class ConfigManager {
 	public void createMenuTree(TreeView<String> tree, VBox configurations) {
 		CheckBoxTreeItem root = new CheckBoxTreeItem(Ref.language.getString("config.location"));
 
-		tree.setCellFactory(CheckBoxTreeCell.<String>forTreeView());
+		tree.setCellFactory(CheckBoxTreeCell.forTreeView());
 
 		root.setExpanded(true);
 
@@ -469,7 +469,7 @@ public class ConfigManager {
 	}
 
 	public interface GetOptions {
-		public ArrayList<String> options();
+		ArrayList<String> options();
 	}
 
 }

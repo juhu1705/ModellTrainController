@@ -86,8 +86,8 @@ public class Main {
 					case "sensors":
 						Ref.LOGGER.info("Sensors:");
 						for (Sensor s : LocoNet.getInstance().getSensors())
-							Ref.LOGGER.info("Address: " + Integer.toString(s.getAddress()) + "; Slot: "
-									+ Boolean.toString(s.getState()));
+							Ref.LOGGER.info("Address: " + s.getAddress() + "; Slot: "
+									+ s.getState());
 						break;
 					case "addTrain":
 						Ref.LOGGER.info("Type Address:");
@@ -103,8 +103,8 @@ public class Main {
 					case "editTrain":
 						Ref.LOGGER.info("Trains:");
 						for (Train t : LocoNet.getInstance().getTrains())
-							Ref.LOGGER.info("Address: " + Byte.toString(t.getAddress()) + "; Slot: "
-									+ Byte.toString(t.getSlot()));
+							Ref.LOGGER.info("Address: " + t.getAddress() + "; Slot: "
+									+ t.getSlot());
 
 						Ref.LOGGER.info("Type address:");
 						byte address = Byte.parseByte(scanner.readLine());
@@ -126,8 +126,8 @@ public class Main {
 					case "speed":
 						Ref.LOGGER.info("Trains:");
 						for (Train t : LocoNet.getInstance().getTrains())
-							Ref.LOGGER.info("Address: " + Byte.toString(t.getAddress()) + "; Slot: "
-									+ Byte.toString(t.getSlot()));
+							Ref.LOGGER.info("Address: " + t.getAddress() + "; Slot: "
+									+ t.getSlot());
 						Ref.LOGGER.info("Type Slot:");
 
 						byte slot = Byte.parseByte(scanner.readLine());
@@ -144,8 +144,8 @@ public class Main {
 					case "direction":
 						Ref.LOGGER.info("Trains:");
 						for (Train t : LocoNet.getInstance().getTrains())
-							Ref.LOGGER.info("Address: " + Byte.toString(t.getAddress()) + "; Slot: "
-									+ Byte.toString(t.getSlot()));
+							Ref.LOGGER.info("Address: " + t.getAddress() + "; Slot: "
+									+ t.getSlot());
 						Ref.LOGGER.info("Type Slot:");
 
 						byte train_slot = Byte.parseByte(scanner.readLine());
@@ -208,8 +208,8 @@ public class Main {
 							case 1:
 								Ref.LOGGER.info("Trains:");
 								for (Train t : LocoNet.getInstance().getTrains())
-									Ref.LOGGER.info("Address: " + Byte.toString(t.getAddress()) + "; Slot: "
-											+ Byte.toString(t.getSlot()));
+									Ref.LOGGER.info("Address: " + t.getAddress() + "; Slot: "
+											+ t.getSlot());
 								Ref.LOGGER.info("Type Slot:");
 
 								byte slot1 = Byte.parseByte(scanner.readLine());

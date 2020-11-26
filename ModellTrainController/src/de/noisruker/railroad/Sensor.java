@@ -2,7 +2,7 @@ package de.noisruker.railroad;
 
 public class Sensor {
 
-	private int address;
+	private final int address;
 	private boolean state;
 
 	public Sensor(int address, boolean state) {

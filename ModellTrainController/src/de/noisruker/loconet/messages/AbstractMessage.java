@@ -5,8 +5,8 @@ import java.io.Serializable;
 
 public interface AbstractMessage extends Serializable {
 
-	public LocoNetMessage toLocoNetMessage();
+	LocoNetMessage toLocoNetMessage();
 
-	public void send() throws IOException;
+	void send() throws IOException;
 
 }

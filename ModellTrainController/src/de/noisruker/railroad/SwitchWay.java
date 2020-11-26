@@ -4,9 +4,10 @@ import java.util.HashMap;
 
 public class SwitchWay {
 
-	private Track a, b;
+	private final Track a;
+	private final Track b;
 
-	private HashMap<Switch, Boolean> states = new HashMap<>();
+	private final HashMap<Switch, Boolean> states = new HashMap<>();
 
 	public SwitchWay(Track a, Track b) {
 		this.a = a;

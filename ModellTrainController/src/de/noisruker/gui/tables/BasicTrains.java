@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 public class BasicTrains {
 
-    private static BasicTrains instance = null;
+    private static final BasicTrains instance = null;
 
     public static BasicTrains getInstance() {
         return instance == null ? new BasicTrains() : instance;

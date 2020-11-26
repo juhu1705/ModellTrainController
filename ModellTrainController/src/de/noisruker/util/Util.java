@@ -122,7 +122,7 @@ public class Util {
 		return stage;
 	}
 
-	private static ArrayList<Runnable> runnables = new ArrayList<>();
+	private static final ArrayList<Runnable> runnables = new ArrayList<>();
 	private static boolean isRunning = false;
 
 	public static void runNext(Runnable runnable) {

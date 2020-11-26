@@ -14,8 +14,11 @@ import de.noisruker.util.Util;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 import jssc.SerialPortException;
 
 import java.io.IOException;
@@ -24,17 +27,28 @@ import java.util.ResourceBundle;
 
 public class GuiLoading implements Initializable {
 
+    public static AnchorPane s_window = null;
+
+    public static AnchorPane getWindow() {
+        return s_window;
+    }
+
     @FXML
     public ProgressIndicator progress;
 
     @FXML
     public Label text;
 
+    @FXML
+    public AnchorPane window;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         progress.progressProperty().bind(Progress.getInstance().progressProperty());
 
         Progress.getInstance().bindLabel(text);
+
+        s_window = window;
     }
 
     public static void checkForUpdates() throws InterruptedException {
@@ -83,6 +97,7 @@ public class GuiLoading implements Initializable {
                 LocoNet.getInstance().start(Config.port);
             } catch (SerialPortException e) {
                 Progress.getInstance().setProgressDescription("LocoNet connection failed! Restart and try again!");
+                addBackButton();
                 return;
             }
             try {
@@ -98,6 +113,7 @@ public class GuiLoading implements Initializable {
                     new SwitchMessage((byte) i, true).send();
                 } catch (IOException e) {
                     Progress.getInstance().setProgressDescription("LocoNet connection closed! Restart and try again!");
+                    addBackButton();
                     return;
                 }
                 try {
@@ -119,6 +135,7 @@ public class GuiLoading implements Initializable {
                         new LocoNetMessage(MessageType.OPC_LOCO_ADR, (byte) 0, (byte) i).send();
                     } catch (SerialPortException | LocoNetConnection.PortNotOpenException e) {
                         Progress.getInstance().setProgressDescription("LocoNet connection closed! Restart and try again!");
+                        addBackButton();
                         return;
                     }
                     try {
@@ -140,5 +157,20 @@ public class GuiLoading implements Initializable {
                 Util.openWindow("/assets/layouts/add_train.fxml", "Add Train", GUILoader.getPrimaryStage());
             });
         }).start();
+    }
+
+    public static void addBackButton() {
+        Platform.runLater(() -> {
+            Button button = new Button();
+            button.setText(Ref.language.getString("button.back"));
+            button.setOnAction(action -> {
+                Util.updateWindow(GUILoader.getPrimaryStage(), "/assets/layouts/init_settings.fxml");
+            });
+
+            button.setLayoutX(15);
+            button.setLayoutY(360);
+
+            GuiLoading.getWindow().getChildren().add(button);
+        });
     }
 }

@@ -12,8 +12,8 @@ import jssc.SerialPortException;
 
 public class SwitchMessage implements AbstractMessage, Serializable {
 
-	private byte address;
-	private boolean on;
+	private final byte address;
+	private final boolean on;
 
 	public SwitchMessage(byte address, boolean state) {
 		this.address = address;

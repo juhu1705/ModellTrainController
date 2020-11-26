@@ -40,6 +40,8 @@ public class GUILoader extends Application {
 
         Scene s = new Scene(root);
 
+        Ref.theme = Theme.NORMAL;
+
         if (!Ref.theme.getLocation().equalsIgnoreCase("remove")) {
             if(Ref.theme.equals(Theme.LIGHT) || Ref.theme.equals(Theme.DARK)) {
                 JMetro m = new JMetro(s, Ref.theme == Theme.DARK ? Style.DARK : Style.LIGHT);

@@ -4,7 +4,9 @@ import java.io.Serializable;
 
 public class ChatMessage implements Serializable {
 
-	private String message, senderName, senderLevel;
+	private final String message;
+    private String senderName;
+    private String senderLevel;
 
 	public ChatMessage(String message) {
 		this.message = message;

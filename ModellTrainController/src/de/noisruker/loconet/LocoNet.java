@@ -23,8 +23,8 @@ public class LocoNet {
 	public static boolean record;
 	public static boolean drive;
 
-	private static ArrayList<Train> trains = new ArrayList<>();
-	private ArrayList<Sensor> sensors = new ArrayList<>();
+	private static final ArrayList<Train> trains = new ArrayList<>();
+	private final ArrayList<Sensor> sensors = new ArrayList<>();
 
 	private boolean stopAutoDrive = false;
 
@@ -44,7 +44,7 @@ public class LocoNet {
 	}
 
 	private void addTrain(Train train) {
-		this.trains.add(train);
+		trains.add(train);
 	}
 
 	public void stopAutoDrive() {
@@ -118,7 +118,7 @@ public class LocoNet {
 	}
 
 	public ArrayList<Train> getTrains() {
-		return this.trains;
+		return trains;
 	}
 
 	public ArrayList<Sensor> getSensors() {
@@ -136,7 +136,7 @@ public class LocoNet {
 	}
 
 	public void stop() throws SerialPortException {
-		LocoNetMessageReciever.getInstance().removeConnection();
+		LocoNetMessageReceiver.getInstance().removeConnection();
 		this.connection.close();
 	}
 
@@ -145,11 +145,11 @@ public class LocoNet {
 		this.connection.open();
 
 		LocoNetMessageSender.getInstance().useConnection(this.connection);
-		LocoNetMessageReciever.getInstance().useConnection(this.connection).start();
+		LocoNetMessageReceiver.getInstance().useConnection(this.connection).start();
 
 		LocoNetMessage.registerStandart();
 
-		LocoNetMessageReciever.getInstance().registerListener(l -> {
+		LocoNetMessageReceiver.getInstance().registerListener(l -> {
 			if (record) {
 				if (l instanceof SensorMessage) {
 					SensorMessage s = (SensorMessage) l;
@@ -175,7 +175,7 @@ public class LocoNet {
 			}
 		});
 
-		LocoNetMessageReciever.getInstance().registerListener(l -> {
+		LocoNetMessageReceiver.getInstance().registerListener(l -> {
 			if (l == null)
 				return;
 
