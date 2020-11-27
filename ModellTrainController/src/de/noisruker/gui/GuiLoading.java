@@ -1,6 +1,7 @@
 package de.noisruker.gui;
 
 import de.noisruker.gui.progress.Progress;
+import de.noisruker.gui.tables.BasicTrains;
 import de.noisruker.loconet.messages.SwitchMessage;
 import de.noisruker.main.GUILoader;
 import de.noisruker.loconet.LocoNet;
@@ -23,6 +24,7 @@ import jssc.SerialPortException;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class GuiLoading implements Initializable {

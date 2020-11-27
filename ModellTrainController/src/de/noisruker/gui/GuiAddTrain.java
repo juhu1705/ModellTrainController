@@ -50,16 +50,16 @@ public class GuiAddTrain implements Initializable {
         });
     }
 
-    public void close(ActionEvent event) {
+    public void onClose(ActionEvent event) {
         ((Stage) ((Button) event.getSource()).getScene().getWindow()).close();
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        BasicTrains.getInstance().writeTable(this.trains);
+        BasicTrains.getInstance().addTable(this.trains);
 
         this.address.setCellValueFactory(t -> new SimpleStringProperty(String.valueOf(t.getValue().getAddress())));
-        this.address.setCellValueFactory(t -> new SimpleStringProperty(String.valueOf(t.getValue().getSlot())));
+        this.slot.setCellValueFactory(t -> new SimpleStringProperty(String.valueOf(t.getValue().getSlot())));
 
         this.newAddress.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 255, 1));
     }

@@ -1,5 +1,6 @@
 package de.noisruker.gui;
 
+import de.noisruker.gui.tables.BasicTrains;
 import de.noisruker.railroad.Train;
 import de.noisruker.loconet.LocoNet;
 import de.noisruker.util.Ref;
@@ -23,6 +24,8 @@ public class GuiTrains implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        BasicTrains.getInstance().addTable(this.trains);
+
         address.setCellValueFactory(train ->
             new SimpleStringProperty(String.valueOf(train.getValue().getAddress())));
 

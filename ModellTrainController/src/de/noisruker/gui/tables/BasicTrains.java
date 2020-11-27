@@ -2,6 +2,8 @@ package de.noisruker.gui.tables;
 
 import de.noisruker.loconet.LocoNet;
 import de.noisruker.railroad.Train;
+import de.noisruker.util.Ref;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -10,26 +12,31 @@ import java.util.ArrayList;
 
 public class BasicTrains {
 
-    private static final BasicTrains instance = null;
+    private static BasicTrains instance = null;
 
     public static BasicTrains getInstance() {
-        return instance == null ? new BasicTrains() : instance;
+        return instance == null ? (instance = new BasicTrains()) : instance;
     }
 
     protected BasicTrains() {}
 
-    public TableView<Train> trains = null;
+    private ArrayList<TableView<Train>> trains = new ArrayList<>();
 
-    public void writeTable(TableView<Train> trains) {
-        this.trains = trains;
+    public void addTable(TableView<Train> trains) {
+        this.trains.add(trains);
     }
 
-    public void setTrains(ArrayList<Train> trains) {
-        if(this.trains != null) {
-            this.trains.getItems().clear();
-            this.trains.setItems(FXCollections.observableArrayList(trains));
-            this.trains.sort();
-        }
+    public void setTrains(final ArrayList<Train> trains) {
+        Platform.runLater(() -> {
+            for(TableView<Train> t: this.trains) {
+                t.getItems().clear();
+                t.setItems(FXCollections.observableArrayList(trains));
+                t.sort();
+            }
+        });
     }
 
+    public void removeTable(TableView<Train> trains) {
+        this.trains.remove(trains);
+    }
 }

@@ -25,6 +25,6 @@
          </items>
       </SplitPane>
       <Label fx:id="messages" prefHeight="17.0" prefWidth="664.0" text="Label" />
-      <Button mnemonicParsing="false" onAction="#close" text="%button.start" />
+      <Button mnemonicParsing="false" onAction="#onClose" text="%button.start" />
    </children>
 </VBox>
