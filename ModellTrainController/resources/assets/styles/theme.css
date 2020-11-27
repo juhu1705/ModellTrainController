@@ -12,6 +12,7 @@
     primary1: #212121;
     secondary1: #757575;
     divider1: #BDBDBD;
+    ACCENT_COLOR: #5dbcd2;
 }
  
 /*Root Color*/
@@ -291,4 +292,185 @@
 
 .progress-indicator .percentage {
     -fx-fill: white;
+}
+
+/* Progress Bar */
+
+.progress-bar {
+    track_background_color: progress_background_color;
+    bar_color: accent_color;
+    dot_color: accent_color;
+}
+
+.progress-bar {
+    -fx-skin: "impl.jfxtras.styles.jmetro.ProgressBarSkin";
+}
+
+.progress-bar > .bar {
+    -fx-background-color: #44bcd8;
+    -fx-background-radius: 0;
+    -fx-background-insets: 0;
+}
+
+.progress-bar > .track {
+    -fx-background-color: track_background_color;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+
+    -fx-pref-height: 4px;
+    -fx-min-height: 4px;
+    -fx-max-height: 4px;
+}
+
+/* Indeterminate */
+.progress-bar:indeterminate > .track {
+    -fx-background-color: transparent;
+}
+
+.progress-bar:indeterminate .dot {
+    -fx-background-radius: 1em;
+    -fx-padding: 0.166667em;
+
+    -fx-background-color: dot_color;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * Progress Indicator                                                          *
+ *                                                                             *
+ ******************************************************************************/
+
+/*
+ * For now most of the CSS in this section is equal to modena.css because the changes introduced by JMetro broke the
+ * styles of Progress Indicator. Also accent color now changes according to the accent color defined by JMetro.
+ */
+
+.progress-indicator {
+    -fx-indeterminate-segment-count: 12;
+    -fx-spin-enabled: true;
+}
+.progress-indicator > .determinate-indicator > .indicator {
+    -fx-background-color: -fx-box-border,
+    radial-gradient(center 50% 50%, radius 50%, -fx-control-inner-background 70%, derive(-fx-control-inner-background, -9%) 100%),
+    -fx-control-inner-background;
+    -fx-background-insets: 0, 1, 5 2 1 2;
+    -fx-padding: 0.166667em; /* 2px */
+}
+.progress-indicator > .determinate-indicator > .progress {
+    -fx-background-color: accent_color;
+    -fx-padding: 0.083333em; /* 1px */
+}
+.progress-indicator > .determinate-indicator > .tick {
+    -fx-background-color: white;
+    -fx-background-insets: 0;
+    -fx-padding: 0.666667em; /* 8 */
+    -fx-shape: "M-0.25,6.083c0.843-0.758,4.583,4.833,5.75,4.833S14.5-1.5,15.917-0.917c1.292,0.532-8.75,17.083-10.5,17.083C3,16.167-1.083,6.833-0.25,6.083z";
+}
+.progress-indicator > .determinate-indicator > .percentage {
+    -fx-fill: text_color;
+    -fx-font-family: "Segoe UI";
+}
+.progress-indicator:indeterminate > .spinner {
+    /** Applying to undo styling from .spinner, reported in RT-37965 */
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+}
+.progress-indicator:indeterminate .segment {
+    -fx-background-color: accent_color;
+}
+.progress-indicator:indeterminate .segment0 {
+    -fx-shape:"M41.98 14.74 a3.5,3.5 0 1,1 0,1 Z";
+}
+.progress-indicator:indeterminate .segment1 {
+    -fx-shape:"M33.75 6.51 a3.5,3.5 0 1,1 0,1 Z";
+}
+.progress-indicator:indeterminate .segment2 {
+    -fx-shape:"M22.49 3.5 a3.5,3.5 0 1,1 0,1 Z";
+}
+.progress-indicator:indeterminate .segment3 {
+    -fx-shape:"M11.24 6.51 a3.5,3.5 0 1,1 0,1 Z";
+}
+.progress-indicator:indeterminate .segment4 {
+    -fx-shape:"M3.01 14.74 a3.5,3.5 0 1,1 0,1 Z";
+}
+.progress-indicator:indeterminate .segment5 {
+    -fx-shape:"M0.0 26.0 a3.5,3.5 0 1,1 0,1 Z";
+}
+.progress-indicator:indeterminate .segment6 {
+    -fx-shape:"M3.01 37.25 a3.5,3.5 0 1,1 0,1 Z";
+}
+.progress-indicator:indeterminate .segment7 {
+    -fx-shape:"M11.25 45.48 a3.5,3.5 0 1,1 0,1 Z";
+}
+.progress-indicator:indeterminate .segment8 {
+    -fx-shape:"M22.5 48.5 a3.5,3.5 0 1,1 0,1 Z";
+}
+.progress-indicator:indeterminate .segment9 {
+    -fx-shape:"M33.75 45.48 a3.5,3.5 0 1,1 0,1 Z";
+}
+.progress-indicator:indeterminate .segment10 {
+    -fx-shape:"M41.98 37.25 a3.5,3.5 0 1,1 0,1 Z";
+}
+.progress-indicator:indeterminate .segment11 {
+    -fx-shape:"M45.0 26.0 a3.5,3.5 0 1,1 0,1 Z";
+}
+
+/* Split Pane */
+
+.split-pane {
+    -fx-background-color: transparent;
+}
+
+.split-pane-divider {
+    -fx-background-color: transparent;
+}
+
+/* Text Field / Areas */
+
+*.text-area {
+    -fx-text-fill: primary1;
+    -fx-highlight-text-fill: white;
+    -fx-highlight-fill: dark1;
+    -fx-focus-color: transparent;
+    -fx-background-radius: 10;
+}
+
+*.text-field {
+    -fx-text-fill: primary1;
+    -fx-highlight-text-fill: white;
+    -fx-highlight-fill: dark1;
+    -fx-focus-color: transparent;
+    -fx-background-radius: 10;
+}
+
+/* Spinner */
+
+.spinner {
+   -fx-background-radius: 10 10 10 10;
+}
+
+.spinner .text-field {
+    -fx-text-fill: primary1;
+    -fx-highlight-text-fill: white;
+    -fx-highlight-fill: dark1;
+    -fx-focus-color: transparent;
+    -fx-background-radius: 10 0 0 10;
+}
+
+.spinner .increment-arrow-button {
+    -fx-background-radius: 0 10 0 0;
+}
+
+.spinner .decrement-arrow-button {
+    -fx-background-radius: 0 0 10 0;
+}
+
+.spinner .increment-arrow-button,
+.spinner .decrement-arrow-button {
+}
+
+.spinner .increment-arrow-button:hover,
+.spinner .decrement-arrow-button:hover {
+    -fx-background-color: default1;
 }

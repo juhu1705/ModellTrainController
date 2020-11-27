@@ -15,7 +15,7 @@ public class LocoNetConnection {
 	private final SerialPort connectionPort;
 	private boolean isOpen = false;
 
-	private final LinkedList<byte[]> receivedMessages = new LinkedList<byte[]>();
+	private final LinkedList<byte[]> receivedMessages = new LinkedList<>();
 
 	public LocoNetConnection(String port) {
 		this.connectionPort = new SerialPort(port);
@@ -60,8 +60,7 @@ public class LocoNetConnection {
 				if (Util.getCheckSum(bytes) == nextByte) {
 					byte[] newBytes = new byte[bytes.length + 1];
 
-					for (int i = 0; i < bytes.length; i++)
-						newBytes[i] = bytes[i];
+					System.arraycopy(bytes, 0, newBytes, 0, bytes.length);
 					newBytes[newBytes.length - 1] = nextByte;
 
 					bytes = newBytes;
@@ -72,8 +71,7 @@ public class LocoNetConnection {
 				} else {
 					byte[] newBytes = new byte[bytes.length + 1];
 
-					for (int i = 0; i < bytes.length; i++)
-						newBytes[i] = bytes[i];
+					System.arraycopy(bytes, 0, newBytes, 0, bytes.length);
 					newBytes[newBytes.length - 1] = nextByte;
 
 					bytes = newBytes;
@@ -95,7 +93,7 @@ public class LocoNetConnection {
 		this.isOpen = false;
 	}
 
-	public class PortNotOpenException extends Throwable {
+	public static class PortNotOpenException extends Throwable {
 
 	}
 
