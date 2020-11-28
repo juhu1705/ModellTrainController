@@ -1,57 +1,133 @@
 package de.noisruker.railroad;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
 
+import de.noisruker.loconet.LocoNetConnection;
+import de.noisruker.loconet.messages.LocoNetMessage;
+import de.noisruker.loconet.messages.MessageType;
 import de.noisruker.loconet.messages.SpeedMessage;
 import de.noisruker.loconet.LocoNet;
+import de.noisruker.loconet.messages.TrainSlotMessage;
 import de.noisruker.util.Ref;
+import jssc.SerialPortException;
 
-public class Train implements Serializable {
+public class Train implements Serializable, Comparable<Train> {
 
 	/**
-	 * Die universelle Serial-Version-UID
+	 * This methods requests the slot of a Train from the LocoNet. Before you use this method make sure you
+	 * {@link LocoNet#start(String) connected your LocoNet}. After this method is called the LocoNet answer with a
+	 * {@link TrainSlotMessage train slot message}. This method will be automatically processed by the LocoNet and the
+	 * new train will be added to the {@link LocoNet#getTrains() list of the trains}.
+	 *
+	 * @param address The address of the train
+	 * @throws SerialPortException If there appears an error while sending the data to the LocoNet
+	 * @throws LocoNetConnection.PortNotOpenException If the port is not open
+	 */
+	public static void addTrain(byte address) throws SerialPortException, LocoNetConnection.PortNotOpenException {
+		if(!LocoNet.getInstance().getTrains().contains(Byte.valueOf(address)))
+			new LocoNetMessage(MessageType.OPC_LOCO_ADR, (byte) 0, address).send();
+	}
+
+	/**
+	 * The universal Serial-Version-UID
 	 */
 	private static final long serialVersionUID = Ref.UNIVERSAL_SERIAL_VERSION_UID;
 
 	/**
-	 * Die eindeutige Addresse unter der ein Zug eingespeichert ist.
+	 * The unique address of a train.
 	 */
 	private final byte address;
-	private final byte slot;
-	private byte speed, maxSpeed, normalSpeed, minSpeed, actualSpeed;
-	boolean foreward, standartForeward, stopNext = false;
-
-	public int lastPosition = -1, actualPosition = -1, destination = -1, startWay = -1, startPos = -1, waiting = 0, useConnection = -1;
 
 	/**
-	 * Generiert einen neuen {@link Train Zug} mit der entsprechenden addresse. Es
-	 * kann nur einen Zug mit einer speuifischen Addresse geben.
+	 * The slot that is given to the train from the LocoNet
+	 */
+	private final byte slot;
+
+	/**
+	 * Speed parameters
+	 */
+	private byte speed, maxSpeed, normalSpeed, minSpeed, actualSpeed;
+
+	/**
+	 * Direction parameters
+	 */
+	protected boolean forward, standardForward;
+
+	/**
+	 * If the train should stop after a complete drive in in the Railroad section
+	 */
+	protected boolean stopNext = false;
+
+	/**
+	 * Parameters for the auto drive progress
+	 */
+	protected int lastPosition = -1, actualPosition = -1, destination = -1, startWay = -1, startPos = -1, waiting = 0, useConnection = -1;
+
+	/**
+	 * The way to the next stop of this train
+	 */
+	public HashMap<Railroad.Section, Integer> way = null;
+
+	/**
+	 * Adds a train with the given slot and address. This Method is only called by {@link LocoNet the LocoNet instance}
+	 * after receiving a {@link TrainSlotMessage Train slot message} from the LocoNet. If you want to add a train please
+	 * use {@link Train#addTrain(byte) Train.addTrain(byte address)}. Then wait until the train is listed in
+	 * {@link LocoNet#getTrains() LocoNet's trains list}.
 	 *
-	 * @param address Adresse des Zuges
+	 * @param address The address of the train
+	 * @param slot The given slot from the LocoNet to address this train.
+	 *
+	 * @implNote A Train was initialized with the followed parameters:
+	 * <ul>
+	 * <li>{@link Train#speed The trains speed is 0}</li>
+	 * <li>{@link Train#maxSpeed The trains maximal speed is 124}</li>
+	 * <li>{@link Train#normalSpeed The trains normal speed is 90}</li>
+	 * <li>{@link Train#minSpeed The trains minimal speed is 35}</li>
+	 * <li>{@link Train#standardForward The trains direction is set to true.} Means the train drives forward.
+	 * Some trains drives normally "backwards" so you can set this to false to tell the program that the forward direction of your train is reversed.</li>
+	 * </ul>
 	 */
 	public Train(byte address, byte slot) {
 		this(address, slot, (byte) 0);
 	}
 
-	public Train(byte address, byte slot, byte speed) {
+	private Train(byte address, byte slot, byte speed) {
 		this(address, slot, speed, (byte) 124, (byte) 90, (byte) 35, true);
 	}
 
-	public Train(byte address, byte slot, byte speed, byte maxSpeed, byte normalSpeed, byte minSpeed,
-			boolean standartForeward) {
+	private Train(byte address, byte slot, byte speed, byte maxSpeed, byte normalSpeed, byte minSpeed,
+			boolean standardForward) {
+		if(LocoNet.getInstance().getTrains().contains(address))
+			throw new UnsupportedOperationException("You cannot add an existing Train.");
+
 		this.slot = slot;
 		this.address = address;
 		this.setMaxSpeed(maxSpeed);
 		this.setNormalSpeed(normalSpeed);
 		this.setMinSpeed(minSpeed);
-		this.setStandartForeward(standartForeward);
+		this.setStandardForward(standardForward);
 		this.setSpeed(speed);
 		this.setActualSpeed(speed);
 	}
 
-	public void setForeward(boolean foreward) {
-		this.foreward = foreward;
+	/* Setter Methods */
+
+	/**
+	 * Sets the standard parameters of a train
+	 *
+	 * @param maxSpeed The fastest speed this train could drive with
+	 * @param normalSpeed The normal speed the train would drive with
+	 * @param minSpeed The slowest speed of the train. Used to stop the train slowly
+	 * @param standardForward The forward direction of the train. Normally this is true as forward direction.
+	 *                        But some trains have a reversed direction system.
+	 */
+	public void setParameters(byte maxSpeed, byte normalSpeed, byte minSpeed, boolean standardForward) {
+		this.setMaxSpeed(maxSpeed);
+		this.setNormalSpeed(normalSpeed);
+		this.setMinSpeed(minSpeed);
+		this.setStandardForward(standardForward);
 	}
 
 	private boolean setSpeed(byte speed) {
@@ -59,58 +135,6 @@ public class Train implements Serializable {
 			return false;
 		this.speed = speed;
 		return true;
-	}
-
-	public void setNormalSpeed() {
-		this.setActualSpeed(this.normalSpeed);
-	}
-
-	public void setMaxSpeed() {
-		this.setActualSpeed(this.maxSpeed);
-	}
-
-	public void setBreakSpeed() {
-		this.setActualSpeed(this.minSpeed);
-	}
-
-	public void stop() {
-		this.setActualSpeed((byte) 0);
-	}
-
-	public boolean isStandartForeward() {
-		return standartForeward;
-	}
-
-	public void setStandartForeward(boolean standartForeward) {
-		this.standartForeward = standartForeward;
-	}
-
-	public byte getBreakSpeed() {
-		return minSpeed;
-	}
-
-	public void setMinSpeed(byte brakeSpeed) {
-		this.minSpeed = brakeSpeed;
-	}
-
-	public byte getNormalSpeed() {
-		return normalSpeed;
-	}
-
-	public void setNormalSpeed(byte normalSpeed) {
-		this.normalSpeed = normalSpeed;
-	}
-
-	public byte getMaxSpeed() {
-		return maxSpeed;
-	}
-
-	public void setMaxSpeed(byte maxSpeed) {
-		this.maxSpeed = maxSpeed;
-	}
-
-	public byte getActualSpeed() {
-		return actualSpeed;
 	}
 
 	public void setActualSpeed(byte actualSpeed) {
@@ -123,6 +147,67 @@ public class Train implements Serializable {
 		}
 	}
 
+	public void setNormalSpeed(byte normalSpeed) {
+		this.normalSpeed = normalSpeed;
+	}
+
+	public void setMinSpeed(byte brakeSpeed) {
+		this.minSpeed = brakeSpeed;
+	}
+
+	public void setMaxSpeed(byte maxSpeed) {
+		this.maxSpeed = maxSpeed;
+	}
+
+	/**
+	 * Sets this trains position to a sensor
+	 * @param position The sensors address
+	 */
+	public void setPosition(int position) {
+		this.actualPosition = position;
+		LocoNet.getRailroad().getNodeByAddress(position).reservated = this;
+	}
+
+	/**
+	 * Sets this trains last position to a sensor
+	 * @param lposition The sensors address
+	 */
+	public void setLastPosition(int lposition) {
+		this.lastPosition = lposition;
+	}
+
+	public void setStandardForward(boolean standardForward) {
+		this.standardForward = standardForward;
+	}
+
+	public void setForward(boolean forward) {
+		this.forward = forward;
+	}
+
+	/* Boolean returns */
+
+	public boolean isStandardForward() {
+		return standardForward;
+	}
+
+	/* Getter Methods */
+
+	public byte getBreakSpeed() {
+		return minSpeed;
+	}
+
+	public byte getNormalSpeed() {
+		return normalSpeed;
+	}
+
+	public byte getMaxSpeed() {
+		return maxSpeed;
+	}
+
+	public byte getActualSpeed() {
+		return actualSpeed;
+	}
+
 	public byte getAddress() {
 		return this.address;
 	}
@@ -130,6 +215,55 @@ public class Train implements Serializable {
 	public byte getSlot() {
 		return this.slot;
 	}
+
+	public int getActualPosition() {
+		return this.actualPosition;
+	}
+
+	public int getLastPosition() {
+		return this.lastPosition;
+	}
+
+	/* Simple speed controls */
+
+	/**
+	 * Set the speed of the train to his normal speed.
+	 */
+	public void applyNormalSpeed() {
+		this.setActualSpeed(this.normalSpeed);
+	}
+
+	/**
+	 * Set the speed of the train to his maximal speed.
+	 */
+	public void applyMaxSpeed() {
+		this.setActualSpeed(this.maxSpeed);
+	}
+
+	/**
+	 * Set the speed of the train to his minimal speed.
+	 */
+	public void applyBreakSpeed() {
+		this.setActualSpeed(this.minSpeed);
+	}
+
+	/**
+	 * Stops the train. (Sets his speed to 0)
+	 *
+	 * @implNote The train will stop slowly, not immediately
+	 */
+	public void stopTrain() {
+		this.setActualSpeed((byte) 0);
+	}
+
+	/**
+	 * Stops the train at the position where he actually is.
+	 */
+	public void stopTrainImmediately() {
+		this.setActualSpeed((byte) -1);
+	}
+
+	/* Methods for the automatic driving process */
 
 	public void trainEnter(int nodeAddress) {
 		Ref.LOGGER.info("Train: " + this.getAddress());
@@ -164,7 +298,7 @@ public class Train implements Serializable {
 					node.nodeConnections.get(way.get(node)).activate();
 
 				if (nodeAddress == destination) {
-					this.setBreakSpeed();
+					this.applyBreakSpeed();
 
 					this.stopNext = true;
 
@@ -172,7 +306,7 @@ public class Train implements Serializable {
 						this.useConnection = way.get(node);
 
 					if(LocoNet.getRailroad().getNodeByAddress(this.lastPosition).left) {
-						this.stop();
+						this.stopTrain();
 						this.stopNext = false;
 						way = null;
 						destination = -1;
@@ -192,7 +326,7 @@ public class Train implements Serializable {
 
 	public void trainLeft(int nodeAddress) {
 		if(this.stopNext && nodeAddress == this.lastPosition) {
-			this.stop();
+			this.stopTrain();
 			this.stopNext = false;
 			way = null;
 			destination = -1;
@@ -235,7 +369,7 @@ public class Train implements Serializable {
 					toReserve.reservated = this;
 
 				if(toReserve.reservated == this) {
-					this.setMaxSpeed();
+					this.applyMaxSpeed();
 					this.stopNext = false;
 				}
 			}
@@ -262,7 +396,7 @@ public class Train implements Serializable {
 				Ref.LOGGER.info("Start Auto Driving: ");
 				Ref.LOGGER.info("Train " + this.getAddress() + " drive from " + this.actualPosition + " to " + (newPosition));
 
-				this.setNormalSpeed();
+				this.applyNormalSpeed();
 			}
 		}
 
@@ -275,7 +409,7 @@ public class Train implements Serializable {
 			waiting = 0;
 	}
 
-	public HashMap<Railroad.Section, Integer> way = null;
+
 
 
 
@@ -288,8 +422,8 @@ public class Train implements Serializable {
 		Railroad.Section node = r.getNodeByAddress(actualPosition);
 
 		if(node.reservated != this && node.reservated != null) {
-			this.stop();
-			node.reservated.stop();
+			this.stopTrain();
+			node.reservated.stopTrain();
 
 			this.way = null;
 			this.destination = -1;
@@ -305,7 +439,7 @@ public class Train implements Serializable {
 
 			if(next.reservated != this && next.reservated != null) {
 				this.stopNext = true;
-				this.setBreakSpeed();
+				this.applyBreakSpeed();
 
 				this.way = null;
 				this.destination = -1;
@@ -320,7 +454,7 @@ public class Train implements Serializable {
 
 				if((conflict = toReserve.reservate(this)) != this) {
 					this.stopNext = true;
-					this.setBreakSpeed();
+					this.applyBreakSpeed();
 					this.way = null;
 					this.destination = -1;
 				}
@@ -328,14 +462,13 @@ public class Train implements Serializable {
 		}
 	}
 
-	public void setPosition(int position) {
-		this.actualPosition = position;
-		LocoNet.getRailroad().getNodeByAddress(position).reservated = this;
-	}
 
-	public void setLastPosition(int lposition) {
-		this.lastPosition = lposition;
-	}
+
+
+
+
+
+
 
 	@Override
 	public String toString() {
@@ -343,5 +476,19 @@ public class Train implements Serializable {
 				"address=" + address +
 				", slot=" + slot +
 				'}';
+	}
+
+	@Override
+	public boolean equals(Object train) {
+		if (this == train ||
+				(train != null && train.getClass().equals(Byte.class) && (byte)train == this.address)) return true;
+		if (train == null || getClass() != train.getClass()) return false;
+		return ((Train)train).getAddress() == this.getAddress() &&
+				((Train)train).getSlot() == this.getSlot();
+	}
+
+	@Override
+	public int compareTo(Train train) {
+		return this.getAddress() - train.getAddress();
 	}
 }

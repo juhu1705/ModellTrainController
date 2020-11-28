@@ -405,11 +405,11 @@ public class Railroad {
     }
 
     public void manageConflict(Train conflict1, Train conflict2, Section position) {
-        conflict2.setBreakSpeed();
+        conflict2.applyBreakSpeed();
         conflict2.stopNext = true;
 
         if(conflict2.lastPosition == position.address) {
-            conflict2.setMaxSpeed();
+            conflict2.applyMaxSpeed();
             conflict2.stopNext = false;
             return;
         }
@@ -452,15 +452,15 @@ public class Railroad {
                     conflict2.destination = -1;
                 } else {
                     conflict2.stopNext = false;
-                    conflict2.setMaxSpeed();
+                    conflict2.applyMaxSpeed();
                 }
             } else {
                 conflict2.stopNext = false;
-                conflict2.setMaxSpeed();
+                conflict2.applyMaxSpeed();
             }
         } else {
             conflict2.stopNext = false;
-            conflict2.setMaxSpeed();
+            conflict2.applyMaxSpeed();
         }
     }
 

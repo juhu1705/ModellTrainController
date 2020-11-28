@@ -49,12 +49,11 @@ public class GuiAddTrain implements Initializable {
 
         Util.runNext(() -> {
             try {
-                new LocoNetMessage(MessageType.OPC_LOCO_ADR, (byte) 0, newAddress.getValue().byteValue()).send();
+                Train.addTrain(newAddress.getValue().byteValue());
             } catch (SerialPortException | LocoNetConnection.PortNotOpenException e) {
                 Ref.LOGGER.info("Could not add train, please try again later");
                 Platform.runLater(() -> {
                     messages.setText("Could not add Train, please check your connection and try again!");
-                    progress.setProgress(0.9d);
                 });
             }
         });

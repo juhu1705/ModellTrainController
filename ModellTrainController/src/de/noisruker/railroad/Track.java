@@ -50,7 +50,7 @@ public class Track {
 
 	public void onTrainDriveIn(Train t, Sensor s) {
 		if (this.train != null) {
-			t.stop();
+			t.stopTrain();
 			trainsWaiting.addLast(t);
 		} else
 			train = t;

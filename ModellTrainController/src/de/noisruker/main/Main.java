@@ -287,7 +287,7 @@ public class Main {
 						break;
 					case "trains":
 						for(Train t: LocoNet.getInstance().getTrains()) {
-							LOGGER.info("Train " + t.getAddress() + "[" + t.actualPosition + "|" + t.lastPosition + "]");
+							LOGGER.info("Train " + t.getAddress() + "[" + t.getActualPosition() + "|" + t.getLastPosition() + "]");
 						}
 						break;
 					case "sensor":

@@ -198,7 +198,8 @@ public class LocoNet {
 
 				Ref.LOGGER.info("Write requested Train to slot: " + m.getSlot());
 
-				this.addTrain(new Train(m.getAddress(), m.getSlot()));
+				if(!this.getTrains().contains(m.getAddress()))
+					this.addTrain(new Train(m.getAddress(), m.getSlot()));
 
 				BasicTrains.getInstance().setTrains(this.getTrains());
 			}
