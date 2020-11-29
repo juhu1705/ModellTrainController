@@ -20,7 +20,7 @@ public class GuiTrains implements Initializable {
     public TableView<Train> trains;
 
     @FXML
-    public TableColumn<Train, String> address, slot;
+    public TableColumn<Train, String> address, slot, minSpeed, normalSpeed, maxSpeed;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -31,6 +31,13 @@ public class GuiTrains implements Initializable {
 
         slot.setCellValueFactory(train ->
                 new SimpleStringProperty(String.valueOf(train.getValue().getSlot())));
+
+        minSpeed.setCellValueFactory(train ->
+                new SimpleStringProperty(String.valueOf(train.getValue().getMinSpeed())));
+        normalSpeed.setCellValueFactory(train ->
+                new SimpleStringProperty(String.valueOf(train.getValue().getNormalSpeed())));
+        maxSpeed.setCellValueFactory(train ->
+                new SimpleStringProperty(String.valueOf(train.getValue().getMaxSpeed())));
 
         Ref.LOGGER.info("Trains: " + LocoNet.getInstance().getTrains().toString());
 

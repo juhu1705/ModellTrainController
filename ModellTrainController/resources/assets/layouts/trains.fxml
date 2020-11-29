@@ -5,7 +5,10 @@
 
 <TableView fx:id="trains" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.noisruker.gui.GuiTrains">
   <columns>
-    <TableColumn fx:id="address" prefWidth="129.0" text="Train" />
-    <TableColumn fx:id="slot" prefWidth="470.0" text="Slot" />
+    <TableColumn fx:id="address" prefWidth="83.0" text="Train" />
+    <TableColumn fx:id="slot" minWidth="0.0" prefWidth="141.0" text="Slot" />
+      <TableColumn fx:id="minSpeed" prefWidth="108.0" text="Min Speed" />
+      <TableColumn fx:id="normalSpeed" prefWidth="122.0" text="Normal Speed" />
+      <TableColumn fx:id="maxSpeed" prefWidth="145.0" text="Max Speed" />
   </columns>
 </TableView>

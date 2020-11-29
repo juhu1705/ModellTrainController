@@ -1,5 +1,6 @@
 package de.noisruker.gui;
 
+import de.noisruker.loconet.LocoNet;
 import de.noisruker.railroad.Train;
 import de.noisruker.util.Ref;
 import javafx.beans.value.ObservableValue;
@@ -13,6 +14,7 @@ import javafx.scene.control.Slider;
 import javafx.stage.Stage;
 
 import java.net.URL;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class GuiEditTrain implements Initializable {
@@ -43,7 +45,9 @@ public class GuiEditTrain implements Initializable {
         if(!error.getText().isBlank())
 
         if(GuiEditTrain.train != null) {
-            GuiEditTrain.train.setParameters((byte) this.maxSpeed.getValue(), (byte) this.normalSpeed.getValue(), (byte) this.minSpeed.getValue(), this.standardDirection.isSelected());
+            for(Train t: LocoNet.getInstance().getTrains())
+                if(t.getAddress() == GuiEditTrain.train.getAddress())
+                    t.setParameters((byte) this.maxSpeed.getValue(), (byte) this.normalSpeed.getValue(), (byte) this.minSpeed.getValue(), this.standardDirection.isSelected());
         }
 
         GuiEditTrain.train = null;
@@ -60,15 +64,19 @@ public class GuiEditTrain implements Initializable {
         this.header.setText(Ref.language.getString("label.train") + " " + GuiEditTrain.train.getAddress());
 
         this.minSpeed.valueProperty().addListener((ObservableValue<? extends Number> observableValue, Number oldVal, Number newVal) -> {
-            this.labelMinSpeed.setText(newVal.toString());
+            this.labelMinSpeed.setText(Integer.toString(newVal.intValue()));
+            this.maxSpeed.setMin(newVal.intValue());
+            this.normalSpeed.setMin(newVal.intValue());
         });
 
         this.normalSpeed.valueProperty().addListener((ObservableValue<? extends Number> observableValue, Number oldVal, Number newVal) -> {
-            this.labelNormalSpeed.setText(newVal.toString());
+            this.labelNormalSpeed.setText(Integer.toString(newVal.intValue()));
         });
 
         this.maxSpeed.valueProperty().addListener((ObservableValue<? extends Number> observableValue, Number oldVal, Number newVal) -> {
-            this.labelMaxSpeed.setText(newVal.toString());
+            this.labelMaxSpeed.setText(Integer.toString(newVal.intValue()));
+            this.minSpeed.setMax(newVal.intValue());
+            this.normalSpeed.setMax(newVal.intValue());
         });
 
         this.minSpeed.setValue(GuiEditTrain.train.getMinSpeed());

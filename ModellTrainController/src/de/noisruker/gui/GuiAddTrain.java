@@ -84,6 +84,8 @@ public class GuiAddTrain implements Initializable {
                     } catch (InterruptedException ignore) { }
                 }
             }
+            BasicTrains.getInstance().setTrains(LocoNet.getInstance().getTrains());
+
         });
     }
 
