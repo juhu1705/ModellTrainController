@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="386.0" prefWidth="600.0" style="-fx-padding: 20;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.noisruker.gui.GuiAddTrain">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="386.0" prefWidth="600.0" style="-fx-padding: 20;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.noisruker.gui.GuiAddTrain">
    <children>
       <Label alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="48.0" prefWidth="560.0" text="%label.trains">
          <VBox.margin>
@@ -31,7 +31,7 @@
          </VBox.margin>
          <children>
             <Spinner fx:id="newAddress" editable="true" maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="450.0" HBox.hgrow="ALWAYS" />
-            <Button mnemonicParsing="false" onAction="#onAdd" prefHeight="25.0" prefWidth="100.0" text="%button.add" />
+            <Button defaultButton="true" mnemonicParsing="false" onAction="#onAdd" prefHeight="25.0" prefWidth="100.0" text="%button.add" />
          </children>
       </HBox>
       <Label fx:id="messages" alignment="CENTER" maxWidth="1.7976931348623157E308" style="-fx-pref-width: 100%;" text="%label.waiting_for_input" VBox.vgrow="ALWAYS">
@@ -44,7 +44,7 @@
          </VBox.margin>
          <children>
             <ProgressBar fx:id="progress" prefHeight="18.0" prefWidth="450.0" progress="0.0" />
-            <Button alignment="CENTER" mnemonicParsing="false" onAction="#onClose" prefWidth="100.0" text="%button.start" />
+            <Button alignment="CENTER" mnemonicParsing="false" onAction="#onClose" prefWidth="100.0" text="%button.next" />
          </children>
       </HBox>
    </children>

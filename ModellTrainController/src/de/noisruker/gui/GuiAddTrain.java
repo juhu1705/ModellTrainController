@@ -5,6 +5,7 @@ import de.noisruker.loconet.LocoNet;
 import de.noisruker.loconet.LocoNetConnection;
 import de.noisruker.loconet.messages.LocoNetMessage;
 import de.noisruker.loconet.messages.MessageType;
+import de.noisruker.main.GUILoader;
 import de.noisruker.railroad.Train;
 import de.noisruker.util.Ref;
 import de.noisruker.util.Util;
@@ -18,6 +19,7 @@ import javafx.stage.Stage;
 import jssc.SerialPortException;
 
 import java.net.URL;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class GuiAddTrain implements Initializable {
@@ -66,6 +68,23 @@ public class GuiAddTrain implements Initializable {
 
     public void onClose(ActionEvent event) {
         ((Stage) ((Button) event.getSource()).getScene().getWindow()).close();
+        Util.runNext(() -> {
+            for(Train t: LocoNet.getInstance().getTrains()) {
+                GuiEditTrain.train = t;
+
+                Platform.runLater(() -> Objects.requireNonNull(
+                        Util.openWindow("/assets/layouts/edit_train.fxml",
+                                Ref.language.getString("window.edit_train"),
+                                GUILoader.getPrimaryStage()))
+                        .setResizable(true));
+
+                while (GuiEditTrain.train != null) {
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException ignore) { }
+                }
+            }
+        });
     }
 
     @Override

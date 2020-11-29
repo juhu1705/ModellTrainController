@@ -279,7 +279,7 @@
     -fx-background-radius: 10;
 }
 
-.button:hover {
+.button:hover, .button:focused {
     -fx-background-color: default1;
 }
 
@@ -414,6 +414,79 @@
 }
 .progress-indicator:indeterminate .segment11 {
     -fx-shape:"M45.0 26.0 a3.5,3.5 0 1,1 0,1 Z";
+}
+
+/* Slider */
+
+.slider {
+    -fx-skin: "impl.jfxtras.styles.jmetro.SliderSkin";
+}
+
+.slider {
+    -show-value-on-interaction: true;
+}
+
+.slider {
+    track_hover_color: #999999;
+    thumb_hover_color: #f2f2f2;
+
+    thumb_pressed_color: #767676;
+}
+
+.slider .thumb {
+    -fx-background-color: accent_color;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0.5em; /* 6 */
+
+    -fx-padding: 1em 0.333333em 1em 0.333333em;  /* 12 4 12 4 */
+
+    -fx-effect: null;
+}
+
+.slider:vertical .thumb {
+    -fx-padding: 0.333333em 1em 0.333333em 1em; /* 4 12 4 12 */
+}
+
+.slider .track {
+    -fx-background-color: #c6c6c6;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-padding: 0.083333em; /* 1 */
+
+}
+
+.slider .fill {
+    -fx-background-color: accent_color;
+    -fx-padding: 0.083333em; /* 1 */
+}
+
+/* hover */
+.slider:hover .track{
+    -fx-background-color: track_hover_color;
+}
+
+.slider:hover .thumb{
+    -fx-background-color: thumb_hover_color;
+}
+
+/* pressed */
+.slider .thumb:pressed {
+    -fx-background-color: thumb_pressed_color;
+}
+
+/* disabled */
+.slider:disabled {
+    -fx-opacity: 0.2;
+}
+
+/* Slider popup showing its value */
+.slider-popup .label {
+    -fx-background-color: #f2f2f2;
+    -fx-border-color: #cccccc;
+
+    -fx-text-fill: #111;
+
+    -fx-padding: 0.5em 0.75em 0.5em 0.75em; /* 6 9 6 9 */
 }
 
 /* Split Pane */

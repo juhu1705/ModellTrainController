@@ -1,6 +1,5 @@
 package de.noisruker.railroad;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
 
@@ -130,14 +129,13 @@ public class Train implements Serializable, Comparable<Train> {
 		this.setStandardForward(standardForward);
 	}
 
-	private boolean setSpeed(byte speed) {
+	private void setSpeed(byte speed) {
 		if (speed > this.maxSpeed || speed < 0)
-			return false;
+			return;
 		this.speed = speed;
-		return true;
 	}
 
-	public void setActualSpeed(byte actualSpeed) {
+	private void setActualSpeed(byte actualSpeed) {
 		this.actualSpeed = actualSpeed;
 
 		try {
@@ -186,13 +184,13 @@ public class Train implements Serializable, Comparable<Train> {
 
 	/* Boolean returns */
 
-	public boolean isStandardForward() {
+	public boolean standardForward() {
 		return standardForward;
 	}
 
 	/* Getter Methods */
 
-	public byte getBreakSpeed() {
+	public byte getMinSpeed() {
 		return minSpeed;
 	}
 
