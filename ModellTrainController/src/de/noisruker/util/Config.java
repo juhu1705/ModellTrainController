@@ -3,6 +3,7 @@ package de.noisruker.util;
 import de.noisruker.config.ConfigElement;
 import de.noisruker.config.ConfigManager;
 import javafx.collections.FXCollections;
+import jssc.SerialPortList;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
@@ -10,6 +11,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.logging.Level;
 
 public class Config {
@@ -19,6 +21,9 @@ public class Config {
 
     @ConfigElement(defaultValue = "", type = "choose", description = "port.description", name = "port.text", location = "config", visible = true)
     public static String port;
+
+    @ConfigElement(defaultValue = "", type = "choose", description = "mode.description", name = "mode.text", location = "config", visible = true)
+    public static String mode;
 
     public static void register() {
         try {
@@ -30,12 +35,17 @@ public class Config {
             else
                 ConfigManager.getInstance().load(Ref.HOME_FOLDER + "config.cfg");
 
-            ConfigManager.getInstance().registerOptionParameters("port.text", () -> {
+            ConfigManager.getInstance().registerOptionParameters("port", () -> {
                 ArrayList<String> ports = new ArrayList<>();
-                for (String s : jssc.SerialPortList.getPortNames())
-                    ports.add(s);
+                Collections.addAll(ports, SerialPortList.getPortNames());
+                return ports;
+            });
 
-                ports.add("Connect to Server");
+            ConfigManager.getInstance().registerOptionParameters("mode", () -> {
+                ArrayList<String> ports = new ArrayList<>();
+                Collections.addAll(ports, "Drive Manual",
+                        "Drive With Plan",
+                        "Drive Randomly");
                 return ports;
             });
         } catch (IOException | SAXException e) {

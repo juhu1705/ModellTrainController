@@ -16,7 +16,7 @@ public class LocoNetMessageReceiver {
 	private static LocoNetMessageReceiver instance;
 
 	/**
-	 * Gibt die aktuelle Instanz dieser Klasse zurück
+	 * Gibt die aktuelle Instanz dieser Klasse zurÃ¼ck
 	 * 
 	 * @return {@link #instance Die aktive Instanz dieser Klasse}, oder eine neue,
 	 *         wenn keine Instanz vorhanden ist.

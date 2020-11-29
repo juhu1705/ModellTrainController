@@ -268,14 +268,14 @@ public class ConfigManager {
 				boolean found = false;
 				for (Object ti : actual.getChildren()) {
 					if (((String) ((TreeItem) ti).getValue())
-							.equalsIgnoreCase(Ref.language.getString(s + ".location"))) {
+							.equalsIgnoreCase(Ref.language.getString("config.location." + s))) {
 						actual = (CheckBoxTreeItem) ti;
 						found = true;
 						break;
 					}
 				}
 				if (!found) {
-					TreeItem nti = new CheckBoxTreeItem<String>(Ref.language.getString(s + ".location"));
+					TreeItem nti = new CheckBoxTreeItem<String>(Ref.language.getString("config.location." + s));
 
 					nti.setExpanded(true);
 					actual.getChildren().add(0, nti);
@@ -284,7 +284,7 @@ public class ConfigManager {
 			}
 
 			if (e.type().equals("check")) {
-				CheckBoxTreeItem cb = new CheckBoxTreeItem(Ref.language.getString(e.name()));
+				CheckBoxTreeItem cb = new CheckBoxTreeItem(Ref.language.getString("config." + e.name()));
 //				cb.setTooltip(new Tooltip(References.language.getString(e.description())));
 				cb.addEventHandler(ActionEvent.ANY, r -> {
 					this.onConfigChanged();
@@ -352,16 +352,16 @@ public class ConfigManager {
 					for (String s : e.location().split("\\."))
 						if (!s.isEmpty())
 							fieldlocation = fieldlocation + (fieldlocation == "" ? "" : ".")
-									+ Ref.language.getString(s + ".location");
+									+ Ref.language.getString("config.location." + s);
 
-					if (location.equalsIgnoreCase(fieldlocation + "." + Ref.language.getString(e.name()))) {
-						TextArea ta = new TextArea(Ref.language.getString(e.description()));
+					if (location.equalsIgnoreCase(fieldlocation + "." + Ref.language.getString("config." + e.name()))) {
+						TextArea ta = new TextArea(Ref.language.getString("config." + e.description()));
 
 						ta.setEditable(false);
 						ta.setWrapText(true);
 
 						configurations.getChildren()
-								.addAll(new Label(Ref.language.getString("description.text") + ":"), ta);
+								.addAll(new Label(Ref.language.getString("label.description") + ":"), ta);
 					}
 
 					if (!fieldlocation.equalsIgnoreCase(location))
@@ -369,7 +369,7 @@ public class ConfigManager {
 
 					if (e.type().equals("count")) {
 						Spinner cb = new Spinner();
-						cb.setTooltip(new Tooltip(Ref.language.getString(e.description())));
+						cb.setTooltip(new Tooltip(Ref.language.getString("config." + e.description())));
 						cb.setEditable(true);
 						try {
 							if (this.maxCounting.containsKey(e.name()))
@@ -392,14 +392,14 @@ public class ConfigManager {
 							e3.printStackTrace();
 						}
 
-						Label l = new Label((Ref.language.getString(e.name()) + ":"));
+						Label l = new Label((Ref.language.getString("config." + e.name()) + ":"));
 
 						l.autosize();
 						configurations.getChildren().addAll(l, cb);
 					} else if (e.type().equals("text")) {
 
 						TextField cb = new TextField();
-						cb.setTooltip(new Tooltip(Ref.language.getString(e.description())));
+						cb.setTooltip(new Tooltip(Ref.language.getString("config." + e.description())));
 
 						try {
 							cb.setText((String) f.get(null));
@@ -414,7 +414,7 @@ public class ConfigManager {
 								e1.printStackTrace();
 							}
 						});
-						Label l = new Label((Ref.language.getString(e.name()) + ":"));
+						Label l = new Label((Ref.language.getString("config." + e.name()) + ":"));
 
 						l.autosize();
 
@@ -422,7 +422,7 @@ public class ConfigManager {
 					} else if (e.type().equals("choose") && this.options.containsKey(e.name())) {
 
 						ComboBox<String> cb = new ComboBox<String>();
-						cb.setTooltip(new Tooltip(Ref.language.getString(e.description())));
+						cb.setTooltip(new Tooltip(Ref.language.getString("config." + e.description())));
 
 						cb.setItems(FXCollections.observableArrayList(this.options.get(e.name()).options()));
 
@@ -439,7 +439,7 @@ public class ConfigManager {
 								e1.printStackTrace();
 							}
 						});
-						Label l = new Label((Ref.language.getString(e.name()) + ":"));
+						Label l = new Label((Ref.language.getString("config." + e.name()) + ":"));
 
 						l.autosize();
 
@@ -461,7 +461,7 @@ public class ConfigManager {
 	}
 
 	public void registerOptionParameters(String s, GetOptions options) {
-		this.options.put(s, options);
+		this.options.put(s + ".text", options);
 	}
 
 	public void onConfigChanged() {

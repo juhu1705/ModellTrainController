@@ -5,7 +5,7 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
 /**
- * Handler für Logging-API
+ * Handler fÃ¼r Logging-API
  *
  * @author Niklas
  */

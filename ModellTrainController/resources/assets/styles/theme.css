@@ -13,6 +13,7 @@
     secondary1: #757575;
     divider1: #BDBDBD;
     ACCENT_COLOR: #5dbcd2;
+    contentbackground: #50545c;
 }
  
 /*Root Color*/
@@ -222,7 +223,7 @@
 /* Checkbox */
 
 .check-box .box {
-    -fx-background-radius: 0.5rem;
+    -fx-background-radius: 5;
     -fx-background-color: white;
 }
 
@@ -255,7 +256,6 @@
 }
 
 .combo-box-popup .list-view .list-cell {
-    -fx-padding: 1rem;
     -fx-background-radius: 10;
 }
 
@@ -367,7 +367,7 @@
     -fx-shape: "M-0.25,6.083c0.843-0.758,4.583,4.833,5.75,4.833S14.5-1.5,15.917-0.917c1.292,0.532-8.75,17.083-10.5,17.083C3,16.167-1.083,6.833-0.25,6.083z";
 }
 .progress-indicator > .determinate-indicator > .percentage {
-    -fx-fill: text_color;
+    -fx-fill: white;
     -fx-font-family: "Segoe UI";
 }
 .progress-indicator:indeterminate > .spinner {
@@ -546,4 +546,27 @@
 .spinner .increment-arrow-button:hover,
 .spinner .decrement-arrow-button:hover {
     -fx-background-color: default1;
+}
+
+/* Tree View */
+
+*.tree-view {
+    -fx-color:default1;
+
+    -fx-background-color:contentbackground;
+}
+
+*.tree-view .tree-cell {
+    -fx-background-color:contentbackground;
+    -fx-text-fill:white;
+}
+
+*.tree-view .tree-cell:focused {
+    -fx-background-color:divider1;
+    -fx-text-fill:white;
+}
+
+/*VBox */
+*.vbox {
+    -fx-background-color:transparent;
 }

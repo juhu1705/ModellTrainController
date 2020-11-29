@@ -65,7 +65,7 @@ public class GuiEditTrain implements Initializable {
 
         this.minSpeed.valueProperty().addListener((ObservableValue<? extends Number> observableValue, Number oldVal, Number newVal) -> {
             this.labelMinSpeed.setText(Integer.toString(newVal.intValue()));
-            this.maxSpeed.setMin(newVal.intValue());
+            this.maxSpeed.setMin(newVal.intValue() + 1);
             this.normalSpeed.setMin(newVal.intValue());
         });
 
@@ -75,7 +75,7 @@ public class GuiEditTrain implements Initializable {
 
         this.maxSpeed.valueProperty().addListener((ObservableValue<? extends Number> observableValue, Number oldVal, Number newVal) -> {
             this.labelMaxSpeed.setText(Integer.toString(newVal.intValue()));
-            this.minSpeed.setMax(newVal.intValue());
+            this.minSpeed.setMax(newVal.intValue() - 1);
             this.normalSpeed.setMax(newVal.intValue());
         });
 

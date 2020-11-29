@@ -156,7 +156,11 @@ public class GuiLoading implements Initializable {
 
             Platform.runLater(() -> {
                 Util.updateWindow(GUILoader.getPrimaryStage(), "/assets/layouts/trains.fxml");
-                Objects.requireNonNull(Util.openWindow("/assets/layouts/add_train.fxml", Ref.language.getString("window.add_train"), GUILoader.getPrimaryStage())).setResizable(true);
+                Stage s = Util.openWindow("/assets/layouts/add_train.fxml", Ref.language.getString("window.add_train"), GUILoader.getPrimaryStage());
+                if(s == null)
+                    return;
+                s.setResizable(true);
+                s.setOnCloseRequest(e -> GuiAddTrain.actual.close(e));
             });
         }).start();
     }

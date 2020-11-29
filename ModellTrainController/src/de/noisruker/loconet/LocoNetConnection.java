@@ -10,7 +10,7 @@ import jssc.SerialPortException;
 public class LocoNetConnection {
 
 	/**
-	 * Der serielle Port, über den die Modellbahn angesprochen wird.
+	 * Der serielle Port, Ã¼ber den die Modellbahn angesprochen wird.
 	 */
 	private final SerialPort connectionPort;
 	private boolean isOpen = false;

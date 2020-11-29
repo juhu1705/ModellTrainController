@@ -460,19 +460,14 @@ public class Train implements Serializable, Comparable<Train> {
 		}
 	}
 
-
-
-
-
-
-
-
-
 	@Override
 	public String toString() {
 		return "Train{" +
 				"address=" + address +
 				", slot=" + slot +
+				", minSpeed=" + minSpeed +
+				", normalSpeed=" + normalSpeed +
+				", maxSpeed=" + maxSpeed +
 				'}';
 	}
 

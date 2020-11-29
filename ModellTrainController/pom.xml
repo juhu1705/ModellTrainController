@@ -10,6 +10,7 @@
     <properties>
         <javafx.version>16-ea+4</javafx.version>
         <mainclass>de.noisruker.main.GUILoader</mainclass>
+        <encoding>UTF-8</encoding>
     </properties>
 
     <!-- Dependencies -->

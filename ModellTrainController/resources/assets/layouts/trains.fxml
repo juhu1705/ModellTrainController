@@ -7,8 +7,8 @@
   <columns>
     <TableColumn fx:id="address" prefWidth="83.0" text="Train" />
     <TableColumn fx:id="slot" minWidth="0.0" prefWidth="141.0" text="Slot" />
-      <TableColumn fx:id="minSpeed" prefWidth="108.0" text="Min Speed" />
-      <TableColumn fx:id="normalSpeed" prefWidth="122.0" text="Normal Speed" />
-      <TableColumn fx:id="maxSpeed" prefWidth="145.0" text="Max Speed" />
+    <TableColumn fx:id="minSpeed" prefWidth="108.0" text="Min Speed" />
+    <TableColumn fx:id="normalSpeed" prefWidth="122.0" text="Normal Speed" />
+    <TableColumn fx:id="maxSpeed" prefWidth="145.0" text="Max Speed" />
   </columns>
 </TableView>

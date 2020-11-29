@@ -6,7 +6,7 @@ import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 
 /**
- * Formatter für den {@link LoggingHandler}
+ * Formatter fÃ¼r den {@link LoggingHandler}
  *
  * @author Niklas
  */

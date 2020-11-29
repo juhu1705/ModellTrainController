@@ -3,6 +3,7 @@ package de.noisruker.gui;
 import de.noisruker.config.ConfigManager;
 import de.noisruker.main.GUILoader;
 import de.noisruker.util.Config;
+import de.noisruker.util.Ref;
 import de.noisruker.util.Theme;
 import de.noisruker.util.Util;
 import javafx.collections.FXCollections;
@@ -39,7 +40,6 @@ public class GuiStart implements Initializable {
             Util.openWindow("/assets/layouts/loading.fxml", "Loading", GUILoader.getPrimaryStage());
         else
             Util.updateWindow(stage, "/assets/layouts/loading.fxml");
-
         GuiLoading.startLocoNet();
     }
 
@@ -50,7 +50,7 @@ public class GuiStart implements Initializable {
         if(!ports.isEmpty()) {
             port.setItems(FXCollections.observableArrayList(ports));
 
-            if (Config.port.equals("") || !ports.contains(Config.port))
+            if (Config.port.isBlank() || !ports.contains(Config.port))
                 port.setValue(ports.get(0));
             else
                 port.setValue(Config.port);

@@ -16,6 +16,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import jssc.SerialPortException;
 
 import java.net.URL;
@@ -23,6 +24,8 @@ import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class GuiAddTrain implements Initializable {
+
+    public static GuiAddTrain actual = null;
 
     @FXML
     public TableView<Train> trains;
@@ -66,8 +69,8 @@ public class GuiAddTrain implements Initializable {
         messages.setText(Ref.language.getString("label.waiting_for_input"));
     }
 
-    public void onClose(ActionEvent event) {
-        ((Stage) ((Button) event.getSource()).getScene().getWindow()).close();
+    public void close(WindowEvent event) {
+        BasicTrains.getInstance().removeTable(this.trains);
         Util.runNext(() -> {
             for(Train t: LocoNet.getInstance().getTrains()) {
                 GuiEditTrain.train = t;
@@ -85,8 +88,11 @@ public class GuiAddTrain implements Initializable {
                 }
             }
             BasicTrains.getInstance().setTrains(LocoNet.getInstance().getTrains());
-
         });
+    }
+
+    public void onClose(ActionEvent event) {
+        ((Stage) ((Button) event.getSource()).getScene().getWindow()).close();
     }
 
     @Override
@@ -97,6 +103,7 @@ public class GuiAddTrain implements Initializable {
         this.slot.setCellValueFactory(t -> new SimpleStringProperty(String.valueOf(t.getValue().getSlot())));
 
         this.newAddress.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 255, 1));
+        actual = this;
     }
 
 }

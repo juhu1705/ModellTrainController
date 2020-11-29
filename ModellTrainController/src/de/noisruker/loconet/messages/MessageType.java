@@ -4,7 +4,7 @@ public enum MessageType {
 
 	// INFO: Befehle die nur aus dem OPCPDE bestehen:
 	/**
-	 * Lässt alle Züge anhalten.
+	 * LÃ¤sst alle ZÃ¼ge anhalten.
 	 */
 	OPC_IDLE((byte) 0x85, (byte) 1),
 	/**
@@ -22,7 +22,7 @@ public enum MessageType {
 
 	// INFO: Befehle die aus dem OPCODE und weiteren eingaben bestehen.
 	/**
-	 * Weißt der mitgegebenen Addresse einen neuen Slot zu.
+	 * WeiÃŸt der mitgegebenen Addresse einen neuen Slot zu.
 	 */
 	OPC_LOCO_ADR((byte) 0xBF, (byte) 3),
 	/**
@@ -36,11 +36,11 @@ public enum MessageType {
 	 */
 	OPC_LOCO_SPD((byte) 0xA0, (byte) 3),
 	/**
-	 * Verändert den Status eines Magnetartikels.
+	 * VerÃ¤ndert den Status eines Magnetartikels.
 	 */
 	OPC_SW_REQ((byte) 0xB0, (byte) 3),
 	/**
-	 * Sensor Rückmeldung
+	 * Sensor RÃ¼ckmeldung
 	 */
 	OPC_INPUT_REP((byte) 0xB2, (byte) 3), OPC_SL_RD_DATA((byte) 0xE7, (byte) 12);
 

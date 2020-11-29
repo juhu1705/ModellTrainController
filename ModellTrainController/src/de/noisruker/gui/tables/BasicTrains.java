@@ -1,11 +1,9 @@
 package de.noisruker.gui.tables;
 
-import de.noisruker.loconet.LocoNet;
 import de.noisruker.railroad.Train;
 import de.noisruker.util.Ref;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
-import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
 import java.util.ArrayList;
@@ -26,11 +24,13 @@ public class BasicTrains {
         this.trains.add(trains);
     }
 
-    public void setTrains(final ArrayList<Train> trains) {
+    public void setTrains(final ArrayList<Train> all_trains) {
         Platform.runLater(() -> {
+            Ref.LOGGER.info(all_trains.toString());
+
             for(TableView<Train> t: this.trains) {
                 t.getItems().clear();
-                t.setItems(FXCollections.observableArrayList(trains));
+                t.setItems(FXCollections.observableArrayList(all_trains));
                 t.sort();
             }
         });
