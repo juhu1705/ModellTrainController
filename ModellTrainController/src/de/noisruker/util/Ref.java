@@ -4,12 +4,15 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.PropertyResourceBundle;
 import java.util.Random;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import jfxtras.styles.jmetro.JMetro;
+import jfxtras.styles.jmetro.Style;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -29,7 +32,10 @@ public class Ref {
 	public static final Logger LOGGER;
 	public static final String VERSION;
 	public static final String PROJECT_NAME;
-	public static Theme theme = Theme.NORMAL;
+	public static final JMetro J_METRO = new JMetro(Style.DARK);
+	public static final ArrayList<JMetro> other_page_themes = new ArrayList<>();
+	public static Theme theme = Theme.DARK;
+	public static final String THEME_IMPROVEMENTS = "/assets/styles/theme.css";
 	public static final String HOME_FOLDER;
 	static {
 		HOME_FOLDER = System.getProperty("user.home") + "/.TrainController/";

@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 
 import javafx.collections.FXCollections;
@@ -286,20 +288,28 @@ public class ConfigManager {
 			if (e.type().equals("check")) {
 				CheckBoxTreeItem cb = new CheckBoxTreeItem(Ref.language.getString("config." + e.name()));
 //				cb.setTooltip(new Tooltip(References.language.getString(e.description())));
-				cb.addEventHandler(ActionEvent.ANY, r -> {
-					this.onConfigChanged();
-				});
 				try {
 					cb.setSelected(f.getBoolean(null));
-				} catch (IllegalArgumentException e2) {
-					e2.printStackTrace();
-				} catch (IllegalAccessException e2) {
+
+				} catch (IllegalArgumentException | IllegalAccessException e2) {
 					e2.printStackTrace();
 				}
+				this.listeners.add(new ChangeEntry(e.name(), () -> {
+					try {
+						if(cb.isSelected() != f.getBoolean(null))
+							cb.setSelected(f.getBoolean(null));
+					} catch (IllegalArgumentException | IllegalAccessException ignored) {
+
+					}
+				}));
+
 
 				cb.selectedProperty().addListener((obs, oldValue, newValue) -> {
 					try {
-						f.setBoolean(null, newValue);
+						if(oldValue != newValue) {
+							f.setBoolean(null, newValue);
+							this.onConfigChanged(e.name());
+						}
 					} catch (IllegalArgumentException | IllegalAccessException e1) {
 						LOGGER.severe("Error while updating config!");
 					}
@@ -371,6 +381,13 @@ public class ConfigManager {
 						Spinner cb = new Spinner();
 						cb.setTooltip(new Tooltip(Ref.language.getString("config." + e.description())));
 						cb.setEditable(true);
+						this.listeners.add(new ChangeEntry(e.name(), () -> {
+							try {
+								cb.getValueFactory().setValue(f.getInt(null));
+							} catch (IllegalArgumentException | IllegalAccessException ignored) {
+
+							}
+						}));
 						try {
 							if (this.maxCounting.containsKey(e.name()))
 								cb.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0,
@@ -380,13 +397,16 @@ public class ConfigManager {
 										Integer.MAX_VALUE, f.getInt(null)));
 							cb.getValueFactory().valueProperty().addListener((o, oldValue, newValue) -> {
 								try {
-									f.set(null, newValue);
+									if(oldValue != newValue) {
+										f.set(null, newValue);
+										this.onConfigChanged(e.name());
+									}
+
 								} catch (IllegalArgumentException e1) {
 									e1.printStackTrace();
 								} catch (IllegalAccessException e1) {
 									e1.printStackTrace();
 								}
-								this.onConfigChanged();
 							});
 						} catch (IllegalArgumentException | IllegalAccessException e3) {
 							e3.printStackTrace();
@@ -406,10 +426,19 @@ public class ConfigManager {
 						} catch (IllegalArgumentException | IllegalAccessException e2) {
 							e2.printStackTrace();
 						}
+
+						this.listeners.add(new ChangeEntry(e.name(), () -> {
+							try {
+								cb.setText((String) f.get(null));
+							} catch (IllegalArgumentException | IllegalAccessException ignored) {
+
+							}
+						}));
+
 						cb.addEventHandler(KeyEvent.KEY_RELEASED, events -> {
 							try {
 								f.set(null, cb.getText());
-								this.onConfigChanged();
+								this.onConfigChanged(e.name());
 							} catch (IllegalArgumentException | IllegalAccessException e1) {
 								e1.printStackTrace();
 							}
@@ -431,10 +460,19 @@ public class ConfigManager {
 						} catch (IllegalArgumentException | IllegalAccessException e2) {
 							e2.printStackTrace();
 						}
+
+						this.listeners.add(new ChangeEntry(e.name(), () -> {
+							try {
+								cb.setValue((String) f.get(null));
+							} catch (IllegalArgumentException | IllegalAccessException ignored) {
+
+							}
+						}));
+
 						cb.addEventHandler(ActionEvent.ANY, events -> {
 							try {
 								f.set(null, cb.getValue());
-								this.onConfigChanged();
+								this.onConfigChanged(e.name());
 							} catch (IllegalArgumentException | IllegalAccessException e1) {
 								e1.printStackTrace();
 							}
@@ -448,8 +486,6 @@ public class ConfigManager {
 
 				}
 			}
-
-			this.onConfigChanged();
 		}));
 	}
 
@@ -464,11 +500,50 @@ public class ConfigManager {
 		this.options.put(s + ".text", options);
 	}
 
-	public void onConfigChanged() {
-
+	public void onConfigChanged(String fieldName) {
+		for(ChangeEntry e: listeners)
+			if(e.getForValue().equals(fieldName))
+				e.getListener().onChange();
 	}
 
-	public interface GetOptions {
+	ArrayList<ChangeEntry> listeners = new ArrayList<>();
+
+    public void registerActionListener(String s, ActionListener listener) {
+		listeners.add(new ChangeEntry(s + ".text", listener));
+    }
+
+    private class ChangeEntry {
+    	private final String s;
+    	private final ActionListener l;
+
+    	public ChangeEntry(String s, ActionListener l) {
+    		this.s = s;
+    		this.l = l;
+		}
+
+		public String getForValue() {
+    		return s;
+		}
+
+		public ActionListener getListener() {
+    		return l;
+		}
+	}
+
+	public void onConfigChangedGeneral() {
+		for (Field f : this.fields) {
+			if (f.getAnnotation(ConfigElement.class) == null)
+				continue;
+			ConfigElement e = f.getAnnotation(ConfigElement.class);
+			this.onConfigChanged(e.name());
+		}
+	}
+
+	public interface ActionListener {
+		void onChange();
+	}
+
+    public interface GetOptions {
 		ArrayList<String> options();
 	}
 

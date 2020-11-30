@@ -1,30 +1,24 @@
 package de.noisruker.gui;
 
 import de.noisruker.gui.progress.Progress;
-import de.noisruker.gui.tables.BasicTrains;
 import de.noisruker.loconet.messages.SwitchMessage;
 import de.noisruker.main.GUILoader;
 import de.noisruker.loconet.LocoNet;
-import de.noisruker.loconet.LocoNetConnection;
-import de.noisruker.loconet.messages.LocoNetMessage;
-import de.noisruker.loconet.messages.MessageType;
 import de.noisruker.util.Config;
 import de.noisruker.util.Ref;
-import de.noisruker.util.Theme;
 import de.noisruker.util.Util;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import jssc.SerialPortException;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class GuiLoading implements Initializable {
@@ -36,7 +30,7 @@ public class GuiLoading implements Initializable {
     }
 
     @FXML
-    public ProgressIndicator progress;
+    public ProgressBar progress;
 
     @FXML
     public Label text;
@@ -100,6 +94,7 @@ public class GuiLoading implements Initializable {
             } catch (SerialPortException e) {
                 Progress.getInstance().setProgressDescription("LocoNet connection failed! Restart and try again!");
                 addBackButton();
+                Platform.runLater(() -> Util.updateWindow(GUILoader.getPrimaryStage(), "/assets/layouts/main.fxml").setResizable(true));
                 return;
             }
             try {
@@ -155,7 +150,7 @@ public class GuiLoading implements Initializable {
             Progress.getInstance().setProgressDescription("Finished");
 
             Platform.runLater(() -> {
-                Util.updateWindow(GUILoader.getPrimaryStage(), "/assets/layouts/trains.fxml");
+                Util.updateWindow(GUILoader.getPrimaryStage(), "/assets/layouts/main.fxml").setResizable(true);
                 Stage s = Util.openWindow("/assets/layouts/add_train.fxml", Ref.language.getString("window.add_train"), GUILoader.getPrimaryStage());
                 if(s == null)
                     return;
@@ -174,7 +169,7 @@ public class GuiLoading implements Initializable {
             });
 
             button.setLayoutX(15);
-            button.setLayoutY(360);
+            button.setLayoutY(250);
 
             GuiLoading.getWindow().getChildren().add(button);
         });

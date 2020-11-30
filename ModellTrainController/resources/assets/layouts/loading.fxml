@@ -1,12 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane fx:id="window" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="background" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.noisruker.gui.GuiLoading">
+<AnchorPane fx:id="window" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="297.0" prefWidth="292.0" styleClass="background" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.noisruker.gui.GuiLoading">
    <children>
-      <ProgressIndicator fx:id="progress" layoutX="199.0" layoutY="66.0" prefHeight="203.0" prefWidth="202.0" progress="0.0" AnchorPane.bottomAnchor="131.0" AnchorPane.leftAnchor="199.0" AnchorPane.rightAnchor="199.0" AnchorPane.topAnchor="66.0" />
-      <Label fx:id="text" alignment="CENTER" layoutX="12.0" layoutY="331.0" prefHeight="17.0" prefWidth="576.0" styleClass="background" AnchorPane.bottomAnchor="52.0" AnchorPane.leftAnchor="12.0" AnchorPane.rightAnchor="12.0" AnchorPane.topAnchor="331.0" />
+      <Label fx:id="text" alignment="CENTER" layoutX="12.0" layoutY="212.0" prefHeight="17.0" prefWidth="576.0" styleClass="background" AnchorPane.bottomAnchor="68.0" AnchorPane.leftAnchor="12.0" AnchorPane.rightAnchor="12.0" />
+      <ProgressBar fx:id="progress" layoutX="57.0" layoutY="291.0" maxWidth="1.7976931348623157E308" prefHeight="18.0" progress="0.0" AnchorPane.bottomAnchor="93.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" />
+      <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="71.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="133.0" AnchorPane.leftAnchor="71.0" AnchorPane.rightAnchor="71.0">
+         <image>
+            <Image url="@../textures/logo/logo.png" />
+         </image>
+      </ImageView>
    </children>
 </AnchorPane>

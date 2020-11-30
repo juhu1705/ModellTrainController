@@ -75,11 +75,13 @@ public class Util {
 		Scene s = new Scene(root);
 		if (!Ref.theme.getLocation().equalsIgnoreCase("remove")) {
 			if(Ref.theme.equals(Theme.LIGHT) || Ref.theme.equals(Theme.DARK)) {
-				JMetro m = new JMetro(Ref.theme == Theme.DARK ? Style.DARK : Style.LIGHT);
-				m.setScene(s);
+				JMetro theme = new JMetro(s, Theme.DARK == Ref.theme ? Style.DARK : Style.LIGHT);
+				Ref.other_page_themes.add(theme);
+				primaryStage.setOnCloseRequest(event -> Ref.other_page_themes.remove(theme));
 			} else
 				s.getStylesheets().add(Ref.theme.getLocation());
 		}
+		s.getStylesheets().add(Ref.THEME_IMPROVEMENTS);
 
 		primaryStage.setMinWidth(200);
 		primaryStage.setMinHeight(158);
@@ -89,6 +91,7 @@ public class Util {
 		if (parent != null)
 			primaryStage.initOwner(parent);
 		primaryStage.initStyle(StageStyle.DECORATED);
+
 
 		primaryStage.getIcons().add(i);
 
@@ -110,12 +113,11 @@ public class Util {
 		Scene s = new Scene(root);
 		if (!Ref.theme.getLocation().equalsIgnoreCase("remove")) {
 			if(Ref.theme.equals(Theme.LIGHT) || Ref.theme.equals(Theme.DARK)) {
-				JMetro m = new JMetro(Ref.theme == Theme.DARK ? Style.DARK : Style.LIGHT);
-				m.setScene(s);
+				Ref.J_METRO.setScene(s);
 			} else
 				s.getStylesheets().add(Ref.theme.getLocation());
 		}
-
+		s.getStylesheets().add(Ref.THEME_IMPROVEMENTS);
 		stage.setScene(s);
 
 		stage.show();
@@ -157,7 +159,7 @@ public class Util {
 	}
 
 	private static void closeConfig() {
-		ConfigManager.getInstance().onConfigChanged();
+		ConfigManager.getInstance().onConfigChangedGeneral();
 
 		Ref.LOGGER.fine("Start saving config");
 

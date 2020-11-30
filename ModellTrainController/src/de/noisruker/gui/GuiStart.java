@@ -34,7 +34,8 @@ public class GuiStart implements Initializable {
     public void start(ActionEvent event) {
         Config.startImmediately = dontShow.isSelected();
         Config.port = port.getValue();
-        ConfigManager.getInstance().onConfigChanged();
+        ConfigManager.getInstance().onConfigChanged("port.text");
+        ConfigManager.getInstance().onConfigChanged("startImmediately.text");
 
         if(stage == null)
             Util.openWindow("/assets/layouts/loading.fxml", "Loading", GUILoader.getPrimaryStage());

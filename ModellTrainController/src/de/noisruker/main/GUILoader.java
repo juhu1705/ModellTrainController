@@ -40,14 +40,14 @@ public class GUILoader extends Application {
 
         Scene s = new Scene(root);
 
-        Ref.theme = Theme.NORMAL;
-
         if (!Ref.theme.getLocation().equalsIgnoreCase("remove")) {
             if(Ref.theme.equals(Theme.LIGHT) || Ref.theme.equals(Theme.DARK)) {
-                JMetro m = new JMetro(s, Ref.theme == Theme.DARK ? Style.DARK : Style.LIGHT);
+                Ref.J_METRO.setStyle(Ref.theme == Theme.DARK ? Style.DARK : Style.LIGHT);
+                Ref.J_METRO.setScene(s);
             } else
                 s.getStylesheets().add(Ref.theme.getLocation());
         }
+        s.getStylesheets().add(Ref.THEME_IMPROVEMENTS);
         stage.setTitle(Ref.PROJECT_NAME);
         stage.setScene(s);
         stage.centerOnScreen();

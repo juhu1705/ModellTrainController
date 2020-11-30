@@ -71,6 +71,7 @@ public class FieldHandler implements ContentHandler {
 				else
 					f.set(this, value);
 
+				ConfigManager.getInstance().onConfigChanged(e.name());
 			} catch (IllegalArgumentException | IllegalAccessException e) {
 				e.printStackTrace();
 			}
