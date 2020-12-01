@@ -18,6 +18,7 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import jssc.SerialPortException;
+import org.controlsfx.glyphfont.FontAwesome;
 
 import java.net.URL;
 import java.util.Objects;

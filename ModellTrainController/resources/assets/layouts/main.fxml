@@ -64,7 +64,12 @@
               <tabs>
                 <Tab closable="false" text="%tab.trains">
                      <content>
-                        <TreeView prefHeight="200.0" prefWidth="200.0" />
+                        <VBox>
+                           <children>
+                              <ToolBar maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" prefHeight="40.0" />
+                              <TreeView maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+                           </children>
+                        </VBox>
                      </content>
                 </Tab>
                 <Tab closable="false" text="%tab.sections">

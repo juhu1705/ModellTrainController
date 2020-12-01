@@ -94,7 +94,7 @@ public class GuiLoading implements Initializable {
             } catch (SerialPortException e) {
                 Progress.getInstance().setProgressDescription("LocoNet connection failed! Restart and try again!");
                 addBackButton();
-                Platform.runLater(() -> Util.updateWindow(GUILoader.getPrimaryStage(), "/assets/layouts/main.fxml").setResizable(true));
+                //Platform.runLater(() -> Util.updateWindow(GUILoader.getPrimaryStage(), "/assets/layouts/main.fxml").setResizable(true));
                 return;
             }
             try {

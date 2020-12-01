@@ -171,3 +171,7 @@
 .tab-pane:left > .tab-header-area > .headers-region > .tab {
     -fx-padding: 0.5 18; /* 1 18 0.99 18 */
 }
+
+.toggle-switch {
+    -toggle-display: left;
+}

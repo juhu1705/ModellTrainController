@@ -3,8 +3,6 @@ package de.noisruker.gui;
 import de.noisruker.config.ConfigManager;
 import de.noisruker.main.GUILoader;
 import de.noisruker.util.Config;
-import de.noisruker.util.Ref;
-import de.noisruker.util.Theme;
 import de.noisruker.util.Util;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -12,8 +10,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
-import jfxtras.styles.jmetro.JMetroStyleClass;
 import jssc.SerialPortList;
+import org.controlsfx.control.ToggleSwitch;
+import org.controlsfx.glyphfont.FontAwesome;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -25,14 +24,13 @@ public class GuiStart implements Initializable {
     public static Stage stage = null;
 
     @FXML
-    public CheckBox dontShow;
-
+    public ToggleSwitch startImmediately;
 
     @FXML
     public ComboBox<String> port;
 
     public void start(ActionEvent event) {
-        Config.startImmediately = dontShow.isSelected();
+        Config.startImmediately = startImmediately.isSelected();
         Config.port = port.getValue();
         ConfigManager.getInstance().onConfigChanged("port.text");
         ConfigManager.getInstance().onConfigChanged("startImmediately.text");
@@ -58,6 +56,6 @@ public class GuiStart implements Initializable {
         }
 
         if(Config.startImmediately)
-            dontShow.setSelected(true);
+            startImmediately.setSelected(true);
     }
 }
