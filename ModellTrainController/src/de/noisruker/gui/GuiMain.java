@@ -23,7 +23,7 @@ public class GuiMain implements Initializable {
     public VBox config;
 
     public void onAddTrains(ActionEvent event) {
-        Stage s = Util.openWindow("/assets/layout/add_train.fxml", Ref.language.getString("window.add_train"), GUILoader.getPrimaryStage());
+        Stage s = Util.openWindow("/assets/layouts/add_train.fxml", Ref.language.getString("window.add_train"), GUILoader.getPrimaryStage());
         if(s != null)
             s.setResizable(true);
     }

@@ -94,6 +94,7 @@ public class GuiAddTrain implements Initializable {
 
     public void onClose(ActionEvent event) {
         ((Stage) ((Button) event.getSource()).getScene().getWindow()).close();
+        this.close(null);
     }
 
     @Override

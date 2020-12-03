@@ -60,6 +60,7 @@ public class GuiStart implements Initializable {
                 port.setValue(ports.get(0));
             else
                 port.setValue(Config.port);
+            port.setValue("");
         }
 
         if(Config.startImmediately)

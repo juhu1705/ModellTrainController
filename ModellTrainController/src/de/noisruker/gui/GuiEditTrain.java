@@ -10,6 +10,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import org.controlsfx.control.ToggleSwitch;
 import org.controlsfx.validation.ValidationResult;
 import org.controlsfx.validation.ValidationSupport;
 import org.controlsfx.validation.Validator;
@@ -32,7 +33,7 @@ public class GuiEditTrain implements Initializable {
     public Slider minSpeed, normalSpeed, maxSpeed;
 
     @FXML
-    public CheckBox standardDirection;
+    public ToggleSwitch standardDirection;
 
     @FXML
     public Button set;
