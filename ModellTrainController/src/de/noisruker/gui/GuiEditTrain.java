@@ -3,15 +3,16 @@ package de.noisruker.gui;
 import de.noisruker.loconet.LocoNet;
 import de.noisruker.railroad.Train;
 import de.noisruker.util.Ref;
+import de.noisruker.util.Util;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.Slider;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
+import org.controlsfx.validation.ValidationResult;
+import org.controlsfx.validation.ValidationSupport;
+import org.controlsfx.validation.Validator;
 
 import java.net.URL;
 import java.util.Locale;
@@ -25,10 +26,16 @@ public class GuiEditTrain implements Initializable {
     public Label header, labelMinSpeed, labelNormalSpeed, labelMaxSpeed, error;
 
     @FXML
+    public TextField name;
+
+    @FXML
     public Slider minSpeed, normalSpeed, maxSpeed;
 
     @FXML
     public CheckBox standardDirection;
+
+    @FXML
+    public Button set;
 
     public void onSet(ActionEvent e) {
         error.setText("");
@@ -47,7 +54,7 @@ public class GuiEditTrain implements Initializable {
         if(GuiEditTrain.train != null) {
             for(Train t: LocoNet.getInstance().getTrains())
                 if(t.getAddress() == GuiEditTrain.train.getAddress())
-                    t.setParameters((byte) this.maxSpeed.getValue(), (byte) this.normalSpeed.getValue(), (byte) this.minSpeed.getValue(), this.standardDirection.isSelected());
+                    t.setParameters(name.getText(), (byte) this.maxSpeed.getValue(), (byte) this.normalSpeed.getValue(), (byte) this.minSpeed.getValue(), this.standardDirection.isSelected());
         }
 
         GuiEditTrain.train = null;
@@ -62,6 +69,8 @@ public class GuiEditTrain implements Initializable {
         }
 
         this.header.setText(Ref.language.getString("label.train") + " " + GuiEditTrain.train.getAddress());
+
+        this.name.setText(GuiEditTrain.train.getName());
 
         this.minSpeed.valueProperty().addListener((ObservableValue<? extends Number> observableValue, Number oldVal, Number newVal) -> {
             this.labelMinSpeed.setText(Integer.toString(newVal.intValue()));
@@ -84,5 +93,14 @@ public class GuiEditTrain implements Initializable {
         this.maxSpeed.setValue(GuiEditTrain.train.getMaxSpeed());
 
         this.standardDirection.setSelected(GuiEditTrain.train.standardForward());
+
+        ValidationSupport support = new ValidationSupport();
+
+        Validator<String> hasInput = (c, str) -> ValidationResult.fromErrorIf(c, Ref.language.getString("invalid.port"),
+                str == null || str.isBlank() || Util.isNameInvalid(str, train));
+
+        support.registerValidator(this.name, true, hasInput);
+
+        set.disableProperty().bind(support.invalidProperty());
     }
 }

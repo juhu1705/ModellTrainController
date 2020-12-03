@@ -45,6 +45,11 @@ public class Train implements Serializable, Comparable<Train> {
 	private final byte slot;
 
 	/**
+	 * The given name of the train
+	 */
+	private String name;
+
+	/**
 	 * Speed parameters
 	 */
 	private byte speed, maxSpeed, normalSpeed, minSpeed, actualSpeed;
@@ -103,6 +108,7 @@ public class Train implements Serializable, Comparable<Train> {
 
 		this.slot = slot;
 		this.address = address;
+		this.setName("Train " + this.getAddress());
 		this.setMaxSpeed(maxSpeed);
 		this.setNormalSpeed(normalSpeed);
 		this.setMinSpeed(minSpeed);
@@ -116,17 +122,23 @@ public class Train implements Serializable, Comparable<Train> {
 	/**
 	 * Sets the standard parameters of a train
 	 *
+	 * @param name The given name for this train
 	 * @param maxSpeed The fastest speed this train could drive with
 	 * @param normalSpeed The normal speed the train would drive with
 	 * @param minSpeed The slowest speed of the train. Used to stop the train slowly
 	 * @param standardForward The forward direction of the train. Normally this is true as forward direction.
 	 *                        But some trains have a reversed direction system.
 	 */
-	public void setParameters(byte maxSpeed, byte normalSpeed, byte minSpeed, boolean standardForward) {
+	public void setParameters(String name, byte maxSpeed, byte normalSpeed, byte minSpeed, boolean standardForward) {
+		this.setName(name);
 		this.setMaxSpeed(maxSpeed);
 		this.setNormalSpeed(normalSpeed);
 		this.setMinSpeed(minSpeed);
 		this.setStandardForward(standardForward);
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	private void setSpeed(byte speed) {
@@ -189,6 +201,10 @@ public class Train implements Serializable, Comparable<Train> {
 	}
 
 	/* Getter Methods */
+
+	public String getName() {
+		return this.name;
+	}
 
 	public byte getMinSpeed() {
 		return minSpeed;
@@ -474,7 +490,8 @@ public class Train implements Serializable, Comparable<Train> {
 	@Override
 	public boolean equals(Object train) {
 		if (this == train ||
-				(train != null && train.getClass().equals(Byte.class) && (byte)train == this.address)) return true;
+				(train != null && ((train.getClass().equals(Byte.class) && (byte)train == this.address) ||
+						(train.getClass().equals(String.class) && ((String)train).equals(this.name))))) return true;
 		if (train == null || getClass() != train.getClass()) return false;
 		return ((Train)train).getAddress() == this.getAddress() &&
 				((Train)train).getSlot() == this.getSlot();

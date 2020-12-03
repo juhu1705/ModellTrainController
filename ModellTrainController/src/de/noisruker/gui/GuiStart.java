@@ -3,6 +3,7 @@ package de.noisruker.gui;
 import de.noisruker.config.ConfigManager;
 import de.noisruker.main.GUILoader;
 import de.noisruker.util.Config;
+import de.noisruker.util.Ref;
 import de.noisruker.util.Util;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -13,6 +14,9 @@ import javafx.stage.Stage;
 import jssc.SerialPortList;
 import org.controlsfx.control.ToggleSwitch;
 import org.controlsfx.glyphfont.FontAwesome;
+import org.controlsfx.validation.ValidationResult;
+import org.controlsfx.validation.ValidationSupport;
+import org.controlsfx.validation.Validator;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -28,6 +32,9 @@ public class GuiStart implements Initializable {
 
     @FXML
     public ComboBox<String> port;
+
+    @FXML
+    public Button next;
 
     public void start(ActionEvent event) {
         Config.startImmediately = startImmediately.isSelected();
@@ -57,5 +64,14 @@ public class GuiStart implements Initializable {
 
         if(Config.startImmediately)
             startImmediately.setSelected(true);
+
+        ValidationSupport support = new ValidationSupport();
+
+        Validator<String> hasInput = (c, str) -> ValidationResult.fromErrorIf(c, Ref.language.getString("invalid.port"),
+                str == null || str.isBlank() || !ports.contains(str));
+
+        support.registerValidator(this.port, true, hasInput);
+
+        next.disableProperty().bind(support.invalidProperty());
     }
 }

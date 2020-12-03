@@ -5,14 +5,16 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-
 <VBox prefHeight="361.0" prefWidth="381.0" spacing="20.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.noisruker.gui.GuiEditTrain">
    <children>
       <Label fx:id="header" alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="17.0" />
+      <Label text="%label.name" />
+      <TextField fx:id="name" />
       <Label maxWidth="1.7976931348623157E308" text="%label.min_speed" />
       <HBox spacing="10.0">
          <children>
@@ -54,7 +56,7 @@
       <HBox spacing="10.0" VBox.vgrow="ALWAYS">
          <children>
             <Label fx:id="error" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-            <Button defaultButton="true" mnemonicParsing="false" onAction="#onSet" prefHeight="25.0" prefWidth="113.0" text="%button.start" />
+            <Button fx:id="set" defaultButton="true" mnemonicParsing="false" onAction="#onSet" prefHeight="25.0" prefWidth="113.0" text="%button.start" />
          </children>
       </HBox>
    </children>

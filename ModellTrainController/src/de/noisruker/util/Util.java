@@ -1,10 +1,13 @@
 package de.noisruker.util;
 
 import de.noisruker.config.ConfigManager;
+import de.noisruker.loconet.LocoNet;
 import de.noisruker.loconet.messages.MessageType;
+import de.noisruker.railroad.Train;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -176,5 +179,12 @@ public class Util {
 
 	}
 
+    public static boolean isNameInvalid(String name, Train train) {
+		for(Train t: LocoNet.getInstance().getTrains())
+			if(t != train)
+				if(t.equals(name))
+					return true;
 
+		return false;
+    }
 }
