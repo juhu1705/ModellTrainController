@@ -1,5 +1,6 @@
 package de.noisruker.gui;
 
+import de.noisruker.config.ConfigManager;
 import de.noisruker.gui.progress.Progress;
 import de.noisruker.loconet.messages.SwitchMessage;
 import de.noisruker.main.GUILoader;
@@ -16,9 +17,12 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import jssc.SerialPortException;
+import jssc.SerialPortList;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 
 public class GuiLoading implements Initializable {
@@ -79,8 +83,12 @@ public class GuiLoading implements Initializable {
             }
             Ref.LOGGER.info("Finished");
             Platform.runLater(() -> {
-                Ref.LOGGER.info("Starting Init Page");
-                Util.updateWindow(GUILoader.getPrimaryStage(), "/assets/layouts/init_settings.fxml");
+                if(Config.startImmediately && Arrays.asList(SerialPortList.getPortNames()).contains(Config.port)) {
+                    GuiLoading.startLocoNet();
+                } else {
+                    Ref.LOGGER.info("Starting Init Page");
+                    Util.updateWindow(GUILoader.getPrimaryStage(), "/assets/layouts/init_settings.fxml");
+                }
             });
         }).start();
     }

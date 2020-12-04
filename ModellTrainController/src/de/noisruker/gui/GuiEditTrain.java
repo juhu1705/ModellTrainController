@@ -90,8 +90,10 @@ public class GuiEditTrain implements Initializable {
         });
 
         this.minSpeed.setValue(GuiEditTrain.train.getMinSpeed());
-        this.normalSpeed.setValue(GuiEditTrain.train.getNormalSpeed());
+
         this.maxSpeed.setValue(GuiEditTrain.train.getMaxSpeed());
+
+        this.normalSpeed.setValue(GuiEditTrain.train.getNormalSpeed());
 
         this.standardDirection.setSelected(GuiEditTrain.train.standardForward());
 

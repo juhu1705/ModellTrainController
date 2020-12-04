@@ -12,10 +12,14 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
+import org.controlsfx.glyphfont.FontAwesome;
+import org.controlsfx.glyphfont.Glyph;
+import org.controlsfx.glyphfont.GlyphFontRegistry;
 
 import java.io.File;
 import java.io.InputStreamReader;
@@ -47,6 +51,7 @@ public class GUILoader extends Application {
             } else
                 s.getStylesheets().add(Ref.theme.getLocation());
         }
+
         s.getStylesheets().add(Ref.THEME_IMPROVEMENTS);
         stage.setTitle(Ref.PROJECT_NAME);
         stage.setScene(s);
@@ -64,6 +69,7 @@ public class GUILoader extends Application {
         stage.getIcons().add(i);
 
         stage.show();
+
         GUILoader.primaryStage = stage;
 
         GuiStart.stage = primaryStage;
@@ -73,7 +79,6 @@ public class GUILoader extends Application {
 
     public static void main(String[] args) {
         Config.register();
-
 
         launch(args);
     }

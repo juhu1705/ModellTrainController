@@ -1,12 +1,17 @@
 package de.noisruker.gui;
 
 import de.noisruker.config.ConfigManager;
+import de.noisruker.loconet.LocoNet;
+import de.noisruker.loconet.LocoNetMessageReceiver;
+import de.noisruker.loconet.messages.TrainSlotMessage;
 import de.noisruker.main.GUILoader;
+import de.noisruker.railroad.Train;
 import de.noisruker.util.Ref;
 import de.noisruker.util.Util;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -17,7 +22,7 @@ import java.util.ResourceBundle;
 public class GuiMain implements Initializable {
 
     @FXML
-    public TreeView<String> tree;
+    public TreeView<String> tree, trains;
 
     @FXML
     public VBox config;
@@ -31,5 +36,20 @@ public class GuiMain implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         ConfigManager.getInstance().createMenuTree(tree, config);
+
+        this.updateTrains();
+
+        LocoNetMessageReceiver.getInstance().registerListener(message -> {
+            if(message instanceof TrainSlotMessage) {
+                this.updateTrains();
+            }
+        });
+    }
+
+    private void updateTrains() {
+        for(Train t: LocoNet.getInstance().getTrains()) {
+            TreeItem<String> trains = new TreeItem<>(t.getName());
+            trains.getChildren().add(trains);
+        }
     }
 }

@@ -52,6 +52,13 @@ public class Util {
 		return b;
 	}
 
+	public static int[] apply(int[] arr, int x) {
+		int[] toReturn = new int[arr.length];
+		for(int i = 0; i < arr.length; i++)
+			toReturn[i] = i == 0 || i == arr.length - 1 ? x : arr[i] * x;
+		return toReturn;
+	}
+
 	public static MessageType getMessageType(byte opCode) {
 		for (MessageType m : MessageType.values())
 			if (m.getOpCode() == opCode)
