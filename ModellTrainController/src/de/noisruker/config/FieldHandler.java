@@ -78,9 +78,6 @@ public class FieldHandler implements ContentHandler {
 			f.setAccessible(a);
 		}
 
-		if (arg1.equals("themetype"))
-			Ref.theme = Theme.valueOf(currentValue);
-
 	}
 
 	@Override

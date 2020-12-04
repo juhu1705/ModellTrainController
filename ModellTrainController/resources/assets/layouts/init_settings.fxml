@@ -20,7 +20,7 @@
       <HBox alignment="CENTER" layoutX="7.0" layoutY="129.0" maxWidth="1.7976931348623157E308" prefHeight="20.0" prefWidth="405.0" spacing="20.0">
          <children>
             <ToggleSwitch fx:id="startImmediately" prefHeight="18.0" prefWidth="27.0" />
-            <Label maxWidth="1.7976931348623157E308" prefHeight="17.0" text="%checkbox.dontshow" textOverrun="CLIP" wrapText="true" />
+            <Label maxWidth="1.7976931348623157E308" prefHeight="18.0" text="%checkbox.dontshow" textOverrun="CLIP" wrapText="true" />
          </children>
       </HBox>
    </children>

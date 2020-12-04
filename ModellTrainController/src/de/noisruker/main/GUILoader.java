@@ -23,6 +23,7 @@ import org.controlsfx.glyphfont.GlyphFontRegistry;
 
 import java.io.File;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.PropertyResourceBundle;
 
 public class GUILoader extends Application {
@@ -36,7 +37,7 @@ public class GUILoader extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         InputStreamReader r;
-        PropertyResourceBundle language = new PropertyResourceBundle(r = new InputStreamReader(GUILoader.class.getResourceAsStream("/assets/language/de.properties")));
+        PropertyResourceBundle language = new PropertyResourceBundle(r = new InputStreamReader(GUILoader.class.getResourceAsStream("/assets/language/de.properties"), StandardCharsets.UTF_8));
         r.close();
 
         Parent root = FXMLLoader.load(GUILoader.class.getResource("/assets/layouts/loading.fxml"), language);

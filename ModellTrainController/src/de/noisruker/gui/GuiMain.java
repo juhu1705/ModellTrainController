@@ -6,11 +6,15 @@ import de.noisruker.loconet.LocoNetMessageReceiver;
 import de.noisruker.loconet.messages.TrainSlotMessage;
 import de.noisruker.main.GUILoader;
 import de.noisruker.railroad.Train;
+import de.noisruker.util.Config;
 import de.noisruker.util.Ref;
+import de.noisruker.util.Theme;
 import de.noisruker.util.Util;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.VBox;
@@ -33,6 +37,9 @@ public class GuiMain implements Initializable {
     public TreeItem<String> trainsRoot;
 
     @FXML
+    public Menu theme;
+
+    @FXML
     public VBox config;
 
     public void onAddTrains(ActionEvent event) {
@@ -41,11 +48,28 @@ public class GuiMain implements Initializable {
             s.setResizable(true);
     }
 
+    public void onFullscreen(ActionEvent event) {
+        GUILoader.getPrimaryStage().setFullScreen(true);
+    }
+
+    public void onClose(ActionEvent event) {
+        Util.onClose(event);
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         GuiMain.instance = this;
 
         ConfigManager.getInstance().createMenuTree(tree, config);
+
+        for(Theme t: Theme.values()) {
+            MenuItem theme = new MenuItem(Ref.language.getString("theme." + t.name()));
+            theme.setOnAction(action -> {
+                Config.theme = t.name();
+                ConfigManager.getInstance().onConfigChanged("theme.text");
+            });
+            this.theme.getItems().add(theme);
+        }
 
         LocoNetMessageReceiver.getInstance().registerListener(message -> {
             if(message instanceof TrainSlotMessage) {

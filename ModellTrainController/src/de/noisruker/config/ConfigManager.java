@@ -14,8 +14,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
+import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
+import org.controlsfx.control.ToggleSwitch;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -231,14 +236,6 @@ public class ConfigManager {
 
 		bw.append(" </fields>");
 		bw.newLine();
-		bw.append(" <theme>");
-		bw.newLine();
-
-		bw.append("   <themetype>" + Ref.theme.name() + "</themetype>");
-		bw.newLine();
-
-		bw.append(" </theme>");
-		bw.newLine();
 
 		bw.append("</config>");
 
@@ -247,9 +244,7 @@ public class ConfigManager {
 	}
 
 	public void createMenuTree(TreeView<String> tree, VBox configurations) {
-		CheckBoxTreeItem root = new CheckBoxTreeItem(Ref.language.getString("config.location"));
-
-		tree.setCellFactory(CheckBoxTreeCell.forTreeView());
+		TreeItem root = new TreeItem(Ref.language.getString("config.location"));
 
 		root.setExpanded(true);
 
@@ -260,7 +255,7 @@ public class ConfigManager {
 				continue;
 			ConfigElement e = f.getAnnotation(ConfigElement.class);
 
-			CheckBoxTreeItem actual = null;
+			TreeItem<String> actual = null;
 
 			for (String s : e.location().split("\\.")) {
 				if (actual == null) {
@@ -271,78 +266,34 @@ public class ConfigManager {
 				for (Object ti : actual.getChildren()) {
 					if (((String) ((TreeItem) ti).getValue())
 							.equalsIgnoreCase(Ref.language.getString("config.location." + s))) {
-						actual = (CheckBoxTreeItem) ti;
+						actual = (TreeItem<String>) ti;
 						found = true;
 						break;
 					}
 				}
 				if (!found) {
-					TreeItem nti = new CheckBoxTreeItem<String>(Ref.language.getString("config.location." + s));
+					TreeItem nti = new TreeItem<String>(Ref.language.getString("config.location." + s));
 
 					nti.setExpanded(true);
 					actual.getChildren().add(0, nti);
-					actual = (CheckBoxTreeItem) nti;
+					actual = (TreeItem<String>) nti;
 				}
-			}
-
-			if (e.type().equals("check")) {
-				CheckBoxTreeItem cb = new CheckBoxTreeItem(Ref.language.getString("config." + e.name()));
-//				cb.setTooltip(new Tooltip(References.language.getString(e.description())));
-				try {
-					cb.setSelected(f.getBoolean(null));
-
-				} catch (IllegalArgumentException | IllegalAccessException e2) {
-					e2.printStackTrace();
-				}
-				this.listeners.add(new ChangeEntry(e.name(), () -> {
-					try {
-						if(cb.isSelected() != f.getBoolean(null))
-							cb.setSelected(f.getBoolean(null));
-					} catch (IllegalArgumentException | IllegalAccessException ignored) {
-
-					}
-				}));
-
-
-				cb.selectedProperty().addListener((obs, oldValue, newValue) -> {
-					try {
-						if(oldValue != newValue) {
-							f.setBoolean(null, newValue);
-							this.onConfigChanged(e.name());
-						}
-					} catch (IllegalArgumentException | IllegalAccessException e1) {
-						LOGGER.severe("Error while updating config!");
-					}
-				});
-
-				cb.addEventHandler(ActionEvent.ACTION, event -> {
-					try {
-						f.setBoolean(null, cb.isSelected());
-					} catch (IllegalArgumentException e1) {
-						e1.printStackTrace();
-					} catch (IllegalAccessException e1) {
-						e1.printStackTrace();
-					}
-				});
-//				configurationTree.setCellFactory(CheckBoxTreeCell.<String>forTreeView());
-				cb.setExpanded(true);
-				actual.getChildren().add(cb);
 			}
 
 		}
 
 		tree.addEventHandler(MouseEvent.MOUSE_CLICKED, (event -> {
-			CheckBoxTreeItem selected = (CheckBoxTreeItem) tree.getSelectionModel().getSelectedItem();
+			TreeItem<String> selected = (TreeItem<String>) tree.getSelectionModel().getSelectedItem();
 
 			if (selected == null)
 				return;
 			String location = (String) selected.getValue();
 
-			CheckBoxTreeItem<String> actual = selected;
+			TreeItem<String> actual = selected;
 
 			while (actual != null) {
 
-				actual = (CheckBoxTreeItem<String>) actual.getParent();
+				actual = (TreeItem<String>) actual.getParent();
 
 				if (actual != null)
 					location = actual.getValue() + "." + location;
@@ -351,6 +302,11 @@ public class ConfigManager {
 
 			if (selected != null) {
 				configurations.getChildren().clear();
+				VBox checks = new VBox();
+				checks.setPadding(new Insets(20, 0, 0, 0));
+				checks.getChildren().add(new Label(Ref.language.getString("config.booleans") + ":"));
+				checks.setSpacing(20);
+
 				for (Field f : this.fields) {
 
 					if (f.getAnnotation(ConfigElement.class) == null)
@@ -377,16 +333,43 @@ public class ConfigManager {
 					if (!fieldlocation.equalsIgnoreCase(location))
 						continue;
 
-					if (e.type().equals("count")) {
+
+					if (e.type().equals("check")) {
+						HBox check = new HBox();
+						check.setAlignment(Pos.CENTER_LEFT);
+						check.setSpacing(20);
+
+						ToggleSwitch toggleSwitch = new ToggleSwitch();
+						try {
+							toggleSwitch.setSelected(f.getBoolean(null));
+						} catch (IllegalAccessException ignored) { }
+						toggleSwitch.selectedProperty().addListener((o, oldValue, newValue) -> {
+							if(oldValue != newValue) {
+								try {
+									f.set(null, newValue);
+								} catch (IllegalAccessException ignored) { }
+								this.onConfigChanged(e.name());
+							}
+						});
+						toggleSwitch.setPrefWidth(27.0);
+						Tooltip t = new Tooltip(Ref.language.getString("config." + e.description()));
+						toggleSwitch.setTooltip(t);
+						Label l = new Label(Ref.language.getString("config." + e.name()));
+						l.setAlignment(Pos.CENTER);
+						l.setPrefHeight(18);
+						l.setTooltip(t);
+
+						check.getChildren().addAll(toggleSwitch, l);
+
+						checks.getChildren().addAll(check);
+					} else if (e.type().equals("count")) {
 						Spinner cb = new Spinner();
 						cb.setTooltip(new Tooltip(Ref.language.getString("config." + e.description())));
 						cb.setEditable(true);
 						this.listeners.add(new ChangeEntry(e.name(), () -> {
 							try {
 								cb.getValueFactory().setValue(f.getInt(null));
-							} catch (IllegalArgumentException | IllegalAccessException ignored) {
-
-							}
+							} catch (IllegalArgumentException | IllegalAccessException ignored) { }
 						}));
 						try {
 							if (this.maxCounting.containsKey(e.name()))
@@ -484,7 +467,11 @@ public class ConfigManager {
 						configurations.getChildren().addAll(l, cb);
 					}
 
+
+
 				}
+				if(checks.getChildren().size() > 1)
+					configurations.getChildren().add(checks);
 			}
 		}));
 	}

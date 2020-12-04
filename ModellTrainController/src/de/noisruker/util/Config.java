@@ -34,12 +34,6 @@ public class Config {
         try {
             ConfigManager.getInstance().register(Config.class);
 
-            if (!Files.exists(FileSystems.getDefault().getPath(Ref.HOME_FOLDER + "config.cfg"),
-                    LinkOption.NOFOLLOW_LINKS))
-                ConfigManager.getInstance().loadDefault();
-            else
-                ConfigManager.getInstance().load(Ref.HOME_FOLDER + "config.cfg");
-
             ConfigManager.getInstance().registerOptionParameters("port", () -> {
                 ArrayList<String> ports = new ArrayList<>();
                 Collections.addAll(ports, SerialPortList.getPortNames());
@@ -70,6 +64,12 @@ public class Config {
                     }
                 }
             });
+
+            if (!Files.exists(FileSystems.getDefault().getPath(Ref.HOME_FOLDER + "config.cfg"),
+                    LinkOption.NOFOLLOW_LINKS))
+                ConfigManager.getInstance().loadDefault();
+            else
+                ConfigManager.getInstance().load(Ref.HOME_FOLDER + "config.cfg");
         } catch (IOException | SAXException e) {
             Ref.LOGGER.log(Level.SEVERE, "Error while loading Config", e);
         }

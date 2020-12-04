@@ -4,10 +4,10 @@ import de.noisruker.config.ConfigManager;
 import de.noisruker.loconet.LocoNet;
 import de.noisruker.loconet.messages.MessageType;
 import de.noisruker.railroad.Train;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -15,7 +15,6 @@ import javafx.stage.StageStyle;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
 
-import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
@@ -157,8 +156,6 @@ public class Util {
 		}).start();
 
 	}
-
-
 
 	public static void onClose(ActionEvent e) {
 		closeConfig();
