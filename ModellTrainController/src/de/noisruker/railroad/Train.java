@@ -478,7 +478,7 @@ public class Train implements Serializable, Comparable<Train> {
 
 	@Override
 	public String toString() {
-		return "Train{" +
+		return name + "{" +
 				"address=" + address +
 				", slot=" + slot +
 				", minSpeed=" + minSpeed +

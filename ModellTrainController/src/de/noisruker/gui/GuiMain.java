@@ -21,8 +21,16 @@ import java.util.ResourceBundle;
 
 public class GuiMain implements Initializable {
 
+    private static GuiMain instance = null;
+
+    public static GuiMain getInstance() {
+        return instance;
+    }
+
     @FXML
     public TreeView<String> tree, trains;
+
+    public TreeItem<String> trainsRoot;
 
     @FXML
     public VBox config;
@@ -35,21 +43,26 @@ public class GuiMain implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        ConfigManager.getInstance().createMenuTree(tree, config);
+        GuiMain.instance = this;
 
-        this.updateTrains();
+        ConfigManager.getInstance().createMenuTree(tree, config);
 
         LocoNetMessageReceiver.getInstance().registerListener(message -> {
             if(message instanceof TrainSlotMessage) {
                 this.updateTrains();
             }
         });
+        trainsRoot = new TreeItem<>(Ref.language.getString("label.trains"));
+        trains.setRoot(this.trainsRoot);
+        trains.setShowRoot(false);
+        this.updateTrains();
     }
 
-    private void updateTrains() {
+    public void updateTrains() {
+        trainsRoot.getChildren().clear();
         for(Train t: LocoNet.getInstance().getTrains()) {
-            TreeItem<String> trains = new TreeItem<>(t.getName());
-            trains.getChildren().add(trains);
+            TreeItem<String> train = new TreeItem<>(t.getName());
+            trainsRoot.getChildren().add(train);
         }
     }
 }

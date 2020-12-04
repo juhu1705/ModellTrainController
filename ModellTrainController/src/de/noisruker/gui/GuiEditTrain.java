@@ -50,15 +50,17 @@ public class GuiEditTrain implements Initializable {
         if(this.maxSpeed.getValue() < this.normalSpeed.getValue())
             error.setText(Ref.language.getString("label.error.max_speed"));
 
-        if(!error.getText().isBlank())
-
-        if(GuiEditTrain.train != null) {
-            for(Train t: LocoNet.getInstance().getTrains())
-                if(t.getAddress() == GuiEditTrain.train.getAddress())
-                    t.setParameters(name.getText(), (byte) this.maxSpeed.getValue(), (byte) this.normalSpeed.getValue(), (byte) this.minSpeed.getValue(), this.standardDirection.isSelected());
-        }
-
+        if(error.getText().isBlank())
+            if(GuiEditTrain.train != null)
+                for(Train t: LocoNet.getInstance().getTrains()) {
+                    Ref.LOGGER.info(t.toString());
+                    if (t.getAddress() == GuiEditTrain.train.getAddress())
+                        t.setParameters(name.getText(), (byte) this.maxSpeed.getValue(), (byte) this.normalSpeed.getValue(), (byte) this.minSpeed.getValue(), this.standardDirection.isSelected());
+                }
         GuiEditTrain.train = null;
+
+        GuiMain.getInstance().updateTrains();
+
         ((Stage)((Button) e.getSource()).getScene().getWindow()).close();
     }
 
@@ -99,7 +101,7 @@ public class GuiEditTrain implements Initializable {
 
         ValidationSupport support = new ValidationSupport();
 
-        Validator<String> hasInput = (c, str) -> ValidationResult.fromErrorIf(c, Ref.language.getString("invalid.port"),
+        Validator<String> hasInput = (c, str) -> ValidationResult.fromErrorIf(c, Ref.language.getString("invalid.no_input"),
                 str == null || str.isBlank() || Util.isNameInvalid(str, train));
 
         support.registerValidator(this.name, true, hasInput);

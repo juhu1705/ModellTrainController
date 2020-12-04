@@ -53,7 +53,7 @@
                         <VBox>
                            <children>
                               <ToolBar maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" prefHeight="40.0" />
-                              <TreeView fx:id="trains" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
+                              <TreeView fx:id="trains" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
                            </children>
                         </VBox>
                      </content>
