@@ -46,6 +46,11 @@ public class GuiMain implements Initializable {
     }
 
     public void onStartTrainControl(ActionEvent event) {
+        if(this.trains.getSelectionModel() == null || this.trains.getSelectionModel().getSelectedItem() == null) {
+            Notifications.create().darkStyle().title(Ref.language.getString("window.error")).text(Ref.language.getString("error.no_train_selected")).showError();
+            return;
+        }
+
         String s = this.trains.getSelectionModel().getSelectedItem().getValue();
         Train t = null;
         for(Train train: LocoNet.getInstance().getTrains())
@@ -62,7 +67,7 @@ public class GuiMain implements Initializable {
                     } catch (InterruptedException ignored) { }
                 }
                 GuiControlTrain.toAdd = finalT;
-                Platform.runLater(() -> Util.openWindow("/assets/layouts/control_train.fxml", finalT.getName(), null).setResizable(true));
+                Platform.runLater(() -> Util.openWindow("/assets/layouts/control_train.fxml", finalT.getName(), null));
             });
         }
     }

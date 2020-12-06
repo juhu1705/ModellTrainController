@@ -294,7 +294,8 @@ public class Train implements Serializable, Comparable<Train> {
 	 */
 	public void stopTrainImmediately() {
 		try {
-			this.setActualSpeed((byte) -1);
+			this.setSpeed((byte) 0);
+			this.setActualSpeed((byte) 0);
 		} catch (IOException ignored) { }
 	}
 
@@ -550,7 +551,7 @@ public class Train implements Serializable, Comparable<Train> {
 		return this.getAddress() - train.getAddress();
 	}
 
-	private ArrayList<TrainSpeedChangeListener> trainSpeedChangeListener;
+	private ArrayList<TrainSpeedChangeListener> trainSpeedChangeListener = new ArrayList<>();
 
 	public void registerSpeedChangeListener(TrainSpeedChangeListener listener) {
 		this.trainSpeedChangeListener.add(listener);

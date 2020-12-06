@@ -11,10 +11,7 @@ import javafx.collections.ObservableArray;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.Slider;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.DragEvent;
@@ -73,13 +70,14 @@ public class GuiControlTrain implements Initializable {
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Picture", ".png", ".jpg", ".JPG"));
         fileChooser.setTitle(Ref.language.getString("window.choose_picture"));
+        if(t.getPicturePath() != null && !t.getPicturePath().isBlank()) {
+            File file = new File(t.getPicturePath());
 
-        File file = new File(t.getPicturePath());
+            if (file.exists() && new File(file.getParent()).exists())
+                fileChooser.setInitialDirectory(new File(file.getParent()));
+        }
 
-        if(!t.getPicturePath().isBlank() && file.exists() && new File(file.getParent()).exists())
-            fileChooser.setInitialDirectory(new File(file.getParent()));
-
-        File selected = fileChooser.showOpenDialog(((Button)event.getSource()).getScene().getWindow());
+        File selected = fileChooser.showOpenDialog(((Hyperlink)event.getSource()).getScene().getWindow());
 
         if(selected == null)
             return;
@@ -159,7 +157,7 @@ public class GuiControlTrain implements Initializable {
                     }
                 });
 
-        this.loadPicture();
+        //this.loadPicture();
 
     }
 }
