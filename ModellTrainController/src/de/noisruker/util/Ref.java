@@ -21,8 +21,6 @@ public class Ref {
 
 	public static final long UNIVERSAL_SERIAL_VERSION_UID = 983475897014889764L;
 
-	public static String password = "1";
-
 	public static PropertyResourceBundle language;
 
 	public static int autoDriveNumber = 1;
@@ -36,6 +34,7 @@ public class Ref {
 	public static final ArrayList<JMetro> other_page_themes = new ArrayList<>();
 	public static Theme theme = Theme.DARK;
 	public static final String THEME_IMPROVEMENTS = "/assets/styles/theme.css";
+	public static final String DARK_THEME_FIXES = "/assets/styles/dark.css";
 	public static final String HOME_FOLDER;
 	static {
 		HOME_FOLDER = System.getProperty("user.home") + "/.TrainController/";

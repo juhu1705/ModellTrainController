@@ -468,6 +468,27 @@ public class Railroad {
         return this.nodes;
     }
 
+    private static boolean stopTrainControlSystem = true;
+
+    public void startTrainControlSystem() {
+        if(stopTrainControlSystem)
+            new Thread(this::trainControl).start();
+    }
+
+    public void stopTrainControlSystem() {
+        stopTrainControlSystem = true;
+    }
+
+    private void trainControl() {
+        stopTrainControlSystem = false;
+        while(!stopTrainControlSystem) {
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException ignored) { }
+            this.update();
+        }
+    }
+
     public class Section {
         public boolean left = false;
         int forCalculation;

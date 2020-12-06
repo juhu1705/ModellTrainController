@@ -22,6 +22,7 @@ import java.util.ResourceBundle;
 public class GuiEditTrain implements Initializable {
 
     public static Train train = null;
+    private Train t;
 
     @FXML
     public Label header, labelMinSpeed, labelNormalSpeed, labelMaxSpeed, error;
@@ -51,13 +52,13 @@ public class GuiEditTrain implements Initializable {
             error.setText(Ref.language.getString("label.error.max_speed"));
 
         if(error.getText().isBlank())
-            if(GuiEditTrain.train != null)
+            if(this.t != null)
                 for(Train t: LocoNet.getInstance().getTrains()) {
                     Ref.LOGGER.info(t.toString());
-                    if (t.getAddress() == GuiEditTrain.train.getAddress())
+                    if (t.getAddress() == this.t.getAddress())
                         t.setParameters(name.getText(), (byte) this.maxSpeed.getValue(), (byte) this.normalSpeed.getValue(), (byte) this.minSpeed.getValue(), this.standardDirection.isSelected());
                 }
-        GuiEditTrain.train = null;
+        this.t = null;
 
         GuiMain.getInstance().updateTrains();
 
@@ -70,10 +71,11 @@ public class GuiEditTrain implements Initializable {
             this.header.setText(Ref.language.getString("label.no_train_found"));
             return;
         }
+        this.t = train;
 
-        this.header.setText(Ref.language.getString("label.train") + " " + GuiEditTrain.train.getAddress());
+        this.header.setText(Ref.language.getString("label.train") + " " + this.t.getAddress());
 
-        this.name.setText(GuiEditTrain.train.getName());
+        this.name.setText(this.t.getName());
 
         this.minSpeed.valueProperty().addListener((ObservableValue<? extends Number> observableValue, Number oldVal, Number newVal) -> {
             this.labelMinSpeed.setText(Integer.toString(newVal.intValue()));
@@ -91,21 +93,23 @@ public class GuiEditTrain implements Initializable {
             this.normalSpeed.setMax(newVal.intValue());
         });
 
-        this.minSpeed.setValue(GuiEditTrain.train.getMinSpeed());
+        this.minSpeed.setValue(this.t.getMinSpeed());
 
-        this.maxSpeed.setValue(GuiEditTrain.train.getMaxSpeed());
+        this.maxSpeed.setValue(this.t.getMaxSpeed());
 
-        this.normalSpeed.setValue(GuiEditTrain.train.getNormalSpeed());
+        this.normalSpeed.setValue(this.t.getNormalSpeed());
 
-        this.standardDirection.setSelected(GuiEditTrain.train.standardForward());
+        this.standardDirection.setSelected(this.t.standardForward());
 
         ValidationSupport support = new ValidationSupport();
 
         Validator<String> hasInput = (c, str) -> ValidationResult.fromErrorIf(c, Ref.language.getString("invalid.no_input"),
-                str == null || str.isBlank() || Util.isNameInvalid(str, train));
+                str == null || str.isBlank() || Util.isNameInvalid(str, this.t));
 
         support.registerValidator(this.name, true, hasInput);
 
         set.disableProperty().bind(support.invalidProperty());
+
+        GuiEditTrain.train = null;
     }
 }

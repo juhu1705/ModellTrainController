@@ -1,6 +1,8 @@
 package de.noisruker.railroad;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import de.noisruker.loconet.LocoNetConnection;
@@ -9,6 +11,7 @@ import de.noisruker.loconet.messages.MessageType;
 import de.noisruker.loconet.messages.SpeedMessage;
 import de.noisruker.loconet.LocoNet;
 import de.noisruker.loconet.messages.TrainSlotMessage;
+import de.noisruker.util.Config;
 import de.noisruker.util.Ref;
 import jssc.SerialPortException;
 
@@ -48,6 +51,11 @@ public class Train implements Serializable, Comparable<Train> {
 	 * The given name of the train
 	 */
 	private String name;
+
+	/**
+	 * The path to the picture of the train
+	 */
+	private String picture;
 
 	/**
 	 * Speed parameters
@@ -114,7 +122,9 @@ public class Train implements Serializable, Comparable<Train> {
 		this.setMinSpeed(minSpeed);
 		this.setStandardForward(standardForward);
 		this.setSpeed(speed);
-		this.setActualSpeed(speed);
+		this.actualSpeed = this.speed;
+
+		LocoNet.getRailroad().startTrainControlSystem();
 	}
 
 	/* Setter Methods */
@@ -141,20 +151,17 @@ public class Train implements Serializable, Comparable<Train> {
 		this.name = name;
 	}
 
-	private void setSpeed(byte speed) {
+	public void setSpeed(byte speed) {
 		if (speed > this.maxSpeed || speed < 0)
 			return;
 		this.speed = speed;
+		this.trainSpeedChangeListener.forEach(a -> a.onSpeedChanged(this.speed));
 	}
 
-	private void setActualSpeed(byte actualSpeed) {
+	private void setActualSpeed(byte actualSpeed) throws IOException {
 		this.actualSpeed = actualSpeed;
 
-		try {
-			new SpeedMessage(this.getSlot(), this.actualSpeed).send();
-		} catch (Exception e1) {
-			Ref.LOGGER.severe("Failed to set speed, please try manually!");
-		}
+		new SpeedMessage(this.slot, actualSpeed).send();
 	}
 
 	public void setNormalSpeed(byte normalSpeed) {
@@ -194,6 +201,10 @@ public class Train implements Serializable, Comparable<Train> {
 		this.forward = forward;
 	}
 
+	public void setPicturePath(String path) {
+		this.picture = path;
+	}
+
 	/* Boolean returns */
 
 	public boolean standardForward() {
@@ -222,6 +233,10 @@ public class Train implements Serializable, Comparable<Train> {
 		return actualSpeed;
 	}
 
+	public byte getSpeed() {
+		return this.speed;
+	}
+
 	public byte getAddress() {
 		return this.address;
 	}
@@ -238,27 +253,31 @@ public class Train implements Serializable, Comparable<Train> {
 		return this.lastPosition;
 	}
 
+	public String getPicturePath() {
+		return this.picture;
+	}
+
 	/* Simple speed controls */
 
 	/**
 	 * Set the speed of the train to his normal speed.
 	 */
 	public void applyNormalSpeed() {
-		this.setActualSpeed(this.normalSpeed);
+		this.setSpeed(this.normalSpeed);
 	}
 
 	/**
 	 * Set the speed of the train to his maximal speed.
 	 */
 	public void applyMaxSpeed() {
-		this.setActualSpeed(this.maxSpeed);
+		this.setSpeed(this.maxSpeed);
 	}
 
 	/**
 	 * Set the speed of the train to his minimal speed.
 	 */
 	public void applyBreakSpeed() {
-		this.setActualSpeed(this.minSpeed);
+		this.setSpeed(this.minSpeed);
 	}
 
 	/**
@@ -267,14 +286,16 @@ public class Train implements Serializable, Comparable<Train> {
 	 * @implNote The train will stop slowly, not immediately
 	 */
 	public void stopTrain() {
-		this.setActualSpeed((byte) 0);
+		this.setSpeed((byte) 0);
 	}
 
 	/**
 	 * Stops the train at the position where he actually is.
 	 */
 	public void stopTrainImmediately() {
-		this.setActualSpeed((byte) -1);
+		try {
+			this.setActualSpeed((byte) -1);
+		} catch (IOException ignored) { }
 	}
 
 	/* Methods for the automatic driving process */
@@ -359,6 +380,36 @@ public class Train implements Serializable, Comparable<Train> {
 	}
 
 	public void update() {
+		if(Config.mode.equals(Config.MODE_RANDOM))
+			this.updateRandomDriving();
+
+		try {
+			this.updateSpeed();
+		} catch (IOException ignored) { }
+
+
+		try {
+			Thread.sleep(200);
+		} catch (InterruptedException ignored) { }
+	}
+
+	private void updateSpeed() throws IOException {
+		if(this.speed == -1)
+			this.setActualSpeed((byte) -1);
+		if(this.speed > this.actualSpeed) {
+			if(this.speed - 10 < this.actualSpeed)
+				this.setActualSpeed(this.speed);
+			else
+				this.setActualSpeed((byte) (this.speed - 10));
+		} else if(this.speed < this.actualSpeed) {
+			if(this.speed + 10 > this.actualSpeed)
+				this.setActualSpeed(this.speed);
+			else
+				this.setActualSpeed((byte) (this.speed + 10));
+		}
+	}
+
+	private void updateRandomDriving() {
 		Railroad r = LocoNet.getRailroad();
 		int trainsDriving = r.trainsWithDestination();
 
@@ -422,9 +473,6 @@ public class Train implements Serializable, Comparable<Train> {
 		} else if(waiting < 0)
 			waiting = 0;
 	}
-
-
-
 
 
 	public void reservateNext() {
@@ -501,4 +549,19 @@ public class Train implements Serializable, Comparable<Train> {
 	public int compareTo(Train train) {
 		return this.getAddress() - train.getAddress();
 	}
+
+	private ArrayList<TrainSpeedChangeListener> trainSpeedChangeListener;
+
+	public void registerSpeedChangeListener(TrainSpeedChangeListener listener) {
+		this.trainSpeedChangeListener.add(listener);
+	}
+
+	public void removeSpeedChangeListener(TrainSpeedChangeListener listener) {
+		this.trainSpeedChangeListener.remove(listener);
+	}
+
+	public interface TrainSpeedChangeListener {
+		public void onSpeedChanged(byte newSpeed);
+	}
+
 }

@@ -34,13 +34,17 @@ public class GUILoader extends Application {
         return primaryStage;
     }
 
+    public static void closePrimaryStage() {
+        primaryStage = null;
+    }
+
     @Override
     public void start(Stage stage) throws Exception {
         InputStreamReader r;
         PropertyResourceBundle language = new PropertyResourceBundle(r = new InputStreamReader(GUILoader.class.getResourceAsStream("/assets/language/de.properties"), StandardCharsets.UTF_8));
         r.close();
 
-        Parent root = FXMLLoader.load(GUILoader.class.getResource("/assets/layouts/loading.fxml"), language);
+        Parent root = FXMLLoader.load(GUILoader.class.getResource("/assets/layouts/loading.fxml"), Ref.language);
         Ref.language = language;
 
         Scene s = new Scene(root);
@@ -52,6 +56,8 @@ public class GUILoader extends Application {
             } else
                 s.getStylesheets().add(Ref.theme.getLocation());
         }
+        if(Ref.theme.equals(Theme.DARK))
+            s.getStylesheets().add(Ref.DARK_THEME_FIXES);
 
         s.getStylesheets().add(Ref.THEME_IMPROVEMENTS);
         stage.setTitle(Ref.PROJECT_NAME);

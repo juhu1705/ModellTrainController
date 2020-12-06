@@ -2,9 +2,11 @@ package de.noisruker.gui;
 
 import de.noisruker.config.ConfigManager;
 import de.noisruker.gui.progress.Progress;
+import de.noisruker.loconet.LocoNetConnection;
 import de.noisruker.loconet.messages.SwitchMessage;
 import de.noisruker.main.GUILoader;
 import de.noisruker.loconet.LocoNet;
+import de.noisruker.railroad.Train;
 import de.noisruker.util.Config;
 import de.noisruker.util.Ref;
 import de.noisruker.util.Util;
@@ -54,39 +56,31 @@ public class GuiLoading implements Initializable {
     public static void checkForUpdates() throws InterruptedException {
         new Thread(() -> {
             try {
-                Progress.getInstance().setProgressDescription("Checking for Updates");
-                Progress.getInstance().setProgress(0);
-
-
-
-                Progress.getInstance().setProgressDescription("Connect to Server");
+                Progress.getInstance().setProgressDescription(Ref.language.getString("info.connecting_to_update_server"));
                 Progress.getInstance().setProgress(0.25);
 
-
-
-                Progress.getInstance().setProgressDescription("Searching for updates");
+                Progress.getInstance().setProgressDescription(Ref.language.getString("info.update_check"));
                 Progress.getInstance().setProgress(0.5);
 
                 Thread.sleep(1000);
 
-                Progress.getInstance().setProgressDescription("Waiting");
+                Progress.getInstance().setProgressDescription(Ref.language.getString("info.waiting"));
                 Progress.getInstance().setProgress(0.75);
 
 
 
-                Progress.getInstance().setProgressDescription("Finished");
+                Progress.getInstance().setProgressDescription(Ref.language.getString("info.finished"));
                 Progress.getInstance().setProgress(1);
 
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            Ref.LOGGER.info("Finished");
+
             Platform.runLater(() -> {
                 if(Config.startImmediately && Arrays.asList(SerialPortList.getPortNames()).contains(Config.port)) {
                     GuiLoading.startLocoNet();
                 } else {
-                    Ref.LOGGER.info("Starting Init Page");
                     Util.updateWindow(GUILoader.getPrimaryStage(), "/assets/layouts/init_settings.fxml");
                 }
             });
@@ -95,12 +89,12 @@ public class GuiLoading implements Initializable {
 
     public static void startLocoNet() {
         new Thread(() -> {
-            Progress.getInstance().setProgressDescription("Starting LocoNet Connection");
+            Progress.getInstance().setProgressDescription(Ref.language.getString("info.connect_to_loconet"));
             Progress.getInstance().setProgress(-1);
             try {
                 LocoNet.getInstance().start(Config.port);
             } catch (SerialPortException e) {
-                Progress.getInstance().setProgressDescription("LocoNet connection failed! Restart and try again!");
+                Progress.getInstance().setProgressDescription(Ref.language.getString("info.connection_failed"));
                 addBackButton();
                 //Platform.runLater(() -> Util.updateWindow(GUILoader.getPrimaryStage(), "/assets/layouts/main.fxml").setResizable(true));
                 return;
@@ -109,61 +103,53 @@ public class GuiLoading implements Initializable {
                 Thread.sleep(1000);
             } catch (InterruptedException ignored) { }
 
-            Progress.getInstance().setProgressDescription("Checking Connection");
+            Progress.getInstance().setProgressDescription(Ref.language.getString("info.check_connection"));
 
             Progress.getInstance().setProgress(0);
+            try {
+                for (byte i = 1; i < 6; i++) {
+                    LocoNet.checkConnection = i;
 
-            for (int i = 0; i < 5; i++) {
-                try {
-                    new SwitchMessage((byte) i, true).send();
-                } catch (IOException e) {
-                    Progress.getInstance().setProgressDescription("LocoNet connection closed! Restart and try again!");
-                    addBackButton();
-                    return;
+                    Train.addTrain(i);
+
+                    int timeLeft = 10;
+
+                    while(!LocoNet.connectionChecked) {
+                        if(timeLeft == 0){
+                            Progress.getInstance().setProgressDescription(Ref.language.getString("info.connection_failed"));
+                            addBackButton();
+                            return;
+                        }
+
+                        Thread.sleep(1000);
+                        timeLeft--;
+                    }
+                    LocoNet.connectionChecked = false;
+                    Progress.getInstance().setProgress((double) i / 5d);
+                    Thread.sleep(300);
                 }
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException ignored) { }
-                Progress.getInstance().setProgress(((double) i + 1) / 5);
+            } catch (SerialPortException | LocoNetConnection.PortNotOpenException | InterruptedException e) {
+                Progress.getInstance().setProgressDescription(Ref.language.getString("info.connection_failed"));
+                addBackButton();
+                //Platform.runLater(() -> Util.updateWindow(GUILoader.getPrimaryStage(), "/assets/layouts/main.fxml").setResizable(true));
+                return;
             }
 
-            Progress.getInstance().setProgressDescription("Connection checked");
+            Progress.getInstance().setProgressDescription(Ref.language.getString("info.connection_complete"));
             Progress.getInstance().setProgress(-1);
-
-
-            /*if (Config.addTrainsFirst) {
-                Progress.getInstance().setProgressDescription("Searching Trains");
-                Progress.getInstance().setProgress(0);
-                for (int i = 1; i <= 10; i++) {
-                    Progress.getInstance().setProgress(((double) i) / 10);
-                    try {
-                        new LocoNetMessage(MessageType.OPC_LOCO_ADR, (byte) 0, (byte) i).send();
-                    } catch (SerialPortException | LocoNetConnection.PortNotOpenException e) {
-                        Progress.getInstance().setProgressDescription("LocoNet connection closed! Restart and try again!");
-                        addBackButton();
-                        return;
-                    }
-                    try {
-                        Thread.sleep(10000);
-                    } catch (InterruptedException ignored) {
-                    }
-                }
-            }*/
 
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException ignored) { }
 
             Progress.getInstance().setProgress(1);
-            Progress.getInstance().setProgressDescription("Finished");
+            Progress.getInstance().setProgressDescription(Ref.language.getString("info.start_window"));
 
             Platform.runLater(() -> {
                 Util.updateWindow(GUILoader.getPrimaryStage(), "/assets/layouts/main.fxml").setResizable(true);
-                Stage s = Util.openWindow("/assets/layouts/add_train.fxml", Ref.language.getString("window.add_train"), GUILoader.getPrimaryStage());
-                if(s == null)
-                    return;
-                s.setResizable(true);
-                s.setOnCloseRequest(e -> GuiAddTrain.actual.close(e));
+                GUILoader.getPrimaryStage().setMaximized(true);
+                if(Config.fullScreen)
+                    GUILoader.getPrimaryStage().setFullScreen(true);
             });
         }).start();
     }

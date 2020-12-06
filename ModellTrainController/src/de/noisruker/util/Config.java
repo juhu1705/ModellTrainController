@@ -2,6 +2,7 @@ package de.noisruker.util;
 
 import de.noisruker.config.ConfigElement;
 import de.noisruker.config.ConfigManager;
+import de.noisruker.main.GUILoader;
 import javafx.collections.FXCollections;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
@@ -9,17 +10,27 @@ import jssc.SerialPortList;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.PropertyResourceBundle;
 import java.util.logging.Level;
 
 public class Config {
 
+    public static final String MODE_MANUAL = "manual";
+    public static final String MODE_RANDOM = "random";
+    public static final String MODE_PLAN = "plan";
+
     @ConfigElement(defaultValue = "false", type = "check", description = "startImmediately.description", name = "startImmediately.text", location = "config", visible = true)
     public static boolean startImmediately;
+
+    @ConfigElement(defaultValue = "false", type = "check", description = "fullScreen.description", name = "fullScreen.text", location = "config", visible = true)
+    public static boolean fullScreen;
 
     @ConfigElement(defaultValue = "", type = "choose", description = "port.description", name = "port.text", location = "config.loconet", visible = true)
     public static String port;
@@ -29,6 +40,9 @@ public class Config {
 
     @ConfigElement(defaultValue = "DARK", type = "choose", description = "theme.description", name = "theme.text", location = "config", visible = true)
     public static String theme;
+
+    @ConfigElement(defaultValue = "German", type = "choose", description = "language.description", name = "language.text", location = "config", visible = true)
+    public static String language;
 
     public static void register() {
         try {
@@ -42,9 +56,9 @@ public class Config {
 
             ConfigManager.getInstance().registerOptionParameters("mode", () -> {
                 ArrayList<String> modes = new ArrayList<>();
-                Collections.addAll(modes, "Drive Manual",
-                        "Drive With Plan",
-                        "Drive Randomly");
+                Collections.addAll(modes, Config.MODE_MANUAL,
+                        Config.MODE_PLAN,
+                        Config.MODE_RANDOM);
                 return modes;
             });
 
@@ -55,6 +69,19 @@ public class Config {
                 return themes;
             });
 
+            ConfigManager.getInstance().registerOptionParameters("language", () -> {
+                ArrayList<String> languages = new ArrayList<>();
+                for(Language t: Language.values())
+                    languages.add(t.name());
+                return languages;
+            });
+
+            ConfigManager.getInstance().registerActionListener("fullScreen", () -> {
+                if(GUILoader.getPrimaryStage() != null && GUILoader.getPrimaryStage().isResizable()) {
+                    GUILoader.getPrimaryStage().setFullScreen(Config.fullScreen);
+                }
+            });
+
             ConfigManager.getInstance().registerActionListener("theme", () -> {
                 Ref.theme = Theme.valueOf(Config.theme);
                 if(Ref.theme == Theme.DARK || Ref.theme == Theme.LIGHT) {
@@ -63,6 +90,19 @@ public class Config {
                         metro.setStyle(Ref.theme == Theme.DARK ? Style.DARK : Style.LIGHT);
                     }
                 }
+            });
+
+            ConfigManager.getInstance().registerActionListener("language", () -> {
+                try {
+                    InputStreamReader r;
+                    Ref.language = new PropertyResourceBundle(r = new InputStreamReader(GUILoader.class.getResourceAsStream(Language.valueOf(Config.language).getLocation()), StandardCharsets.UTF_8));
+                    r.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                if(GUILoader.getPrimaryStage() != null)
+                    Util.updateWindow(GUILoader.getPrimaryStage(), "/assets/layouts/main.fxml");
             });
 
             if (!Files.exists(FileSystems.getDefault().getPath(Ref.HOME_FOLDER + "config.cfg"),

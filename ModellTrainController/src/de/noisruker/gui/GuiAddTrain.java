@@ -56,10 +56,10 @@ public class GuiAddTrain implements Initializable {
         Util.runNext(() -> {
             try {
                 Train.addTrain(newAddress.getValue().byteValue());
-            } catch (SerialPortException | LocoNetConnection.PortNotOpenException e) {
-                Ref.LOGGER.info("Could not add train, please try again later");
+            } catch (SerialPortException | LocoNetConnection.PortNotOpenException | NullPointerException e) {
+                Ref.LOGGER.info(Ref.language.getString("info.train_adding_failed"));
                 Platform.runLater(() -> {
-                    messages.setText("Could not add Train, please check your connection and try again!");
+                    messages.setText(Ref.language.getString("info.train_adding_failed"));
                 });
             }
         });

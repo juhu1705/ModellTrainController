@@ -8,10 +8,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Level;
 
 import javafx.beans.value.ChangeListener;
@@ -20,6 +17,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.util.StringConverter;
 import org.controlsfx.control.ToggleSwitch;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -437,6 +435,26 @@ public class ConfigManager {
 						cb.setTooltip(new Tooltip(Ref.language.getString("config." + e.description())));
 
 						cb.setItems(FXCollections.observableArrayList(this.options.get(e.name()).options()));
+
+						cb.setMaxWidth(1.7976931348623157E308);
+
+						cb.setConverter(new StringConverter<String>() {
+							@Override
+							public String toString(String s) {
+								if(Ref.language.containsKey(e.name() + "." + s))
+									return Ref.language.getString(e.name() + "." + s);
+								return s;
+							}
+
+							@Override
+							public String fromString(String s) {
+								for(String string: Ref.language.keySet()) {
+									if(s.equals(Ref.language.getString(e.name() + "." + string)))
+									return string;
+								}
+								return s;
+							}
+						});
 
 						try {
 							cb.setValue((String) f.get(null));

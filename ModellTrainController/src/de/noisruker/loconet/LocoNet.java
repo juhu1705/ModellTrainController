@@ -22,6 +22,8 @@ public class LocoNet {
 
 	public static boolean record;
 	public static boolean drive;
+	public static byte checkConnection = -1;
+	public static boolean connectionChecked = false;
 
 	private static final ArrayList<Train> trains = new ArrayList<>();
 	private final ArrayList<Sensor> sensors = new ArrayList<>();
@@ -194,6 +196,11 @@ public class LocoNet {
 			}
 
 			if (l instanceof TrainSlotMessage) {
+				if(checkConnection == ((TrainSlotMessage) l).getAddress()) {
+					connectionChecked = true;
+					checkConnection = -1;
+					return;
+				}
 				TrainSlotMessage m = ((TrainSlotMessage) l);
 
 				Ref.LOGGER.info("Write requested Train to slot: " + m.getSlot());

@@ -3,6 +3,7 @@ package de.noisruker.util;
 import de.noisruker.config.ConfigManager;
 import de.noisruker.loconet.LocoNet;
 import de.noisruker.loconet.messages.MessageType;
+import de.noisruker.main.GUILoader;
 import de.noisruker.railroad.Train;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -90,6 +91,8 @@ public class Util {
 			} else
 				s.getStylesheets().add(Ref.theme.getLocation());
 		}
+		if(Ref.theme.equals(Theme.DARK))
+			s.getStylesheets().add(Ref.DARK_THEME_FIXES);
 		s.getStylesheets().add(Ref.THEME_IMPROVEMENTS);
 
 		primaryStage.setMinWidth(200);
@@ -126,6 +129,9 @@ public class Util {
 			} else
 				s.getStylesheets().add(Ref.theme.getLocation());
 		}
+		if(Ref.theme.equals(Theme.DARK))
+			s.getStylesheets().add(Ref.DARK_THEME_FIXES);
+
 		s.getStylesheets().add(Ref.THEME_IMPROVEMENTS);
 		stage.setScene(s);
 
@@ -158,6 +164,8 @@ public class Util {
 	}
 
 	public static void onClose(ActionEvent e) {
+		GUILoader.closePrimaryStage();
+
 		closeConfig();
 
 		Ref.LOGGER.info("Close " + Ref.PROJECT_NAME);
@@ -189,6 +197,14 @@ public class Util {
 				if(t.equals(name))
 					return true;
 
+		return false;
+    }
+
+    public static boolean fileEndsWith(String toCheck, String... strings) {
+		for(String s: strings) {
+			if (toCheck.endsWith(s))
+				return true;
+		}
 		return false;
     }
 }
