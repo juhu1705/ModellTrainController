@@ -4,14 +4,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import de.noisruker.gui.tables.BasicTrains;
+import de.noisruker.loconet.messages.*;
 import de.noisruker.railroad.Railroad;
 import de.noisruker.railroad.Sensor;
 import de.noisruker.railroad.Train;
-import de.noisruker.loconet.messages.DirectionMessage;
-import de.noisruker.loconet.messages.SensorMessage;
-import de.noisruker.loconet.messages.SwitchMessage;
-import de.noisruker.loconet.messages.TrainSlotMessage;
-import de.noisruker.loconet.messages.LocoNetMessage;
 import de.noisruker.util.Ref;
 import jssc.SerialPortException;
 
@@ -205,14 +201,37 @@ public class LocoNet {
 
 				Ref.LOGGER.info("Write requested Train to slot: " + m.getSlot());
 
-				if(!this.getTrains().contains(m.getAddress()))
+
+
+
+
+				if(!this.getTrains().contains(m.getAddress())) {
+					LocoNet.getRailroad().stopTrainControlSystem();
+
+					while(!LocoNet.getRailroad().isControlSystemStopped()) {
+						try {
+							Thread.sleep(500);
+						} catch (InterruptedException ignored) { }
+					}
+
 					this.addTrain(new Train(m.getAddress(), m.getSlot()));
+				}
 
 				BasicTrains.getInstance().setTrains(this.getTrains());
 			}
 
 			if (l instanceof DirectionMessage) {
 //				Ref.LOGGER.info("Set direction to: " + ((DirectionMessage) l).getFunktion());
+			}
+
+			if(l instanceof SpeedMessage) {
+				for(Train t: LocoNet.trains) {
+					if(t.getSlot() == ((SpeedMessage) l).getSlot()) {
+						if(t.getActualSpeed() != ((SpeedMessage) l).getSpeed() && t.getSpeed() != ((SpeedMessage) l).getSpeed()) {
+							t.setSpeed(((SpeedMessage) l).getSpeed());
+						}
+					}
+				}
 			}
 
 			if (l instanceof SensorMessage) {

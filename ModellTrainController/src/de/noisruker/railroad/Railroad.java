@@ -468,11 +468,17 @@ public class Railroad {
         return this.nodes;
     }
 
-    private static boolean stopTrainControlSystem = true;
+    private boolean stopTrainControlSystem = true;
 
     public void startTrainControlSystem() {
         if(stopTrainControlSystem)
             new Thread(this::trainControl).start();
+    }
+
+    private boolean isStopped = true;
+
+    public boolean isControlSystemStopped() {
+        return isStopped;
     }
 
     public void stopTrainControlSystem() {
@@ -480,13 +486,15 @@ public class Railroad {
     }
 
     private void trainControl() {
+        isStopped = false;
         stopTrainControlSystem = false;
         while(!stopTrainControlSystem) {
             try {
-                Thread.sleep(1000);
+                Thread.sleep(500);
             } catch (InterruptedException ignored) { }
             this.update();
         }
+        isStopped = true;
     }
 
     public class Section {

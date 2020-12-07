@@ -45,7 +45,7 @@ public class GuiControlTrain implements Initializable {
     @FXML
     public ListView<String> standardValues;
 
-    private Train.TrainSpeedChangeListener changeListener = newSpeed -> Platform.runLater(() -> this.speed.setValue(newSpeed));
+    private Train.TrainSpeedChangeListener changeListener = newSpeed -> Platform.runLater(() -> this.speed.setValue(newSpeed - 1));
 
     public void onNormalSpeed(ActionEvent event) {
         if(Config.mode.equals(Config.MODE_MANUAL))
@@ -157,7 +157,11 @@ public class GuiControlTrain implements Initializable {
                     }
                 });
 
-        this.loadPicture();
+        this.speed.setMax(t.getMaxSpeed());
+        this.speed.setMin(0);
+        this.speed.setValue(t.getSpeed());
 
+        this.loadPicture();
+        toAdd = null;
     }
 }

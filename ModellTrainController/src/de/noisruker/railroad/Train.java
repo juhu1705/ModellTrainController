@@ -154,7 +154,7 @@ public class Train implements Serializable, Comparable<Train> {
 	public void setSpeed(byte speed) {
 		if (speed > this.maxSpeed || speed < 0)
 			return;
-		this.speed = speed;
+		this.speed = (byte) (speed + 1);
 		this.trainSpeedChangeListener.forEach(a -> a.onSpeedChanged(this.speed));
 	}
 
@@ -234,7 +234,7 @@ public class Train implements Serializable, Comparable<Train> {
 	}
 
 	public byte getSpeed() {
-		return this.speed;
+		return (byte) (this.speed - 1);
 	}
 
 	public byte getAddress() {
@@ -295,7 +295,7 @@ public class Train implements Serializable, Comparable<Train> {
 	public void stopTrainImmediately() {
 		try {
 			this.setSpeed((byte) 0);
-			this.setActualSpeed((byte) 0);
+			this.setActualSpeed((byte) 1);
 		} catch (IOException ignored) { }
 	}
 
@@ -395,18 +395,19 @@ public class Train implements Serializable, Comparable<Train> {
 	}
 
 	private void updateSpeed() throws IOException {
-		if(this.speed == -1)
-			this.setActualSpeed((byte) -1);
+		if(this.speed == 1)
+			this.setActualSpeed((byte) 1);
+
 		if(this.speed > this.actualSpeed) {
 			if(this.speed - 10 < this.actualSpeed)
 				this.setActualSpeed(this.speed);
 			else
-				this.setActualSpeed((byte) (this.speed - 10));
+				this.setActualSpeed((byte) (this.actualSpeed + 10));
 		} else if(this.speed < this.actualSpeed) {
 			if(this.speed + 10 > this.actualSpeed)
 				this.setActualSpeed(this.speed);
 			else
-				this.setActualSpeed((byte) (this.speed + 10));
+				this.setActualSpeed((byte) (this.actualSpeed - 10));
 		}
 	}
 
