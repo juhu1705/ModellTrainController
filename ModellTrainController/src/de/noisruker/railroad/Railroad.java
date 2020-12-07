@@ -483,7 +483,7 @@ public class Railroad {
         stopTrainControlSystem = false;
         while(!stopTrainControlSystem) {
             try {
-                Thread.sleep(500);
+                Thread.sleep(1000);
             } catch (InterruptedException ignored) { }
             this.update();
         }

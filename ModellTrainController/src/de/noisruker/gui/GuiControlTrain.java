@@ -116,7 +116,7 @@ public class GuiControlTrain implements Initializable {
     }
 
     public void loadPicture() {
-        if(!t.getPicturePath().isBlank())
+        if(t.getPicturePath() != null && !t.getPicturePath().isBlank())
             this.picture.setImage(new Image(t.getPicturePath()));
         else
             this.picture.setImage(new Image("/assets/textures/images/no_picture.png"));
@@ -157,7 +157,7 @@ public class GuiControlTrain implements Initializable {
                     }
                 });
 
-        //this.loadPicture();
+        this.loadPicture();
 
     }
 }
