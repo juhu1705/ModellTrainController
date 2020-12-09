@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox maxHeight="-Infinity" styleClass="background" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="386.0" prefWidth="600.0" style="-fx-padding: 20;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.noisruker.gui.GuiAddTrain">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="386.0" prefWidth="600.0" style="-fx-padding: 20;" styleClass="background" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.noisruker.gui.GuiAddTrain">
    <children>
       <Label alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="48.0" prefWidth="560.0" text="%label.trains">
          <VBox.margin>
@@ -43,7 +43,7 @@
             <Insets />
          </VBox.margin>
          <children>
-            <ProgressBar fx:id="progress" prefHeight="18.0" prefWidth="450.0" progress="0.0" />
+            <ProgressBar fx:id="progress" prefHeight="1.0" prefWidth="445.0" progress="0.0" />
             <Button alignment="CENTER" mnemonicParsing="false" onAction="#onClose" prefWidth="100.0" text="%button.next" />
          </children>
       </HBox>

@@ -109,7 +109,7 @@
 
 /* Buttons */
 
-.button, .button:selected, .button:focused {
+.button, .button:selected, .button:focused, .toggle-button, .toggle-button:focused, .toggle-button:selected {
     -fx-background-radius: 10;
     -fx-border-radius: 10;
 }
