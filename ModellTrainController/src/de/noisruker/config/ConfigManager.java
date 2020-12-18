@@ -338,9 +338,11 @@ public class ConfigManager {
 						check.setSpacing(20);
 
 						ToggleSwitch toggleSwitch = new ToggleSwitch();
+
 						try {
 							toggleSwitch.setSelected(f.getBoolean(null));
 						} catch (IllegalAccessException ignored) { }
+
 						toggleSwitch.selectedProperty().addListener((o, oldValue, newValue) -> {
 							if(oldValue != newValue) {
 								try {
@@ -349,6 +351,13 @@ public class ConfigManager {
 								this.onConfigChanged(e.name());
 							}
 						});
+
+						this.listeners.add(new ChangeEntry(e.name(), () -> {
+							try {
+								toggleSwitch.setSelected((Boolean) f.get(null));
+							} catch (IllegalArgumentException | IllegalAccessException ignored) { }
+						}));
+
 						toggleSwitch.setPrefWidth(27.0);
 						Tooltip t = new Tooltip(Ref.language.getString("config." + e.description()));
 						toggleSwitch.setTooltip(t);

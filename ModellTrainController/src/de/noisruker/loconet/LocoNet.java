@@ -108,9 +108,7 @@ public class LocoNet {
 
 				try {
 					Thread.sleep(1000);
-				} catch (InterruptedException ignored) {
-
-				}
+				} catch (InterruptedException ignored) { }
 			}
 		}).start();
 	}

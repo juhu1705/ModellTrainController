@@ -19,7 +19,14 @@ public class SwitchMessage implements AbstractMessage, Serializable {
 		this.address = address;
 
 		this.on = state;
+	}
 
+	public byte getAddress() {
+		return address;
+	}
+
+	public boolean getState() {
+		return on;
 	}
 
 	@Override

@@ -1,17 +1,29 @@
 package de.noisruker.railroad;
 
-public class Sensor {
+import de.noisruker.gui.RailroadImages;
+import de.noisruker.loconet.messages.AbstractMessage;
+import javafx.scene.image.Image;
+
+import java.io.BufferedWriter;
+import java.io.IOException;
+
+public class Sensor extends AbstractRailroadElement {
 
 	private final int address;
+	private int posX, posY;
+
 	private boolean state;
 
 	public Sensor(int address, boolean state) {
+		super("sensor");
 		this.address = address;
 		this.state = state;
 	}
 
-	public boolean isAddress(int address, boolean b) {
-		return this.address == address && this.state == b;
+	@Override
+	public void saveTo(BufferedWriter writer) throws IOException {
+		writer.append("");
+		writer.append("");
 	}
 
 	@Override
@@ -35,4 +47,13 @@ public class Sensor {
 		return this.state;
 	}
 
+	@Override
+	public Image getImage() {
+		return RailroadImages.STRAIGHT_SENSOR_HORIZONTAL;
+	}
+
+	@Override
+	public void onLocoNetMessage(AbstractMessage message) {
+
+	}
 }

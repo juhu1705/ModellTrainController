@@ -40,9 +40,6 @@ public class GuiMain implements Initializable {
     public TreeView<String> tree, trains;
 
     @FXML
-    public ToggleButton straight, curve, RSwitch, LSwitch, LRSwitch, delete, cut, shouldHide;
-
-    @FXML
     public VBox railroadSection;
 
     public ArrayList<HBox> railroadLines = new ArrayList<>();
@@ -56,225 +53,11 @@ public class GuiMain implements Initializable {
     @FXML
     public VBox config;
 
-    public EditMode mode = EditMode.STRAIGHT;
-
-    private enum EditMode {
-        STRAIGHT,
-        CURVE,
-        SWITCH_R,
-        SWITCH_L,
-        SWITCH_L_R,
-        DELETE,
-        CUT
-    }
-
-    public Rotation rotation = Rotation.NORTH;
-
-    private enum Rotation {
-        NORTH,
-        WEST,
-        EAST,
-        SOUTH
-    }
-
-    public Image hover_image = getImageForModeAndRotation(true);
-
-    public void onNextRotation(ActionEvent event) {
-        switch (rotation) {
-            case NORTH:
-                rotation = Rotation.EAST;
-                break;
-            case WEST:
-                rotation = Rotation.NORTH;
-                break;
-            case EAST:
-                rotation = Rotation.SOUTH;
-                break;
-            case SOUTH:
-                rotation = Rotation.WEST;
-                break;
+    public void onCreateRailroad(ActionEvent event) {
+        Stage s = Util.openWindow("/assets/layouts/edit_railroad.fxml", Ref.language.getString("window.railroad"), GUILoader.getPrimaryStage());
+        if(s != null) {
+            s.setResizable(true);
         }
-        this.hover_image = getImageForModeAndRotation(true);
-    }
-
-    public void onPreviousRotation(ActionEvent event) {
-        switch (rotation) {
-            case NORTH:
-                rotation = Rotation.WEST;
-                break;
-            case WEST:
-                rotation = Rotation.SOUTH;
-                break;
-            case EAST:
-                rotation = Rotation.NORTH;
-                break;
-            case SOUTH:
-                rotation = Rotation.EAST;
-                break;
-        }
-        this.hover_image = getImageForModeAndRotation(true);
-    }
-
-    public Image getImageForModeAndRotation(boolean AsHover) {
-        switch (mode) {
-            case STRAIGHT:
-                switch (rotation) {
-                    case NORTH:
-                    case SOUTH:
-                        return AsHover ? RailroadImages.STRAIGHT_VERTICAL_HOVER : RailroadImages.STRAIGHT_VERTICAL;
-                    case WEST:
-                    case EAST:
-                        return AsHover ? RailroadImages.STRAIGHT_HORIZONTAL_HOVER : RailroadImages.STRAIGHT_HORIZONTAL;
-                }
-            case CURVE:
-                switch (rotation) {
-                    case NORTH:
-                        return AsHover ? RailroadImages.CURVE_NORTH_EAST_HOVER : RailroadImages.CURVE_NORTH_EAST;
-                    case SOUTH:
-                        return AsHover ? RailroadImages.CURVE_SOUTH_WEST_HOVER : RailroadImages.CURVE_SOUTH_WEST;
-                    case WEST:
-                        return AsHover ? RailroadImages.CURVE_NORTH_WEST_HOVER : RailroadImages.CURVE_NORTH_WEST;
-                    case EAST:
-                        return AsHover ? RailroadImages.CURVE_SOUTH_EAST_HOVER : RailroadImages.CURVE_SOUTH_EAST;
-                }
-            case SWITCH_R:
-                switch (rotation) {
-                    case NORTH:
-                        return AsHover ? RailroadImages.SWITCH_NORTH_2_HOVER : RailroadImages.SWITCH_NORTH_2;
-                    case SOUTH:
-                        return AsHover ? RailroadImages.SWITCH_SOUTH_2_HOVER : RailroadImages.SWITCH_SOUTH_2;
-                    case WEST:
-                        return AsHover ? RailroadImages.SWITCH_WEST_2_HOVER : RailroadImages.SWITCH_WEST_2;
-                    case EAST:
-                        return AsHover ? RailroadImages.SWITCH_EAST_2_HOVER : RailroadImages.SWITCH_EAST_2;
-                }
-            case SWITCH_L:
-                switch (rotation) {
-                    case NORTH:
-                        return AsHover ? RailroadImages.SWITCH_NORTH_1_HOVER : RailroadImages.SWITCH_NORTH_1;
-                    case SOUTH:
-                        return AsHover ? RailroadImages.SWITCH_SOUTH_1_HOVER : RailroadImages.SWITCH_SOUTH_1;
-                    case WEST:
-                        return AsHover ? RailroadImages.SWITCH_WEST_1_HOVER : RailroadImages.SWITCH_WEST_1;
-                    case EAST:
-                        return AsHover ? RailroadImages.SWITCH_EAST_1_HOVER : RailroadImages.SWITCH_EAST_1;
-                }
-            case SWITCH_L_R:
-                switch (rotation) {
-                    case NORTH:
-                        return AsHover ? RailroadImages.SWITCH_NORTH_3_HOVER : RailroadImages.SWITCH_NORTH_3;
-                    case SOUTH:
-                        return AsHover ? RailroadImages.SWITCH_SOUTH_3_HOVER : RailroadImages.SWITCH_SOUTH_3;
-                    case WEST:
-                        return AsHover ? RailroadImages.SWITCH_WEST_3_HOVER : RailroadImages.SWITCH_WEST_3;
-                    case EAST:
-                        return AsHover ? RailroadImages.SWITCH_EAST_3_HOVER : RailroadImages.SWITCH_EAST_3;
-                }
-            case CUT:
-                switch (rotation) {
-                    case NORTH:
-                    case SOUTH:
-                        return AsHover ? RailroadImages.STRAIGHT_VERTICAL_HOVER : RailroadImages.STRAIGHT_CUT_VERTICAL;
-                    case WEST:
-                    case EAST:
-                        return AsHover ? RailroadImages.STRAIGHT_HORIZONTAL_HOVER : RailroadImages.STRAIGHT_CUT_HORIZONTAL;
-                }
-        }
-
-        return shouldHide.isSelected() ? RailroadImages.EMPTY : RailroadImages.EMPTY_2;
-    }
-
-    public void onHideChanged(ActionEvent event) {
-        this.railroadCells.forEach((key, list) -> {
-            list.forEach(image -> {
-                if(image.getImage().equals(RailroadImages.EMPTY) || image.getImage().equals(RailroadImages.EMPTY_2))
-                    image.setImage(shouldHide.isSelected() ? RailroadImages.EMPTY : RailroadImages.EMPTY_2);
-            });
-        });
-    }
-
-    public void onSetModeToStraight(ActionEvent event) {
-        straight.setSelected(true);
-        curve.setSelected(false);
-        RSwitch.setSelected(false);
-        LSwitch.setSelected(false);
-        LRSwitch.setSelected(false);
-        delete.setSelected(false);
-        cut.setSelected(false);
-        mode = EditMode.STRAIGHT;
-        this.hover_image = getImageForModeAndRotation(true);
-    }
-
-    public void onSetModeToCurve(ActionEvent event) {
-        curve.setSelected(true);
-        straight.setSelected(false);
-        RSwitch.setSelected(false);
-        LSwitch.setSelected(false);
-        LRSwitch.setSelected(false);
-        delete.setSelected(false);
-        cut.setSelected(false);
-        mode = EditMode.CURVE;
-        this.hover_image = getImageForModeAndRotation(true);
-    }
-
-    public void onSetModeToRSwitch(ActionEvent event) {
-        RSwitch.setSelected(true);
-        curve.setSelected(false);
-        straight.setSelected(false);
-        LSwitch.setSelected(false);
-        LRSwitch.setSelected(false);
-        delete.setSelected(false);
-        cut.setSelected(false);
-        mode = EditMode.SWITCH_R;
-        this.hover_image = getImageForModeAndRotation(true);
-    }
-
-    public void onSetModeToLSwitch(ActionEvent event) {
-        LSwitch.setSelected(true);
-        curve.setSelected(false);
-        straight.setSelected(false);
-        RSwitch.setSelected(false);
-        LRSwitch.setSelected(false);
-        delete.setSelected(false);
-        cut.setSelected(false);
-        mode = EditMode.SWITCH_L;
-        this.hover_image = getImageForModeAndRotation(true);
-    }
-
-    public void onSetModeToLRSwitch(ActionEvent event) {
-        LRSwitch.setSelected(true);
-        curve.setSelected(false);
-        straight.setSelected(false);
-        RSwitch.setSelected(false);
-        LSwitch.setSelected(false);
-        delete.setSelected(false);
-        cut.setSelected(false);
-        mode = EditMode.SWITCH_L_R;
-        this.hover_image = getImageForModeAndRotation(true);
-    }
-
-    public void onSetModeToDelete(ActionEvent event) {
-        delete.setSelected(true);
-        curve.setSelected(false);
-        straight.setSelected(false);
-        RSwitch.setSelected(false);
-        LSwitch.setSelected(false);
-        LRSwitch.setSelected(false);
-        cut.setSelected(false);
-        mode = EditMode.DELETE;
-        this.hover_image = getImageForModeAndRotation(true);
-    }
-
-    public void onSetModeToCut(ActionEvent event) {
-        cut.setSelected(true);
-        curve.setSelected(false);
-        straight.setSelected(false);
-        RSwitch.setSelected(false);
-        LSwitch.setSelected(false);
-        LRSwitch.setSelected(false);
-        delete.setSelected(false);
-        mode = EditMode.CUT;
-        this.hover_image = getImageForModeAndRotation(true);
     }
 
     public void onAddTrains(ActionEvent event) {
@@ -329,7 +112,7 @@ public class GuiMain implements Initializable {
             HBox box = new HBox();
             railroadCells.put(box, new ArrayList<>());
             for(int x = 0; x < 100; x++) {
-                ImageView view = new ImageView(shouldHide.isSelected() ? RailroadImages.EMPTY : RailroadImages.EMPTY_2);
+                ImageView view = new ImageView(RailroadImages.EMPTY);
                 view.setFitHeight(32);
                 view.setFitWidth(32);
                 view.setX(32);
@@ -339,71 +122,6 @@ public class GuiMain implements Initializable {
                 view.setSmooth(true);
                 int finalY = y;
                 int finalX = x;
-                view.setOnMouseClicked(mouseEvent -> {
-                    if(mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
-                        switch (mode) {
-                            case STRAIGHT:
-                                this.setImage(finalX, finalY, getImageForModeAndRotation(false));
-                                start = finalX;
-                                break;
-                            case CURVE:
-                            case SWITCH_R:
-                            case SWITCH_L:
-                            case SWITCH_L_R:
-                            case DELETE:
-                                this.setImage(finalX, finalY, getImageForModeAndRotation(false));
-                                break;
-                            case CUT:
-                                if(RailroadImages.HOVER_IMAGES.contains(view.getImage()) ||
-                                        view.getImage().equals(RailroadImages.STRAIGHT_HORIZONTAL) ||
-                                        view.getImage().equals(RailroadImages.STRAIGHT_VERTICAL)) {
-                                    this.setImage(finalX, finalY, getImageForModeAndRotation(false));
-                                }
-                                break;
-                        }
-                    } else if(mouseEvent.getButton().equals(MouseButton.MIDDLE)) {
-                        this.onNextRotation(null);
-                    } else if(mouseEvent.getButton().equals(MouseButton.SECONDARY)) {
-                        switch (mode) {
-                            case STRAIGHT:
-                                this.onSetModeToDelete(null);
-                                break;
-                            case CURVE:
-                                this.onSetModeToStraight(null);
-                                break;
-                            case SWITCH_R:
-                                this.onSetModeToCurve(null);
-                                break;
-                            case SWITCH_L:
-                                this.onSetModeToRSwitch(null);
-                                break;
-                            case SWITCH_L_R:
-                                this.onSetModeToLSwitch(null);
-                                break;
-                            case DELETE:
-                                this.onSetModeToCut(null);
-                                break;
-                            case CUT:
-                                this.onSetModeToLRSwitch(null);
-                                break;
-                        }
-                    }
-                    if(view.getImage().equals(RailroadImages.EMPTY) || view.getImage().equals(RailroadImages.EMPTY_2) || RailroadImages.HOVER_IMAGES.contains(view.getImage()))
-                        view.setImage(this.hover_image);
-                });
-                view.setOnMouseEntered(mouseEvent -> {
-                    if(view.getImage().equals(RailroadImages.EMPTY) || view.getImage().equals(RailroadImages.EMPTY_2))
-                        view.setImage(this.hover_image);
-                    if(this.mode.equals(EditMode.DELETE) || this.mode.equals(EditMode.CUT))
-                        view.setCursor(Cursor.HAND);
-                    else
-                        view.setCursor(Cursor.DEFAULT);
-                });
-                view.setOnMouseExited(mouseEvent -> {
-                    if(RailroadImages.HOVER_IMAGES.contains(view.getImage()))
-                        view.setImage(shouldHide.isSelected() ? RailroadImages.EMPTY : RailroadImages.EMPTY_2);
-                });
-
                 view.setPickOnBounds(true);
                 box.getChildren().add(view);
                 railroadCells.get(box).add(view);
@@ -450,105 +168,9 @@ public class GuiMain implements Initializable {
         }
     }
 
-    public void calculateConnection(int fromX, int fromY, int toX, int toY, int startDirection) {
-        switch(startDirection) {
-            case 0:
-                if(fromX > toX) {
-                    if(fromY < toY) {
-                        this.setImage(fromX + 1, fromY, RailroadImages.CURVE_SOUTH_WEST);
-
-                        this.connectColumn(fromY + 1, toY, fromX + 1);
-
-                        this.setImage(fromX + 1, toY, RailroadImages.CURVE_NORTH_WEST);
-
-                        this.connectRow(fromX, toX, toY);
-
-                        this.setImage(toX, toY, RailroadImages.STRAIGHT_HORIZONTAL);
-                    } else if(fromY > toY) {
-                        this.setImage(fromX + 1, fromY, RailroadImages.CURVE_NORTH_WEST);
-
-                        this.connectColumn(fromY - 1, toY, fromX + 1);
-
-                        this.setImage(fromX + 1, toY, RailroadImages.CURVE_SOUTH_WEST);
-
-                        this.connectRow(fromX, toX, toY);
-
-                        this.setImage(toX, toY, RailroadImages.STRAIGHT_HORIZONTAL);
-                    } else {
-                        this.setImage(fromX + 1, fromY, RailroadImages.CURVE_SOUTH_WEST);
-
-                        this.setImage(fromX + 1, fromY + 1, RailroadImages.CURVE_NORTH_WEST);
-
-                        this.connectRow(fromX, toX, fromY + 1);
-
-                        this.setImage(toX, fromY + 1, RailroadImages.CURVE_NORTH_EAST);
-
-                        this.setImage(toX, fromY, RailroadImages.STRAIGHT_VERTICAL);
-                    }
-                } else if(fromX < toX) {
-                    this.connectRow(fromX, toX, fromY);
-
-                    HBox box1 = this.railroadLines.get(fromY);
-                    ArrayList<ImageView> cells = this.railroadCells.get(box1);
-                    if(fromY < toY) {
-                        cells.get(toX).setImage(RailroadImages.CURVE_SOUTH_WEST);
-                        this.connectColumn(fromY + 1, toY, toX);
-                        this.setImage(toX, toY, RailroadImages.STRAIGHT_VERTICAL);
-                    } else if(fromY > toY) {
-                        cells.get(toX).setImage(RailroadImages.CURVE_NORTH_WEST);
-                        this.connectColumn(fromY - 1, toY, toX);
-                        this.setImage(toX, toY, RailroadImages.STRAIGHT_VERTICAL);
-                    } else {
-                        cells.get(toX).setImage(RailroadImages.STRAIGHT_HORIZONTAL);
-                    }
-                } else {
-
-                }
-                break;
-            case 1:
-                break;
-            case 2:
-                break;
-            case 3:
-                break;
-            default:
-                break;
-        }
-    }
-
     public void setImage(int x, int y, Image i) {
         HBox box1 = this.railroadLines.get(y);
         ArrayList<ImageView> cells = this.railroadCells.get(box1);
         cells.get(x).setImage(i);
-    }
-
-    public void connectColumn(int from, int to, int row) {
-        if(from < to) {
-            for (int i = from; i < to; i++) {
-                HBox box1 = this.railroadLines.get(i);
-                ArrayList<ImageView> cells = this.railroadCells.get(box1);
-                cells.get(row).setImage(RailroadImages.STRAIGHT_VERTICAL);
-            }
-        } else if(from > to) {
-            for (int i = from; i > to; i--) {
-                HBox box1 = this.railroadLines.get(i);
-                ArrayList<ImageView> cells = this.railroadCells.get(box1);
-                cells.get(row).setImage(RailroadImages.STRAIGHT_VERTICAL);
-            }
-        }
-    }
-
-    public void connectRow(int from, int to, int column) {
-        HBox box1 = this.railroadLines.get(column);
-        ArrayList<ImageView> cells = this.railroadCells.get(box1);
-        if(from < to) {
-            for (int i = from; i < to; i++) {
-                cells.get(i).setImage(RailroadImages.STRAIGHT_HORIZONTAL);
-            }
-        } else if(from > to) {
-            for (int i = from; i > to; i--) {
-                cells.get(i).setImage(RailroadImages.STRAIGHT_HORIZONTAL);
-            }
-        }
     }
 }
