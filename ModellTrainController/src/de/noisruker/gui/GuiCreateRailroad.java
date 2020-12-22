@@ -1,10 +1,7 @@
 package de.noisruker.gui;
 
 import de.noisruker.main.GUILoader;
-import de.noisruker.railroad.AbstractRailroadElement;
-import de.noisruker.railroad.RailRotation;
-import de.noisruker.railroad.RailroadLine;
-import de.noisruker.railroad.Switch;
+import de.noisruker.railroad.*;
 import de.noisruker.util.Ref;
 import de.noisruker.util.Util;
 import javafx.application.Platform;
@@ -349,13 +346,13 @@ public class GuiCreateRailroad implements Initializable {
             ArrayList<ImageView> cells = this.railroadCells.get(box1);
             for (int x = 0; x < 100; x++) {
                 if(cells.get(x).getImage().equals(RailroadImages.STRAIGHT_HORIZONTAL)) {
-                    railroadElements[x][y] = new RailroadLine(RailRotation.NORTH);
+                    railroadElements[x][y] = new RailroadLine(RailRotation.NORTH, new Position(x, y));
                 } else if(cells.get(x).getImage().equals(RailroadImages.STRAIGHT_VERTICAL)) {
-                    railroadElements[x][y] = new RailroadLine(RailRotation.WEST);
+                    railroadElements[x][y] = new RailroadLine(RailRotation.WEST, new Position(x, y));
                 } else if(cells.get(x).getImage().equals(RailroadImages.STRAIGHT_SENSOR_HORIZONTAL)) {
-                    railroadElements[x][y] = new RailroadLine(RailRotation.WEST);
+                    railroadElements[x][y] = new RailroadLine(RailRotation.WEST, new Position(x, y));
                 } else if(cells.get(x).getImage().equals(RailroadImages.STRAIGHT_SENSOR_VERTICAL)) {
-                    railroadElements[x][y] = new RailroadLine(RailRotation.WEST);
+                    railroadElements[x][y] = new RailroadLine(RailRotation.WEST, new Position(x, y));
                 } else if(cells.get(x).getImage().equals(RailroadImages.CURVE_NORTH_EAST)) {
 
                 } else if(cells.get(x).getImage().equals(RailroadImages.CURVE_NORTH_WEST)) {
@@ -399,7 +396,7 @@ public class GuiCreateRailroad implements Initializable {
     private void handleSwitch(AbstractRailroadElement[][] railroadElements, Switch.SwitchType type, RailRotation rotation, int x, int y) {
         Util.runNext(() -> {
             this.handleAddSwitch(x, y);
-            railroadElements[x][y] = new Switch(GuiEditSwitch.getSwitchAddress(), type, rotation, GuiEditSwitch.getDirection());
+            railroadElements[x][y] = new Switch(GuiEditSwitch.getSwitchAddress(), type, rotation, GuiEditSwitch.getDirection(), new Position(x, y));
             GuiEditSwitch.reset();
         });
     }

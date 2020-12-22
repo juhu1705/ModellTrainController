@@ -14,8 +14,8 @@ public class Sensor extends AbstractRailroadElement {
 
 	private boolean state;
 
-	public Sensor(int address, boolean state) {
-		super("sensor");
+	public Sensor(int address, boolean state, Position position) {
+		super("sensor", position);
 		this.address = address;
 		this.state = state;
 	}
@@ -55,5 +55,10 @@ public class Sensor extends AbstractRailroadElement {
 	@Override
 	public void onLocoNetMessage(AbstractMessage message) {
 
+	}
+
+	@Override
+	public Position getToPos(Position from) {
+		return null;
 	}
 }

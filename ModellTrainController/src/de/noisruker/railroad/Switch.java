@@ -20,8 +20,8 @@ public class Switch extends AbstractRailroadElement {
 	private final RailRotation rotation;
 	private final boolean normalPosition;
 
-	public Switch(byte address, SwitchType type, RailRotation rotation, boolean normalPosition) {
-		super("switch");
+	public Switch(byte address, SwitchType type, RailRotation rotation, boolean normalPosition, Position position) {
+		super("switch", position);
 		this.address = address;
 		this.type = type;
 		this.rotation = rotation;
@@ -58,7 +58,7 @@ public class Switch extends AbstractRailroadElement {
 			case LEFT:
 				switch (rotation) {
 					case NORTH:
-						if(normalPosition) {
+						if(!normalPosition) {
 							if (state)
 								return RailroadImages.SWITCH_NORTH_LEFT_ON;
 							else
@@ -70,7 +70,7 @@ public class Switch extends AbstractRailroadElement {
 								return RailroadImages.SWITCH_NORTH_LEFT_OFF;
 						}
 					case SOUTH:
-						if(normalPosition) {
+						if(!normalPosition) {
 							if (state)
 								return RailroadImages.SWITCH_SOUTH_LEFT_ON;
 							else
@@ -82,7 +82,7 @@ public class Switch extends AbstractRailroadElement {
 								return RailroadImages.SWITCH_SOUTH_LEFT_OFF;
 						}
 					case EAST:
-						if(normalPosition) {
+						if(!normalPosition) {
 							if (state)
 								return RailroadImages.SWITCH_EAST_LEFT_ON;
 							else
@@ -94,7 +94,7 @@ public class Switch extends AbstractRailroadElement {
 								return RailroadImages.SWITCH_EAST_LEFT_OFF;
 						}
 					case WEST:
-						if(normalPosition) {
+						if(!normalPosition) {
 							if (state)
 								return RailroadImages.SWITCH_WEST_LEFT_ON;
 							else
@@ -110,50 +110,50 @@ public class Switch extends AbstractRailroadElement {
 			case RIGHT:
 				switch (rotation) {
 					case NORTH:
-						if(normalPosition) {
+						if(!normalPosition) {
 							if (state)
 								return RailroadImages.SWITCH_NORTH_RIGHT_ON;
 							else
-								return RailroadImages.SWITCH_NORTH_LEFT_OFF;
+								return RailroadImages.SWITCH_NORTH_STRAIGHT_RIGHT_OFF;
 						} else {
 							if (state)
-								return RailroadImages.SWITCH_NORTH_LEFT_ON;
+								return RailroadImages.SWITCH_NORTH_STRAIGHT_RIGHT_ON;
 							else
 								return RailroadImages.SWITCH_NORTH_RIGHT_OFF;
 						}
 					case SOUTH:
-						if(normalPosition) {
+						if(!normalPosition) {
 							if (state)
 								return RailroadImages.SWITCH_SOUTH_RIGHT_ON;
 							else
-								return RailroadImages.SWITCH_SOUTH_LEFT_OFF;
+								return RailroadImages.SWITCH_SOUTH_STRAIGHT_RIGHT_OFF;
 						} else {
 							if (state)
-								return RailroadImages.SWITCH_SOUTH_LEFT_ON;
+								return RailroadImages.SWITCH_SOUTH_STRAIGHT_RIGHT_ON;
 							else
 								return RailroadImages.SWITCH_SOUTH_RIGHT_OFF;
 						}
 					case EAST:
-						if(normalPosition) {
+						if(!normalPosition) {
 							if (state)
 								return RailroadImages.SWITCH_EAST_RIGHT_ON;
 							else
-								return RailroadImages.SWITCH_EAST_LEFT_OFF;
+								return RailroadImages.SWITCH_EAST_STRAIGHT_RIGHT_OFF;
 						} else {
 							if (state)
-								return RailroadImages.SWITCH_EAST_LEFT_ON;
+								return RailroadImages.SWITCH_EAST_STRAIGHT_RIGHT_ON;
 							else
 								return RailroadImages.SWITCH_EAST_RIGHT_OFF;
 						}
 					case WEST:
-						if(normalPosition) {
+						if(!normalPosition) {
 							if (state)
 								return RailroadImages.SWITCH_WEST_RIGHT_ON;
 							else
-								return RailroadImages.SWITCH_WEST_LEFT_OFF;
+								return RailroadImages.SWITCH_WEST_STRAIGHT_RIGHT_OFF;
 						} else {
 							if (state)
-								return RailroadImages.SWITCH_WEST_LEFT_ON;
+								return RailroadImages.SWITCH_WEST_STRAIGHT_RIGHT_ON;
 							else
 								return RailroadImages.SWITCH_WEST_RIGHT_OFF;
 						}
@@ -162,7 +162,7 @@ public class Switch extends AbstractRailroadElement {
 			case LEFT_RIGHT:
 				switch (rotation) {
 					case NORTH:
-						if(normalPosition) {
+						if(!normalPosition) {
 							if (state)
 								return RailroadImages.SWITCH_NORTH_RIGHT_ON;
 							else
@@ -174,7 +174,7 @@ public class Switch extends AbstractRailroadElement {
 								return RailroadImages.SWITCH_NORTH_RIGHT_OFF;
 						}
 					case SOUTH:
-						if(normalPosition) {
+						if(!normalPosition) {
 							if (state)
 								return RailroadImages.SWITCH_SOUTH_RIGHT_ON;
 							else
@@ -186,7 +186,7 @@ public class Switch extends AbstractRailroadElement {
 								return RailroadImages.SWITCH_SOUTH_RIGHT_OFF;
 						}
 					case EAST:
-						if(normalPosition) {
+						if(!normalPosition) {
 							if (state)
 								return RailroadImages.SWITCH_EAST_RIGHT_ON;
 							else
@@ -198,7 +198,7 @@ public class Switch extends AbstractRailroadElement {
 								return RailroadImages.SWITCH_EAST_RIGHT_OFF;
 						}
 					case WEST:
-						if(normalPosition) {
+						if(!normalPosition) {
 							if (state)
 								return RailroadImages.SWITCH_WEST_RIGHT_ON;
 							else
@@ -222,6 +222,377 @@ public class Switch extends AbstractRailroadElement {
 			if(switchMessage.getAddress() == this.address)
 				this.state = switchMessage.getState();
 		}
+	}
+
+	@Override
+	public Position getToPos(Position from) {
+		if(isPositionValid(from))
+			return getNextPositionSwitchSpecial(from, this.state);
+		return null;
+	}
+
+	public boolean isPositionValid(Position from) {
+		switch (rotation) {
+			case NORTH:
+				switch (type) {
+					case LEFT:
+						if((state && !normalPosition) || (!state && normalPosition))
+							return from.equals(new Position(super.position.getX(), super.position.getY() - 1)) ||
+									from.equals(new Position(super.position.getX() + 1, super.position.getY()));
+						else
+							return from.equals(new Position(super.position.getX(), super.position.getY() - 1)) ||
+									from.equals(new Position(super.position.getX(), super.position.getY() + 1));
+					case RIGHT:
+						if((state && !normalPosition) || (!state && normalPosition))
+							return from.equals(new Position(super.position.getX(), super.position.getY() - 1)) ||
+									from.equals(new Position(super.position.getX() - 1, super.position.getY()));
+						else
+							return from.equals(new Position(super.position.getX(), super.position.getY() - 1)) ||
+									from.equals(new Position(super.position.getX(), super.position.getY() + 1));
+					case LEFT_RIGHT:
+						if((state && !normalPosition) || (!state && normalPosition))
+							return from.equals(new Position(super.position.getX(), super.position.getY() - 1)) ||
+									from.equals(new Position(super.position.getX() - 1, super.position.getY()));
+						else
+							return from.equals(new Position(super.position.getX(), super.position.getY() - 1)) ||
+									from.equals(new Position(super.position.getX() + 1, super.position.getY()));
+				}
+				break;
+			case WEST:
+				switch (type) {
+					case LEFT:
+						if((state && !normalPosition) || (!state && normalPosition))
+							return from.equals(new Position(super.position.getX(), super.position.getY() - 1)) ||
+									from.equals(new Position(super.position.getX() - 1, super.position.getY()));
+						else
+							return from.equals(new Position(super.position.getX() + 1, super.position.getY())) ||
+									from.equals(new Position(super.position.getX() - 1, super.position.getY()));
+					case RIGHT:
+						if((state && !normalPosition) || (!state && normalPosition))
+							return from.equals(new Position(super.position.getX(), super.position.getY() + 1)) ||
+									from.equals(new Position(super.position.getX() - 1, super.position.getY()));
+						else
+							return from.equals(new Position(super.position.getX() + 1, super.position.getY())) ||
+									from.equals(new Position(super.position.getX() - 1, super.position.getY()));
+					case LEFT_RIGHT:
+						if((state && !normalPosition) || (!state && normalPosition))
+							return from.equals(new Position(super.position.getX(), super.position.getY() - 1)) ||
+									from.equals(new Position(super.position.getX() - 1, super.position.getY()));
+						else
+							return from.equals(new Position(super.position.getX(), super.position.getY() + 1)) ||
+									from.equals(new Position(super.position.getX() - 1, super.position.getY()));
+				}
+				break;
+			case EAST:
+				switch (type) {
+					case LEFT:
+						if((state && !normalPosition) || (!state && normalPosition))
+							return from.equals(new Position(super.position.getX(), super.position.getY() - 1)) ||
+									from.equals(new Position(super.position.getX() + 1, super.position.getY()));
+						else
+							return from.equals(new Position(super.position.getX() + 1, super.position.getY())) ||
+									from.equals(new Position(super.position.getX() - 1, super.position.getY()));
+					case RIGHT:
+						if((state && !normalPosition) || (!state && normalPosition))
+							return from.equals(new Position(super.position.getX(), super.position.getY() + 1)) ||
+									from.equals(new Position(super.position.getX() + 1, super.position.getY()));
+						else
+							return from.equals(new Position(super.position.getX() + 1, super.position.getY())) ||
+									from.equals(new Position(super.position.getX() - 1, super.position.getY()));
+					case LEFT_RIGHT:
+						if((state && !normalPosition) || (!state && normalPosition))
+							return from.equals(new Position(super.position.getX(), super.position.getY() - 1)) ||
+									from.equals(new Position(super.position.getX() + 1, super.position.getY()));
+						else
+							return from.equals(new Position(super.position.getX(), super.position.getY() + 1)) ||
+									from.equals(new Position(super.position.getX() + 1, super.position.getY()));
+				}
+				break;
+			case SOUTH:
+				switch (type) {
+					case LEFT:
+						if((state && !normalPosition) || (!state && normalPosition))
+							return from.equals(new Position(super.position.getX(), super.position.getY() + 1)) ||
+									from.equals(new Position(super.position.getX() + 1, super.position.getY()));
+						else
+							return from.equals(new Position(super.position.getX(), super.position.getY() - 1)) ||
+									from.equals(new Position(super.position.getX(), super.position.getY() + 1));
+					case RIGHT:
+						if((state && !normalPosition) || (!state && normalPosition))
+							return from.equals(new Position(super.position.getX(), super.position.getY() + 1)) ||
+									from.equals(new Position(super.position.getX() - 1, super.position.getY()));
+						else
+							return from.equals(new Position(super.position.getX(), super.position.getY() - 1)) ||
+									from.equals(new Position(super.position.getX(), super.position.getY() + 1));
+					case LEFT_RIGHT:
+						if((state && !normalPosition) || (!state && normalPosition))
+							return from.equals(new Position(super.position.getX(), super.position.getY() + 1)) ||
+									from.equals(new Position(super.position.getX() - 1, super.position.getY()));
+						else
+							return from.equals(new Position(super.position.getX(), super.position.getY() + 1)) ||
+									from.equals(new Position(super.position.getX() + 1, super.position.getY()));
+				}
+				break;
+		}
+		return false;
+	}
+
+	public Position getNextPositionSwitchSpecial(Position from, boolean state) {
+		switch (type) {
+			case LEFT:
+				switch (rotation) {
+					case NORTH:
+						if(!normalPosition) {
+							if (state)
+								return from.equals(new Position(super.position.getX(), super.position.getY() - 1)) ?
+										new Position(super.position.getX() + 1, super.position.getY()) :
+										new Position(super.position.getX(), super.position.getY() - 1);
+							else
+								return from.equals(new Position(super.position.getX(), super.position.getY() - 1)) ?
+										new Position(super.position.getX(), super.position.getY() + 1) :
+										new Position(super.position.getX(), super.position.getY() - 1);
+						} else {
+							if (state)
+								return from.equals(new Position(super.position.getX(), super.position.getY() - 1)) ?
+										new Position(super.position.getX(), super.position.getY() + 1) :
+										new Position(super.position.getX(), super.position.getY() - 1);
+							else
+								return from.equals(new Position(super.position.getX(), super.position.getY() - 1)) ?
+										new Position(super.position.getX() + 1, super.position.getY()) :
+										new Position(super.position.getX(), super.position.getY() - 1);
+						}
+					case SOUTH:
+						if(!normalPosition) {
+							if (state)
+								return from.equals(new Position(super.position.getX(), super.position.getY() + 1)) ?
+										new Position(super.position.getX() - 1, super.position.getY()) :
+										new Position(super.position.getX(), super.position.getY() + 1);
+							else
+								return from.equals(new Position(super.position.getX(), super.position.getY() + 1)) ?
+										new Position(super.position.getX(), super.position.getY() - 1) :
+										new Position(super.position.getX(), super.position.getY() + 1);
+						} else {
+							if (state)
+								return from.equals(new Position(super.position.getX(), super.position.getY() + 1)) ?
+										new Position(super.position.getX(), super.position.getY() - 1) :
+										new Position(super.position.getX(), super.position.getY() + 1);
+							else
+								return from.equals(new Position(super.position.getX(), super.position.getY() + 1)) ?
+										new Position(super.position.getX() - 1, super.position.getY()) :
+										new Position(super.position.getX(), super.position.getY() + 1);
+						}
+					case EAST:
+						if(!normalPosition) {
+							if (state)
+								return from.equals(new Position(super.position.getX(), super.position.getY() + 1)) ?
+										new Position(super.position.getX() + 1, super.position.getY()) :
+										new Position(super.position.getX(), super.position.getY() + 1);
+							else
+								return from.equals(new Position(super.position.getX() + 1, super.position.getY())) ?
+										new Position(super.position.getX() - 1, super.position.getY()) :
+										new Position(super.position.getX() + 1, super.position.getY());
+						} else {
+							if (state)
+								return from.equals(new Position(super.position.getX() + 1, super.position.getY())) ?
+										new Position(super.position.getX() - 1, super.position.getY()) :
+										new Position(super.position.getX() + 1, super.position.getY());
+							else
+								return from.equals(new Position(super.position.getX(), super.position.getY() + 1)) ?
+										new Position(super.position.getX() + 1, super.position.getY()) :
+										new Position(super.position.getX(), super.position.getY() + 1);
+						}
+					case WEST:
+						if(!normalPosition) {
+							if (state)
+								return from.equals(new Position(super.position.getX(), super.position.getY() - 1)) ?
+										new Position(super.position.getX() - 1, super.position.getY()) :
+										new Position(super.position.getX(), super.position.getY() - 1);
+							else
+								return from.equals(new Position(super.position.getX() + 1, super.position.getY())) ?
+										new Position(super.position.getX() - 1, super.position.getY()) :
+										new Position(super.position.getX() + 1, super.position.getY());
+						} else {
+							if (state)
+								return from.equals(new Position(super.position.getX() + 1, super.position.getY())) ?
+										new Position(super.position.getX() - 1, super.position.getY()) :
+										new Position(super.position.getX() + 1, super.position.getY());
+							else
+								return from.equals(new Position(super.position.getX(), super.position.getY() - 1)) ?
+										new Position(super.position.getX() - 1, super.position.getY()) :
+										new Position(super.position.getX(), super.position.getY() - 1);
+						}
+				}
+				break;
+			case RIGHT:
+				switch (rotation) {
+					case NORTH:
+						if(!normalPosition) {
+							if (state)
+								return from.equals(new Position(super.position.getX(), super.position.getY() - 1)) ?
+										new Position(super.position.getX() - 1, super.position.getY()) :
+										new Position(super.position.getX(), super.position.getY() - 1);
+							else
+								return from.equals(new Position(super.position.getX(), super.position.getY() - 1)) ?
+										new Position(super.position.getX(), super.position.getY() + 1) :
+										new Position(super.position.getX(), super.position.getY() - 1);
+						} else {
+							if (state)
+								return from.equals(new Position(super.position.getX(), super.position.getY() - 1)) ?
+										new Position(super.position.getX(), super.position.getY() + 1) :
+										new Position(super.position.getX(), super.position.getY() - 1);
+							else
+								return from.equals(new Position(super.position.getX(), super.position.getY() - 1)) ?
+										new Position(super.position.getX() - 1, super.position.getY()) :
+										new Position(super.position.getX(), super.position.getY() - 1);
+						}
+					case SOUTH:
+						if(!normalPosition) {
+							if (state)
+								return from.equals(new Position(super.position.getX(), super.position.getY() + 1)) ?
+										new Position(super.position.getX() + 1, super.position.getY()) :
+										new Position(super.position.getX(), super.position.getY() + 1);
+							else
+								return from.equals(new Position(super.position.getX(), super.position.getY() - 1)) ?
+										new Position(super.position.getX(), super.position.getY() + 1) :
+										new Position(super.position.getX(), super.position.getY() - 1);
+						} else {
+							if (state)
+								return from.equals(new Position(super.position.getX(), super.position.getY() - 1)) ?
+										new Position(super.position.getX(), super.position.getY() + 1) :
+										new Position(super.position.getX(), super.position.getY() - 1);
+							else
+								return from.equals(new Position(super.position.getX(), super.position.getY() + 1)) ?
+										new Position(super.position.getX() + 1, super.position.getY()) :
+										new Position(super.position.getX(), super.position.getY() + 1);
+						}
+					case EAST:
+						if(!normalPosition) {
+							if (state)
+								return from.equals(new Position(super.position.getX(), super.position.getY() - 1)) ?
+										new Position(super.position.getX() + 1, super.position.getY()) :
+										new Position(super.position.getX(), super.position.getY() - 1);
+							else
+								return from.equals(new Position(super.position.getX() + 1, super.position.getY())) ?
+										new Position(super.position.getX() - 1, super.position.getY()) :
+										new Position(super.position.getX() + 1, super.position.getY());
+						} else {
+							if (state)
+								return from.equals(new Position(super.position.getX() + 1, super.position.getY())) ?
+										new Position(super.position.getX() - 1, super.position.getY()) :
+										new Position(super.position.getX() + 1, super.position.getY());
+							else
+								return from.equals(new Position(super.position.getX(), super.position.getY() - 1)) ?
+										new Position(super.position.getX() + 1, super.position.getY()) :
+										new Position(super.position.getX(), super.position.getY() - 1);
+						}
+					case WEST:
+						if(!normalPosition) {
+							if (state)
+								return from.equals(new Position(super.position.getX(), super.position.getY() + 1)) ?
+										new Position(super.position.getX() - 1, super.position.getY()) :
+										new Position(super.position.getX(), super.position.getY() + 1);
+							else
+								return from.equals(new Position(super.position.getX() + 1, super.position.getY() + 1)) ?
+										new Position(super.position.getX() - 1, super.position.getY()) :
+										new Position(super.position.getX() + 1, super.position.getY());
+						} else {
+							if (state)
+								return from.equals(new Position(super.position.getX() + 1, super.position.getY() + 1)) ?
+										new Position(super.position.getX() - 1, super.position.getY()) :
+										new Position(super.position.getX() + 1, super.position.getY());
+							else
+								return from.equals(new Position(super.position.getX(), super.position.getY() + 1)) ?
+										new Position(super.position.getX() - 1, super.position.getY()) :
+										new Position(super.position.getX(), super.position.getY() + 1);
+						}
+				}
+				break;
+			case LEFT_RIGHT:
+				switch (rotation) {
+					case NORTH:
+						if(!normalPosition) {
+							if (state)
+								return from.equals(new Position(super.position.getX(), super.position.getY() - 1)) ?
+										new Position(super.position.getX() - 1, super.position.getY()) :
+										new Position(super.position.getX(), super.position.getY() - 1);
+							else
+								return from.equals(new Position(super.position.getX(), super.position.getY() - 1)) ?
+										new Position(super.position.getX() + 1, super.position.getY()) :
+										new Position(super.position.getX(), super.position.getY() - 1);
+						} else {
+							if (state)
+								return from.equals(new Position(super.position.getX(), super.position.getY() - 1)) ?
+										new Position(super.position.getX() + 1, super.position.getY()) :
+										new Position(super.position.getX(), super.position.getY() - 1);
+							else
+								return from.equals(new Position(super.position.getX(), super.position.getY() - 1)) ?
+										new Position(super.position.getX() - 1, super.position.getY()) :
+										new Position(super.position.getX(), super.position.getY() - 1);
+						}
+					case SOUTH:
+						if(!normalPosition) {
+							if (state)
+								return from.equals(new Position(super.position.getX(), super.position.getY() + 1)) ?
+										new Position(super.position.getX() + 1, super.position.getY()) :
+										new Position(super.position.getX(), super.position.getY() + 1);
+							else
+								return from.equals(new Position(super.position.getX(), super.position.getY() + 1)) ?
+										new Position(super.position.getX() + 1, super.position.getY()) :
+										new Position(super.position.getX(), super.position.getY() - 1);
+						} else {
+							if (state)
+								return from.equals(new Position(super.position.getX(), super.position.getY() + 1)) ?
+										new Position(super.position.getX() + 1, super.position.getY()) :
+										new Position(super.position.getX(), super.position.getY() - 1);
+							else
+								return from.equals(new Position(super.position.getX(), super.position.getY() + 1)) ?
+										new Position(super.position.getX() + 1, super.position.getY()) :
+										new Position(super.position.getX(), super.position.getY() + 1);
+						}
+					case EAST:
+						if(!normalPosition) {
+							if (state)
+								return from.equals(new Position(super.position.getX(), super.position.getY() - 1)) ?
+										new Position(super.position.getX() + 1, super.position.getY()) :
+										new Position(super.position.getX(), super.position.getY() - 1);
+							else
+								return from.equals(new Position(super.position.getX(), super.position.getY() + 1)) ?
+										new Position(super.position.getX() + 1, super.position.getY()) :
+										new Position(super.position.getX(), super.position.getY() + 1);
+						} else {
+							if (state)
+								return from.equals(new Position(super.position.getX(), super.position.getY() + 1)) ?
+										new Position(super.position.getX() + 1, super.position.getY()) :
+										new Position(super.position.getX(), super.position.getY() + 1);
+							else
+								return from.equals(new Position(super.position.getX(), super.position.getY() - 1)) ?
+										new Position(super.position.getX() + 1, super.position.getY()) :
+										new Position(super.position.getX(), super.position.getY() - 1);
+						}
+					case WEST:
+						if(!normalPosition) {
+							if (state)
+								return from.equals(new Position(super.position.getX(), super.position.getY() + 1)) ?
+										new Position(super.position.getX() - 1, super.position.getY()) :
+										new Position(super.position.getX(), super.position.getY() + 1);
+							else
+								return from.equals(new Position(super.position.getX(), super.position.getY() - 1)) ?
+										new Position(super.position.getX() - 1, super.position.getY()) :
+										new Position(super.position.getX(), super.position.getY() - 1);
+						} else {
+							if (state)
+								return from.equals(new Position(super.position.getX(), super.position.getY() + 1)) ?
+										new Position(super.position.getX() - 1, super.position.getY()) :
+										new Position(super.position.getX(), super.position.getY() + 1);
+							else
+								return from.equals(new Position(super.position.getX(), super.position.getY() + 1)) ?
+										new Position(super.position.getX() - 1, super.position.getY()) :
+										new Position(super.position.getX(), super.position.getY() + 1);
+						}
+				}
+				break;
+		}
+		return from;
 	}
 
 	public enum SwitchType {

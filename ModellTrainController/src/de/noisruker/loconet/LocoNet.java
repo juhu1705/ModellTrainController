@@ -121,16 +121,6 @@ public class LocoNet {
 		return this.sensors;
 	}
 
-	private void updateOrCreateSensor(int address, boolean state) {
-		Sensor dummy = new Sensor(address, state);
-
-		if (this.sensors.contains(dummy))
-			this.sensors.get(this.sensors.indexOf(dummy)).setState(state);
-		else
-			this.sensors.add(dummy);
-
-	}
-
 	public void stop() throws SerialPortException {
 		LocoNetMessageReceiver.getInstance().removeConnection();
 		this.connection.close();
@@ -234,8 +224,6 @@ public class LocoNet {
 
 			if (l instanceof SensorMessage) {
 				SensorMessage s = (SensorMessage) l;
-
-				this.updateOrCreateSensor(s.getAddress(), s.getState());
 
 				Ref.LOGGER.fine("Sensor " + s.getAddress() + " changed state to " + s.getState() + ".");
 			}

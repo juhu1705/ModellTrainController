@@ -11,8 +11,8 @@ public class RailroadLine extends AbstractRailroadElement {
 
     private final RailRotation rotation;
 
-    public RailroadLine(RailRotation rotation) {
-        super("track");
+    public RailroadLine(RailRotation rotation, Position position) {
+        super("track", position);
         this.rotation = rotation;
     }
 
@@ -24,6 +24,11 @@ public class RailroadLine extends AbstractRailroadElement {
     @Override
     public void onLocoNetMessage(AbstractMessage message) {
 
+    }
+
+    @Override
+    public Position getToPos(Position from) {
+        return null;
     }
 
     @Override
