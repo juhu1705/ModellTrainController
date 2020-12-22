@@ -68,7 +68,7 @@ public class GuiControlTrain implements Initializable {
 
     public void onChoosePicture(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Picture", ".png", ".jpg", ".JPG"));
+        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Picture", ".png", ".jpg"));
         fileChooser.setTitle(Ref.language.getString("window.choose_picture"));
         if(t.getPicturePath() != null && !t.getPicturePath().isBlank()) {
             File file = new File(t.getPicturePath());

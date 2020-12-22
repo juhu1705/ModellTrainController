@@ -10,9 +10,9 @@
    <children>
       <ToolBar maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT">
          <items>
-            <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onNext" text="%button.next">
+            <Button alignment="CENTER" defaultButton="true" mnemonicParsing="false" onAction="#onNext" text="%button.next">
                <graphic>
-                  <FontIcon />
+                  <FontIcon iconLiteral="fas-chevron-right" wrappingWidth="1.0" id="normal-icon" />
                </graphic>
             </Button>
             <Separator orientation="VERTICAL" prefHeight="25.0" prefWidth="0.0" />
@@ -112,26 +112,26 @@
                   </ImageView>
                </graphic>
             </ToggleButton>
-            <ToggleButton fx:id="delete" contentDisplay="GRAPHIC_ONLY" layoutX="318.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSetModeToDelete" text="ToggleButton">
+            <ToggleButton fx:id="delete" minWidth="32" layoutX="318.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSetModeToDelete">
                <tooltip>
                   <Tooltip text="%tooltip.delete" />
                </tooltip>
                <graphic>
-                  <FontIcon />
+                  <FontIcon iconLiteral="fas-trash" wrappingWidth="1.0" id="normal-icon" iconColor="#4f4f4f" />
                </graphic>
             </ToggleButton>
             <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
-            <Button contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" onAction="#onNextRotation" text="%tooltip.rotate_right">
+            <Button contentDisplay="CENTER" mnemonicParsing="false" onAction="#onNextRotation">
                <graphic>
-                  <FontIcon />
+                  <FontIcon iconLiteral="fa-rotate-right" wrappingWidth="1.0" id="normal-icon" />
                </graphic>
                <tooltip>
                   <Tooltip text="%tooltip.rotate_right" />
                </tooltip>
             </Button>
-            <Button contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" onAction="#onPreviousRotation" text="%tooltip.rotate_left">
+            <Button contentDisplay="CENTER" mnemonicParsing="false" onAction="#onPreviousRotation">
                <graphic>
-                  <FontIcon />
+                  <FontIcon iconLiteral="fa-rotate-left" wrappingWidth="1.0" id="normal-icon" />
                </graphic>
                <tooltip>
                   <Tooltip text="%tooltip.rotate_left" />
@@ -140,7 +140,7 @@
             <Separator orientation="VERTICAL" prefHeight="25.0" prefWidth="0.0" />
             <ToggleButton fx:id="shouldHide" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" onAction="#onHideChanged" text="ToggleButton">
                <graphic>
-                  <FontIcon />
+                  <FontIcon iconLiteral="fa-paragraph" wrappingWidth="1.0" id="normal-icon" />
                </graphic>
                <tooltip>
                   <Tooltip text="%tooltip.toggle" />
