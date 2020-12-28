@@ -1,5 +1,7 @@
 package de.noisruker.railroad;
 
+import de.noisruker.railroad.elements.Switch;
+
 import java.util.HashMap;
 
 public class SwitchWay {

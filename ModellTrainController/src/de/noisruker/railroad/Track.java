@@ -1,5 +1,8 @@
 package de.noisruker.railroad;
 
+import de.noisruker.railroad.elements.Sensor;
+import de.noisruker.railroad.elements.Switch;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 

@@ -171,7 +171,6 @@ public class ConfigManager {
 	 * @throws IOException  Sollte ein Fehler beim Einlesen der Datei aufgtreten
 	 */
 	public void load(String input) throws SAXException, IOException {
-
 		XMLReader xmlReader = XMLReaderFactory.createXMLReader();
 		InputSource inputSource = new InputSource(new FileReader(input));
 

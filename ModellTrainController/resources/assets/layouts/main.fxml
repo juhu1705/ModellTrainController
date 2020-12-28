@@ -49,7 +49,10 @@
                 <Menu mnemonicParsing="false" text="%menu.help">
                   <items>
                     <MenuItem mnemonicParsing="false" text="%menu.about" />
-                        <MenuItem mnemonicParsing="false" text="%menu.help" />
+                        <MenuItem mnemonicParsing="false" onAction="#onOpenHelp" text="%menu.help">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="H" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
+                           </accelerator></MenuItem>
                         <SeparatorMenuItem mnemonicParsing="false" />
                         <Menu fx:id="language" mnemonicParsing="false" text="%menu.language" />
                         <Menu fx:id="theme" mnemonicParsing="false" text="%menu.theme" />

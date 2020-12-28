@@ -1,0 +1,89 @@
+package de.noisruker.railroad.elements;
+
+import de.noisruker.gui.RailroadImages;
+import de.noisruker.loconet.messages.AbstractMessage;
+import de.noisruker.loconet.messages.SensorMessage;
+import de.noisruker.railroad.AbstractRailroadElement;
+import de.noisruker.railroad.Position;
+import de.noisruker.railroad.RailRotation;
+import de.noisruker.util.Util;
+import javafx.scene.image.Image;
+
+import java.io.BufferedWriter;
+import java.io.IOException;
+
+public class Sensor extends AbstractRailroadElement {
+
+	private final int address;
+
+	private boolean state;
+
+	public Sensor(int address, boolean state, Position position, RailRotation rotation) {
+		super("sensor", position, rotation);
+		this.address = address;
+		this.state = state;
+	}
+
+	@Override
+	public void saveTo(BufferedWriter writer) throws IOException {
+		super.saveTo(writer);
+		Util.writeParameterToBuffer("address", Integer.toString(address));
+		Util.closeWriting();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof Sensor))
+			return false;
+		Sensor s = (Sensor) obj;
+
+		return s.address == this.address;
+	}
+
+	public void setState(boolean state) {
+		this.state = state;
+	}
+
+	public int getAddress() {
+		return this.address;
+	}
+
+	public boolean getState() {
+		return this.state;
+	}
+
+	@Override
+	public Image getImage() {
+		return rotation.equals(RailRotation.NORTH) || rotation.equals(RailRotation.SOUTH) ? RailroadImages.STRAIGHT_SENSOR_VERTICAL : RailroadImages.STRAIGHT_SENSOR_HORIZONTAL;
+	}
+
+	@Override
+	public void onLocoNetMessage(AbstractMessage message) {
+		if(message instanceof SensorMessage) {
+			SensorMessage m = (SensorMessage) message;
+			if(m.getAddress() == this.getAddress())
+				this.setState(m.getState());
+		}
+	}
+
+	@Override
+	public Position getToPos(Position from) {
+		switch (rotation) {
+			case NORTH:
+			case SOUTH:
+				if(from.equals(new Position(position.getX(), position.getY() + 1)))
+					return new Position(position.getX(), position.getY() - 1);
+				else if(from.equals(new Position(position.getX(), position.getY() - 1)))
+					return new Position(position.getX(), position.getY() + 1);
+				break;
+			case WEST:
+			case EAST:
+				if(from.equals(new Position(position.getX() - 1, position.getY())))
+					return new Position(position.getX() + 1, position.getY());
+				else if(from.equals(new Position(position.getX() + 1, position.getY())))
+					return new Position(position.getX() - 1, position.getY());
+				break;
+		}
+		return null;
+	}
+}

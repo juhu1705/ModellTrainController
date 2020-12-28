@@ -40,7 +40,7 @@ public class FieldHandler implements ContentHandler {
 	}
 
 	/**
-	 * L�dt die Daten in das Programm.
+	 * Lädt die Daten in das Programm.
 	 */
 	@Override
 	public void endElement(String arg0, String arg1, String arg2) throws SAXException {

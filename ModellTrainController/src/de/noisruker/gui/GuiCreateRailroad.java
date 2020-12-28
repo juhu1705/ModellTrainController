@@ -2,6 +2,7 @@ package de.noisruker.gui;
 
 import de.noisruker.main.GUILoader;
 import de.noisruker.railroad.*;
+import de.noisruker.railroad.elements.*;
 import de.noisruker.util.Ref;
 import de.noisruker.util.Util;
 import javafx.application.Platform;
@@ -336,7 +337,16 @@ public class GuiCreateRailroad implements Initializable {
             Notifications.create().darkStyle().title(Ref.language.getString("window.error")).text(Ref.language.getString("error.invalid_railroad")).showError();
             return;
         }
-        this.getRailroad();
+        final AbstractRailroadElement[][] railroadElements = this.getRailroad();
+        new Thread(() -> {
+            while (openWindows != 0) {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException ignored) { }
+            }
+            GuiMain.getInstance().applyRailroad(railroadElements);
+        }).start();
+        ((Stage) (((Button)event.getSource()).getScene().getWindow())).close();
     }
 
     public AbstractRailroadElement[][] getRailroad() {
@@ -346,21 +356,21 @@ public class GuiCreateRailroad implements Initializable {
             ArrayList<ImageView> cells = this.railroadCells.get(box1);
             for (int x = 0; x < 100; x++) {
                 if(cells.get(x).getImage().equals(RailroadImages.STRAIGHT_HORIZONTAL)) {
-                    railroadElements[x][y] = new RailroadLine(RailRotation.NORTH, new Position(x, y));
+                    railroadElements[x][y] = new RailroadLine(RailRotation.WEST, new Position(x, y));
                 } else if(cells.get(x).getImage().equals(RailroadImages.STRAIGHT_VERTICAL)) {
-                    railroadElements[x][y] = new RailroadLine(RailRotation.WEST, new Position(x, y));
+                    railroadElements[x][y] = new RailroadLine(RailRotation.NORTH, new Position(x, y));
                 } else if(cells.get(x).getImage().equals(RailroadImages.STRAIGHT_SENSOR_HORIZONTAL)) {
-                    railroadElements[x][y] = new RailroadLine(RailRotation.WEST, new Position(x, y));
+                    this.handleSensor(railroadElements, RailRotation.WEST, x, y);
                 } else if(cells.get(x).getImage().equals(RailroadImages.STRAIGHT_SENSOR_VERTICAL)) {
-                    railroadElements[x][y] = new RailroadLine(RailRotation.WEST, new Position(x, y));
+                    this.handleSensor(railroadElements, RailRotation.NORTH, x, y);
                 } else if(cells.get(x).getImage().equals(RailroadImages.CURVE_NORTH_EAST)) {
-
+                    railroadElements[x][y] = new RailroadCurve(RailRotation.NORTH, new Position(x, y));
                 } else if(cells.get(x).getImage().equals(RailroadImages.CURVE_NORTH_WEST)) {
-
+                    railroadElements[x][y] = new RailroadCurve(RailRotation.WEST, new Position(x, y));
                 } else if(cells.get(x).getImage().equals(RailroadImages.CURVE_SOUTH_WEST)) {
-
+                    railroadElements[x][y] = new RailroadCurve(RailRotation.SOUTH, new Position(x, y));
                 } else if(cells.get(x).getImage().equals(RailroadImages.CURVE_SOUTH_EAST)) {
-
+                    railroadElements[x][y] = new RailroadCurve(RailRotation.EAST, new Position(x, y));
                 } else if(cells.get(x).getImage().equals(RailroadImages.SWITCH_EAST_1)) {
                     this.handleSwitch(railroadElements, Switch.SwitchType.LEFT, RailRotation.EAST, x, y);
                 } else if(cells.get(x).getImage().equals(RailroadImages.SWITCH_EAST_2)) {
@@ -385,19 +395,40 @@ public class GuiCreateRailroad implements Initializable {
                     this.handleSwitch(railroadElements, Switch.SwitchType.RIGHT, RailRotation.SOUTH, x, y);
                 } else if(cells.get(x).getImage().equals(RailroadImages.SWITCH_SOUTH_3)) {
                     this.handleSwitch(railroadElements, Switch.SwitchType.LEFT_RIGHT, RailRotation.SOUTH, x, y);
+                } else if(cells.get(x).getImage().equals(RailroadImages.END_NORTH)) {
+                    railroadElements[x][y] = new RailroadEnd(RailRotation.NORTH, new Position(x, y));
+                } else if(cells.get(x).getImage().equals(RailroadImages.END_SOUTH)) {
+                    railroadElements[x][y] = new RailroadEnd(RailRotation.SOUTH, new Position(x, y));
+                } else if(cells.get(x).getImage().equals(RailroadImages.END_EAST)) {
+                    railroadElements[x][y] = new RailroadEnd(RailRotation.EAST, new Position(x, y));
+                } else if(cells.get(x).getImage().equals(RailroadImages.END_WEST)) {
+                    railroadElements[x][y] = new RailroadEnd(RailRotation.WEST, new Position(x, y));
+                } else if(cells.get(x).getImage().equals(RailroadImages.STRAIGHT_NORTH)) {
+                    railroadElements[x][y] = new RailroadDirectionalLine(RailRotation.NORTH, new Position(x, y));
+                } else if(cells.get(x).getImage().equals(RailroadImages.STRAIGHT_SOUTH)) {
+                    railroadElements[x][y] = new RailroadDirectionalLine(RailRotation.SOUTH, new Position(x, y));
+                } else if(cells.get(x).getImage().equals(RailroadImages.STRAIGHT_EAST)) {
+                    railroadElements[x][y] = new RailroadDirectionalLine(RailRotation.EAST, new Position(x, y));
+                } else if(cells.get(x).getImage().equals(RailroadImages.STRAIGHT_WEST)) {
+                    railroadElements[x][y] = new RailroadDirectionalLine(RailRotation.WEST, new Position(x, y));
                 }
 
 
             }
         }
+
         return railroadElements;
     }
 
+    private int openWindows = 0;
+
     private void handleSwitch(AbstractRailroadElement[][] railroadElements, Switch.SwitchType type, RailRotation rotation, int x, int y) {
+        openWindows++;
         Util.runNext(() -> {
             this.handleAddSwitch(x, y);
             railroadElements[x][y] = new Switch(GuiEditSwitch.getSwitchAddress(), type, rotation, GuiEditSwitch.getDirection(), new Position(x, y));
             GuiEditSwitch.reset();
+            openWindows--;
         });
     }
 
@@ -416,6 +447,44 @@ public class GuiCreateRailroad implements Initializable {
                 Thread.sleep(500);
             } catch (InterruptedException ignored) { }
         }
+    }
+
+    private void handleSensor(AbstractRailroadElement[][] railroadElements, RailRotation rotation, int x, int y) {
+        openWindows++;
+        Util.runNext(() -> {
+            this.handleAddSensor(x, y);
+            railroadElements[x][y] = new Sensor(GuiEditSensor.getSensorAddress(), false, new Position(x, y), rotation);
+            GuiEditSensor.reset();
+            openWindows--;
+        });
+    }
+
+    private void handleAddSensor(int x, int y) {
+        while (GuiEditSensor.isInUse()) {
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException ignored) { }
+        }
+
+        GuiEditSensor.setSensorToEdit(x, y, railroadLines, railroadCells);
+        this.openInLoopSensor();
+
+        while (GuiEditSensor.getSensorAddress() == -1) {
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException ignored) { }
+        }
+    }
+
+    private void openInLoopSensor() {
+        Platform.runLater(() -> {
+            Stage s = Util.openWindow("/assets/layouts/create_sensor.fxml", Ref.language.getString("window.railroad"), GUILoader.getPrimaryStage());
+            if(s == null)
+                return;
+
+            s.setAlwaysOnTop(true);
+            s.setOnCloseRequest(windowEvent -> this.openInLoopSensor());
+        });
     }
 
     private void openInLoopSwitch() {
@@ -598,7 +667,7 @@ public class GuiCreateRailroad implements Initializable {
                     mouseX = finalX;
                     mouseY = finalY;
 
-                    if(startX != -1 && startY != -1) {
+                    if(startX != -1 && startY != -1 && this.straight.isSelected()) {
                         switch (rotation) {
                             case NORTH:
                             case SOUTH:

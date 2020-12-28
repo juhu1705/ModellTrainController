@@ -5,8 +5,9 @@ import java.util.ArrayList;
 
 import de.noisruker.gui.tables.BasicTrains;
 import de.noisruker.loconet.messages.*;
+import de.noisruker.railroad.AbstractRailroadElement;
 import de.noisruker.railroad.Railroad;
-import de.noisruker.railroad.Sensor;
+import de.noisruker.railroad.elements.Sensor;
 import de.noisruker.railroad.Train;
 import de.noisruker.util.Ref;
 import jssc.SerialPortException;
@@ -164,6 +165,8 @@ public class LocoNet {
 		LocoNetMessageReceiver.getInstance().registerListener(l -> {
 			if (l == null)
 				return;
+
+			AbstractRailroadElement.sendToElements(l);
 
 //			String params = "[";
 //

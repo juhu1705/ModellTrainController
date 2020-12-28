@@ -51,7 +51,7 @@ public class LocoNetMessage {
 
 	}
 
-	public void send() throws SerialPortException, PortNotOpenException {
+	public void send() {
 		LocoNetMessageSender.getInstance().sendMessage(this.messageType.opCode, values);
 	}
 

@@ -1,6 +1,7 @@
 package de.noisruker.util;
 
 import de.noisruker.config.ConfigManager;
+import de.noisruker.gui.GuiMain;
 import de.noisruker.loconet.LocoNet;
 import de.noisruker.loconet.messages.MessageType;
 import de.noisruker.main.GUILoader;
@@ -18,6 +19,7 @@ import javafx.stage.StageStyle;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
@@ -172,6 +174,7 @@ public class Util {
 	public static void onClose(ActionEvent e) {
 		GUILoader.closePrimaryStage();
 
+		saveRailroad();
 		closeConfig();
 
 		Ref.LOGGER.info("Close " + Ref.PROJECT_NAME);
@@ -197,6 +200,21 @@ public class Util {
 
 	}
 
+	private static void saveRailroad() {
+		Ref.LOGGER.fine("Start saving railroad");
+
+		if (!Files.exists(FileSystems.getDefault().getPath(Ref.HOME_FOLDER), LinkOption.NOFOLLOW_LINKS))
+			new File(Ref.HOME_FOLDER).mkdir();
+
+		try {
+			GuiMain.getInstance().save(new File(Ref.HOME_FOLDER + "railroad.mtc"));
+		} catch (IOException e) {
+			Ref.LOGGER.log(Level.SEVERE, "Error due to write railroad data!", e);
+		}
+
+		Ref.LOGGER.fine("Finished saving railroad");
+	}
+
     public static boolean isNameInvalid(String name, Train train) {
 		for(Train t: LocoNet.getInstance().getTrains())
 			if(t != train)
@@ -213,4 +231,26 @@ public class Util {
 		}
 		return false;
     }
+
+    private static BufferedWriter writer;
+	private static String opener;
+
+    public static void setWriter(BufferedWriter writer, String type) throws IOException {
+		writer.append("<element>");
+		writer.newLine();
+		Util.writer = writer;
+		Util.opener = type;
+		Util.writeParameterToBuffer("type", type);
+	}
+
+	public static void closeWriting() throws IOException {
+    	writer.append("</element>");
+		writer.newLine();
+    	writer = null;
+	}
+
+    public static void writeParameterToBuffer(String param, String value) throws IOException {
+		writer.append("  <" + param + ">" + value + "</" + param + ">");
+		writer.newLine();
+	}
 }

@@ -27,8 +27,8 @@ public class Train implements Serializable, Comparable<Train> {
 	 * @throws SerialPortException If there appears an error while sending the data to the LocoNet
 	 * @throws LocoNetConnection.PortNotOpenException If the port is not open
 	 */
-	public static void addTrain(byte address) throws SerialPortException, LocoNetConnection.PortNotOpenException {
-		if(!LocoNet.getInstance().getTrains().contains(Byte.valueOf(address)))
+	public static void addTrain(byte address) {
+		if(!LocoNet.getInstance().getTrains().contains(address))
 			new LocoNetMessage(MessageType.OPC_LOCO_ADR, (byte) 0, address).send();
 	}
 
@@ -158,7 +158,7 @@ public class Train implements Serializable, Comparable<Train> {
 		this.trainSpeedChangeListener.forEach(a -> a.onSpeedChanged(this.speed));
 	}
 
-	private void setActualSpeed(byte actualSpeed) throws IOException {
+	private void setActualSpeed(byte actualSpeed) {
 		this.actualSpeed = actualSpeed;
 
 		new SpeedMessage(this.slot, actualSpeed).send();
@@ -293,10 +293,8 @@ public class Train implements Serializable, Comparable<Train> {
 	 * Stops the train at the position where he actually is.
 	 */
 	public void stopTrainImmediately() {
-		try {
-			this.setSpeed((byte) 0);
-			this.setActualSpeed((byte) 1);
-		} catch (IOException ignored) { }
+		this.setSpeed((byte) 0);
+		this.setActualSpeed((byte) 1);
 	}
 
 	/* Methods for the automatic driving process */
@@ -384,27 +382,20 @@ public class Train implements Serializable, Comparable<Train> {
 		if(Config.mode.equals(Config.MODE_RANDOM))
 			this.updateRandomDriving();
 
-		try {
-			this.updateSpeed();
-		} catch (IOException ignored) { }
-
-
-		try {
-			Thread.sleep(200);
-		} catch (InterruptedException ignored) { }
+		this.updateSpeed();
 	}
 
-	private void updateSpeed() throws IOException {
+	private void updateSpeed() {
 		if(this.speed == 1)
 			this.setActualSpeed((byte) 1);
 
 		if(this.speed > this.actualSpeed) {
-			if(this.speed - 10 < this.actualSpeed)
+			if(this.speed - 1 < this.actualSpeed)
 				this.setActualSpeed(this.speed);
 			else
 				this.setActualSpeed((byte) (this.actualSpeed + 10));
 		} else if(this.speed < this.actualSpeed) {
-			if(this.speed + 10 > this.actualSpeed)
+			if(this.speed + 1 > this.actualSpeed)
 				this.setActualSpeed(this.speed);
 			else
 				this.setActualSpeed((byte) (this.actualSpeed - 10));

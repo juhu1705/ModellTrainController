@@ -34,12 +34,8 @@ public class SpeedMessage implements AbstractMessage, Serializable {
 	}
 
 	@Override
-	public void send() throws IOException {
-		try {
-			this.toLocoNetMessage().send();
-		} catch (SerialPortException | PortNotOpenException e) {
-			Ref.LOGGER.log(Level.SEVERE, "Server not opened", e);
-		}
+	public void send() {
+		this.toLocoNetMessage().send();
 	}
 
 	@Override

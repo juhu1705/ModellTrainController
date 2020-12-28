@@ -8,7 +8,7 @@ import java.io.Console;
 import java.io.IOException;
 
 import de.noisruker.railroad.Railroad;
-import de.noisruker.railroad.Sensor;
+import de.noisruker.railroad.elements.Sensor;
 import de.noisruker.railroad.Train;
 import de.noisruker.loconet.messages.AbstractMessage;
 import de.noisruker.loconet.messages.DirectionMessage;
@@ -91,14 +91,8 @@ public class Main {
 						break;
 					case "addTrain":
 						Ref.LOGGER.info("Type Address:");
-
-						try {
-							byte address = Byte.parseByte(scanner.readLine());
-							new LocoNetMessage(MessageType.OPC_LOCO_ADR, (byte) 0, address).send();
-						} catch (Exception | PortNotOpenException e1) {
-							Ref.LOGGER.severe("Failed to add Train, please try again!");
-						}
-
+						byte address = Byte.parseByte(scanner.readLine());
+						new LocoNetMessage(MessageType.OPC_LOCO_ADR, (byte) 0, address).send();
 						break;
 					case "editTrain":
 						Ref.LOGGER.info("Trains:");
@@ -107,7 +101,7 @@ public class Main {
 									+ t.getSlot());
 
 						Ref.LOGGER.info("Type address:");
-						byte address = Byte.parseByte(scanner.readLine());
+						byte address9 = Byte.parseByte(scanner.readLine());
 
 						Ref.LOGGER.info("Type position:");
 						int position = Integer.parseInt(scanner.readLine());
@@ -116,7 +110,7 @@ public class Main {
 						int lposition = Integer.parseInt(scanner.readLine());
 
 						for(Train t: LocoNet.getInstance().getTrains()) {
-							if (t.getAddress() == address) {
+							if (t.getAddress() == address9) {
 								t.setPosition(position);
 								t.setLastPosition(lposition);
 							}

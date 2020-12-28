@@ -1,11 +1,19 @@
-package de.noisruker.railroad;
+package de.noisruker.railroad.elements;
 
+import de.noisruker.gui.GuiMain;
 import de.noisruker.gui.RailroadImages;
 import de.noisruker.loconet.messages.AbstractMessage;
 import de.noisruker.loconet.messages.SwitchMessage;
 import de.noisruker.loconet.LocoNetConnection.PortNotOpenException;
+import de.noisruker.railroad.AbstractRailroadElement;
+import de.noisruker.railroad.Position;
+import de.noisruker.railroad.RailRotation;
+import de.noisruker.util.Util;
+import javafx.application.Platform;
 import javafx.scene.image.Image;
+import javafx.scene.layout.HBox;
 import jssc.SerialPortException;
+import org.codehaus.plexus.component.configurator.converters.basic.UriConverter;
 
 import javax.swing.*;
 import java.io.BufferedWriter;
@@ -17,39 +25,34 @@ public class Switch extends AbstractRailroadElement {
 	private final byte address;
 
 	private final SwitchType type;
-	private final RailRotation rotation;
 	private final boolean normalPosition;
 
 	public Switch(byte address, SwitchType type, RailRotation rotation, boolean normalPosition, Position position) {
-		super("switch", position);
+		super("switch", position, rotation);
 		this.address = address;
 		this.type = type;
-		this.rotation = rotation;
 		this.normalPosition = normalPosition;
-
-		//this.setAndUpdateState(true);
 	}
 
-	public SwitchMessage getMessage() {
+	public SwitchMessage getMessage(boolean state) {
 		return new SwitchMessage(address, state);
 	}
 
-	public void setState(boolean state) {
+	private void setState(boolean state) {
 		this.state = state;
 	}
 
 	public void setAndUpdateState(boolean state) {
-		this.setState(state);
-		try {
-			this.getMessage().toLocoNetMessage().send();
-		} catch (SerialPortException | PortNotOpenException e) {
-			e.printStackTrace();
-		}
+		this.getMessage(state).toLocoNetMessage().send();
 	}
 
 	@Override
 	public void saveTo(BufferedWriter writer) throws IOException {
-
+		super.saveTo(writer);
+		Util.writeParameterToBuffer("address", Integer.toString(this.address));
+		Util.writeParameterToBuffer("normal_state", Boolean.toString(normalPosition));
+		Util.writeParameterToBuffer("switch_type", type.name());
+		Util.closeWriting();
 	}
 
 	@Override
@@ -222,6 +225,12 @@ public class Switch extends AbstractRailroadElement {
 			if(switchMessage.getAddress() == this.address)
 				this.state = switchMessage.getState();
 		}
+		Platform.runLater(() -> {
+			GuiMain gui = GuiMain.getInstance();
+			HBox box = gui.railroadLines.get(this.position.getX());
+			gui.railroadCells.get(box).get(this.position.getY()).setImage(this.getImage());
+		});
+
 	}
 
 	@Override
@@ -593,6 +602,20 @@ public class Switch extends AbstractRailroadElement {
 				break;
 		}
 		return from;
+	}
+
+	public boolean setSwitchTo(Position from, Position to) {
+		if(getNextPositionSwitchSpecial(from, true).equals(to))
+			this.setAndUpdateState(true);
+		else if(getNextPositionSwitchSpecial(from, false).equals(to))
+			this.setAndUpdateState(false);
+		else
+			return false;
+		return isPositionValid(from);
+	}
+
+	public void changeDirection() {
+		this.setAndUpdateState(!this.state);
 	}
 
 	public enum SwitchType {

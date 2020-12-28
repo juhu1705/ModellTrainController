@@ -23,12 +23,7 @@ public class RequestSlotMessage implements Serializable, AbstractMessage {
 
 	@Override
 	public void send() throws IOException {
-
-		try {
-			this.toLocoNetMessage().send();
-		} catch (SerialPortException | PortNotOpenException e) {
-			Ref.LOGGER.log(Level.SEVERE, "Server not opened", e);
-		}
+		this.toLocoNetMessage().send();
 	}
 
 }

@@ -54,14 +54,7 @@ public class GuiAddTrain implements Initializable {
         progress.setProgress(-1d);
 
         Util.runNext(() -> {
-            try {
-                Train.addTrain(newAddress.getValue().byteValue());
-            } catch (SerialPortException | LocoNetConnection.PortNotOpenException | NullPointerException e) {
-                Ref.LOGGER.info(Ref.language.getString("info.train_adding_failed"));
-                Platform.runLater(() -> {
-                    messages.setText(Ref.language.getString("info.train_adding_failed"));
-                });
-            }
+            Train.addTrain(newAddress.getValue().byteValue());
         });
     }
 
