@@ -55,17 +55,27 @@ public class GuiLoading implements Initializable {
 
     public static void checkForUpdates() throws InterruptedException {
         new Thread(() -> {
-            Progress.getInstance().setProgressDescription(Ref.language.getString("info.connecting_to_update_server"));
-            Progress.getInstance().setProgress(0.25);
+            try {
+                Progress.getInstance().setProgressDescription(Ref.language.getString("info.connecting_to_update_server"));
+                Progress.getInstance().setProgress(0.25);
 
-            Progress.getInstance().setProgressDescription(Ref.language.getString("info.update_check"));
-            Progress.getInstance().setProgress(0.5);
+                Progress.getInstance().setProgressDescription(Ref.language.getString("info.update_check"));
+                Progress.getInstance().setProgress(0.5);
 
-            Progress.getInstance().setProgressDescription(Ref.language.getString("info.waiting"));
-            Progress.getInstance().setProgress(0.75);
+                Thread.sleep(1000);
 
-            Progress.getInstance().setProgressDescription(Ref.language.getString("info.finished"));
-            Progress.getInstance().setProgress(1);
+                Progress.getInstance().setProgressDescription(Ref.language.getString("info.waiting"));
+                Progress.getInstance().setProgress(0.75);
+
+
+
+                Progress.getInstance().setProgressDescription(Ref.language.getString("info.finished"));
+                Progress.getInstance().setProgress(1);
+
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
             Platform.runLater(() -> {
                 if(Config.startImmediately && Arrays.asList(SerialPortList.getPortNames()).contains(Config.port)) {
@@ -90,34 +100,48 @@ public class GuiLoading implements Initializable {
                 //Platform.runLater(() -> Util.updateWindow(GUILoader.getPrimaryStage(), "/assets/layouts/main.fxml").setResizable(true));
                 return;
             }
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException ignored) { }
 
             Progress.getInstance().setProgressDescription(Ref.language.getString("info.check_connection"));
 
             Progress.getInstance().setProgress(0);
+            try {
+                for (byte i = 1; i < 6; i++) {
+                    LocoNet.checkConnection = i;
 
-            for (byte i = 1; i < 6; i++) {
-                LocoNet.checkConnection = i;
+                    Train.addTrain(i);
 
-                Train.addTrain(i);
+                    int timeLeft = 10;
 
-                int timeLeft = 10;
+                    while(!LocoNet.connectionChecked) {
+                        if(timeLeft == 0){
+                            Progress.getInstance().setProgressDescription(Ref.language.getString("info.connection_failed"));
+                            addBackButton();
+                            return;
+                        }
 
-                while(!LocoNet.connectionChecked) {
-                    if(timeLeft == 0){
-                        Progress.getInstance().setProgressDescription(Ref.language.getString("info.connection_failed"));
-                        addBackButton();
-                        return;
+                        Thread.sleep(500);
+                        timeLeft--;
                     }
-
-                    timeLeft--;
+                    LocoNet.connectionChecked = false;
+                    Progress.getInstance().setProgress((double) i / 5d);
+                    Thread.sleep(300);
                 }
-                LocoNet.connectionChecked = false;
-                Progress.getInstance().setProgress((double) i / 5d);
+            } catch (InterruptedException e) {
+                Progress.getInstance().setProgressDescription(Ref.language.getString("info.connection_failed"));
+                addBackButton();
+                //Platform.runLater(() -> Util.updateWindow(GUILoader.getPrimaryStage(), "/assets/layouts/main.fxml").setResizable(true));
+                return;
             }
-
 
             Progress.getInstance().setProgressDescription(Ref.language.getString("info.connection_complete"));
             Progress.getInstance().setProgress(-1);
+
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ignored) { }
 
             Progress.getInstance().setProgress(1);
             Progress.getInstance().setProgressDescription(Ref.language.getString("info.start_window"));

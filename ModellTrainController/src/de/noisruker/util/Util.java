@@ -174,7 +174,8 @@ public class Util {
 	public static void onClose(ActionEvent e) {
 		GUILoader.closePrimaryStage();
 
-		saveRailroad();
+		if(GuiMain.getInstance() != null)
+			saveRailroad();
 		closeConfig();
 
 		Ref.LOGGER.info("Close " + Ref.PROJECT_NAME);

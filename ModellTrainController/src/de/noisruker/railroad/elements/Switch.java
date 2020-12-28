@@ -222,14 +222,16 @@ public class Switch extends AbstractRailroadElement {
 	public void onLocoNetMessage(AbstractMessage message) {
 		if(message instanceof SwitchMessage) {
 			SwitchMessage switchMessage = (SwitchMessage) message;
-			if(switchMessage.getAddress() == this.address)
+			if(switchMessage.getAddress() == this.address) {
 				this.state = switchMessage.getState();
+				Platform.runLater(() -> {
+					GuiMain gui = GuiMain.getInstance();
+					HBox box = gui.railroadLines.get(this.position.getX());
+					gui.railroadCells.get(box).get(this.position.getY()).setImage(this.getImage());
+				});
+			}
 		}
-		Platform.runLater(() -> {
-			GuiMain gui = GuiMain.getInstance();
-			HBox box = gui.railroadLines.get(this.position.getX());
-			gui.railroadCells.get(box).get(this.position.getY()).setImage(this.getImage());
-		});
+
 
 	}
 

@@ -386,11 +386,11 @@ public class Train implements Serializable, Comparable<Train> {
 	}
 
 	private void updateSpeed() {
-		if(this.speed == 1)
+		if(this.speed == 1 && this.actualSpeed != 1)
 			this.setActualSpeed((byte) 1);
 
 		if(this.speed > this.actualSpeed) {
-			if(this.speed - 1 < this.actualSpeed)
+			if(this.speed - 10 < this.actualSpeed)
 				this.setActualSpeed(this.speed);
 			else
 				this.setActualSpeed((byte) (this.actualSpeed + 10));

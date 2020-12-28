@@ -40,7 +40,7 @@ public class LocoNetConnection {
 			return;
 
 		this.connectionPort.openPort();
-		this.connectionPort.setParams(9600, SerialPort.DATABITS_8, SerialPort.STOPBITS_2, SerialPort.PARITY_NONE);
+		this.connectionPort.setParams(115200, SerialPort.DATABITS_8, SerialPort.STOPBITS_2, SerialPort.PARITY_NONE);
 
 		this.isOpen = true;
 
@@ -55,6 +55,7 @@ public class LocoNetConnection {
 				}
 				if (actual == null)
 					continue;
+
 				byte nextByte = actual[0];
 
 				if (Util.getCheckSum(bytes) == nextByte) {

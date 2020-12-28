@@ -7,6 +7,7 @@ import java.util.Arrays;
 import de.noisruker.loconet.LocoNetConnection.PortNotOpenException;
 import de.noisruker.loconet.messages.LocoNetMessage;
 import de.noisruker.loconet.messages.MessageType;
+import de.noisruker.util.Ref;
 import de.noisruker.util.Util;
 
 public class LocoNetMessageReceiver {
@@ -47,6 +48,12 @@ public class LocoNetMessageReceiver {
 		this.shouldRun = true;
 		new Thread(() -> {
 			while (shouldRun) {
+				try {
+					Thread.sleep(10);
+				} catch (InterruptedException ignored) {
+
+				}
+
 				byte[] message = null;
 
 				try {
@@ -62,6 +69,9 @@ public class LocoNetMessageReceiver {
 					checkMessage = null;
 
 				MessageType type = Util.getMessageType(message[0]);
+
+				if(message.length < 3)
+					continue;
 
 				byte[] values = new byte[message.length - 2];
 
