@@ -1,18 +1,10 @@
 # ModellTrainController
 
-Der ModellTrainController ist ein Programm zur einfachen Steuerung einer Modellbahn mit einem Computern. Dadurch kann man eine Modellbahn, die das LocoNet System benutzt automatisch via Computer angesteuert werden.
+Der ModellTrainController ist eine Anwendung zur einfachen und automatischen Ansteuerung von Modellbahnen, die das LocoNet-System benutzen.
 
-Hierzu werden mehrere Steuerungsmöglichkeiten zur Verfügung gestellt:
+Züge und Weichen können direkt angesteuert oder zum automatischen Befahren einer Route programmiert werden.
+Der Gleisplan kann über die grafische Oberfläche bearbeitet und betrachtet werden.
 
-- Grafische Oberflächer
-- Dierekte Zugsteuerung
-- Direkte Weichensteuernung
-- Routenerstellung (direkt/automatisch) inklusive passender Weichen- und Sensoransteuerung (wird in Zukunft hinzugefügt)
-
-Weitere Funktionen:
-- Visuelle Gleisplanerstellung
-- Visuelle Gleisplanbetrachtung
-
-Da sich dieses Projekt Momentan im Anfangsstadium befindet, freue ich mich um Hilfreiche Ideen und Verbesserungsvorschläge.
+Da dieses Projekt sich momentan im Anfangsstadium befindet, freue ich mich über hilfreiche Ideen und Verbesserungsvorschläge.
 
 © Team Noisruker
