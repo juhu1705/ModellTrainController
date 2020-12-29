@@ -226,8 +226,8 @@ public class Switch extends AbstractRailroadElement {
 				this.state = switchMessage.getState();
 				Platform.runLater(() -> {
 					GuiMain gui = GuiMain.getInstance();
-					HBox box = gui.railroadLines.get(this.position.getX());
-					gui.railroadCells.get(box).get(this.position.getY()).setImage(this.getImage());
+					HBox box = gui.railroadLines.get(this.position.getY());
+					gui.railroadCells.get(box).get(this.position.getX()).setImage(this.getImage());
 				});
 			}
 		}
