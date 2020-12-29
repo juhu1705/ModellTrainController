@@ -19,6 +19,10 @@ public abstract class AbstractRailroadElement implements SaveAble {
         RAILROAD_ELEMENTS.forEach(e -> e.onLocoNetMessage(message));
     }
 
+    public static void clearElements() {
+        RAILROAD_ELEMENTS.clear();
+    }
+
     protected Position position;
     private final String elementName;
     protected final RailRotation rotation;

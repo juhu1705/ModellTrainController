@@ -31,8 +31,11 @@
               <menus>
                 <Menu mnemonicParsing="false" text="%menu.file">
                   <items>
-                        <MenuItem mnemonicParsing="false" text="%menu.save" />
-                        <MenuItem mnemonicParsing="false" text="%menu.reload" />
+                        <MenuItem mnemonicParsing="false" onAction="#onSave" text="%menu.save" />
+                        <MenuItem mnemonicParsing="false" onAction="#onLoad" text="%menu.reload" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem mnemonicParsing="false" onAction="#onSaveTo" text="%menu.save_to" />
+                        <MenuItem mnemonicParsing="false" onAction="#onLoadFrom" text="%menu.load_from" />
                         <SeparatorMenuItem mnemonicParsing="false" />
                     <MenuItem mnemonicParsing="false" onAction="#onClose" text="%menu.close" />
                   </items>

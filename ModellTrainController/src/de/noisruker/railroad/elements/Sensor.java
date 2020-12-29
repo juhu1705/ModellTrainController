@@ -1,5 +1,6 @@
 package de.noisruker.railroad.elements;
 
+import de.noisruker.gui.GuiMain;
 import de.noisruker.gui.RailroadImages;
 import de.noisruker.loconet.messages.AbstractMessage;
 import de.noisruker.loconet.messages.SensorMessage;
@@ -7,6 +8,7 @@ import de.noisruker.railroad.AbstractRailroadElement;
 import de.noisruker.railroad.Position;
 import de.noisruker.railroad.RailRotation;
 import de.noisruker.util.Util;
+import javafx.application.Platform;
 import javafx.scene.image.Image;
 
 import java.io.BufferedWriter;
@@ -15,7 +17,7 @@ import java.util.ArrayList;
 
 public class Sensor extends AbstractRailroadElement {
 
-	private static ArrayList<Sensor> allSensors;
+	private static ArrayList<Sensor> allSensors = new ArrayList<>();
 
 	public static ArrayList<Sensor> getAllSensors() {
 		return allSensors;
@@ -30,6 +32,7 @@ public class Sensor extends AbstractRailroadElement {
 		this.address = address;
 		this.state = state;
 		Sensor.allSensors.add(this);
+		Platform.runLater(() -> GuiMain.getInstance().updateSensors());
 	}
 
 	@Override

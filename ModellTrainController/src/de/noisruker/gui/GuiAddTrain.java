@@ -11,6 +11,7 @@ import de.noisruker.util.Ref;
 import de.noisruker.util.Util;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -21,12 +22,15 @@ import jssc.SerialPortException;
 import org.controlsfx.glyphfont.FontAwesome;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class GuiAddTrain implements Initializable {
 
     public static GuiAddTrain actual = null;
+
+    private ArrayList<Train> old;
 
     @FXML
     public TableView<Train> trains;
@@ -66,8 +70,6 @@ public class GuiAddTrain implements Initializable {
     public void close(WindowEvent event) {
         BasicTrains.getInstance().removeTable(this.trains);
         Util.runNext(() -> {
-            //TODO: Trains added not due to this window is open must be added with the edit Train window
-            //TODO: Only show new trains in this train display
             for(Train t: LocoNet.getInstance().getTrains()) {
                 GuiEditTrain.train = t;
 
@@ -95,13 +97,27 @@ public class GuiAddTrain implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        BasicTrains.getInstance().addTable(this.trains);
+        old = LocoNet.getInstance().getTrains();
+
+        BasicTrains.getInstance().addTableWithHandler(this::onHandleNewTrains);
 
         this.address.setCellValueFactory(t -> new SimpleStringProperty(String.valueOf(t.getValue().getAddress())));
         this.slot.setCellValueFactory(t -> new SimpleStringProperty(String.valueOf(t.getValue().getSlot())));
 
         this.newAddress.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 255, 1));
         actual = this;
+    }
+
+    private void onHandleNewTrains(final ArrayList<Train> trains) {
+        ArrayList<Train> toAdd = new ArrayList<>();
+        for(Train t: trains) {
+            if(!old.contains(t))
+                toAdd.add(t);
+        }
+        this.trains.getItems().clear();
+        this.trains.refresh();
+        this.trains.setItems(FXCollections.observableArrayList(toAdd));
+        this.trains.sort();
     }
 
 }

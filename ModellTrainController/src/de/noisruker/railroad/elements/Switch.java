@@ -40,6 +40,7 @@ public class Switch extends AbstractRailroadElement {
 		this.type = type;
 		this.normalPosition = normalPosition;
 		Switch.allSwitches.add(this);
+		Platform.runLater(() -> GuiMain.getInstance().updateSwitches());
 	}
 
 	public SwitchMessage getMessage(boolean state) {
@@ -239,8 +240,6 @@ public class Switch extends AbstractRailroadElement {
 				});
 			}
 		}
-
-
 	}
 
 	@Override
@@ -626,6 +625,10 @@ public class Switch extends AbstractRailroadElement {
 
 	public void changeDirection() {
 		this.setAndUpdateState(!this.state);
+	}
+
+	public byte address() {
+		return address;
 	}
 
 	public enum SwitchType {

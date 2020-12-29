@@ -9,6 +9,7 @@ import de.noisruker.main.GUILoader;
 import de.noisruker.railroad.AbstractRailroadElement;
 import de.noisruker.railroad.RailroadReader;
 import de.noisruker.railroad.Train;
+import de.noisruker.railroad.elements.Sensor;
 import de.noisruker.railroad.elements.Switch;
 import de.noisruker.util.*;
 import javafx.application.Platform;
@@ -24,6 +25,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.controlsfx.control.Notifications;
 import org.xml.sax.InputSource;
@@ -150,6 +152,65 @@ public class GuiMain implements Initializable {
         }
     }
 
+    public void onSave(ActionEvent event) {
+        if (!Files.exists(FileSystems.getDefault().getPath(Ref.HOME_FOLDER), LinkOption.NOFOLLOW_LINKS))
+            new File(Ref.HOME_FOLDER).mkdir();
+
+        try {
+            GuiMain.getInstance().save(new File(Ref.HOME_FOLDER + "railroad.mtc"));
+        } catch (IOException e) {
+            Ref.LOGGER.log(Level.SEVERE, "Error due to write railroad data!", e);
+        }
+    }
+
+    public void onSaveTo(ActionEvent event) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Save", "*.mtc"));
+        fileChooser.setTitle(Ref.language.getString("window.choose_picture"));
+
+        File selected = fileChooser.showSaveDialog(GUILoader.getPrimaryStage());
+
+        if(selected == null)
+            return;
+
+        if(!Util.fileEndsWith(selected.getPath(), ".mtc"))
+            return;
+
+        try {
+            GuiMain.getInstance().save(new File(selected.getPath()));
+        } catch (IOException e) {
+            Ref.LOGGER.log(Level.SEVERE, "Error due to write railroad data!", e);
+        }
+    }
+
+    public void onLoad(ActionEvent event) {
+        try {
+            this.initRailroad();
+        } catch (IOException | SAXException e) {
+            Ref.LOGGER.log(Level.WARNING, "Loading of Railroad failed", e);
+        }
+    }
+
+    public void onLoadFrom(ActionEvent event) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Save", "*.mtc"));
+        fileChooser.setTitle(Ref.language.getString("window.choose_picture"));
+
+        File selected = fileChooser.showOpenDialog(GUILoader.getPrimaryStage());
+
+        if(selected == null)
+            return;
+
+        if(!selected.exists() || !Util.fileEndsWith(selected.getPath(), ".mtc"))
+            return;
+
+        try {
+            openRailroad(selected.getPath());
+        } catch (IOException | SAXException e) {
+            Ref.LOGGER.log(Level.SEVERE, "Error due to write railroad data!", e);
+        }
+    }
+
     public void onFullscreen(ActionEvent event) {
         Config.fullScreen = !Config.fullScreen;
         ConfigManager.getInstance().onConfigChanged("fullScreen.text");
@@ -230,6 +291,8 @@ public class GuiMain implements Initializable {
         switches.setShowRoot(false);
 
         this.updateTrains();
+        this.updateSensors();
+        this.updateSwitches();
 
         try {
             this.initRailroad();
@@ -261,6 +324,23 @@ public class GuiMain implements Initializable {
             trainsRoot.getChildren().add(train);
         }
     }
+
+    public void updateSensors() {
+        sensorsRoot.getChildren().clear();
+        for(Sensor s: Sensor.getAllSensors()) {
+            TreeItem<String> train = new TreeItem<>("Sensor: " + s.getAddress());
+            sensorsRoot.getChildren().add(train);
+        }
+    }
+
+    public void updateSwitches() {
+        switchesRoot.getChildren().clear();
+        for(Switch s: Switch.getAllSwitches()) {
+            TreeItem<String> train = new TreeItem<>("Switch: " + s.address());
+            switchesRoot.getChildren().add(train);
+        }
+    }
+
 
     public void setImage(int x, int y, Image i) {
         HBox box1 = this.railroadLines.get(y);

@@ -4,36 +4,31 @@ import static de.noisruker.loconet.messages.MessageType.OPC_LOCO_SPD;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.logging.Level;
-
-import de.noisruker.loconet.LocoNetConnection.PortNotOpenException;
-import de.noisruker.util.Ref;
-import jssc.SerialPortException;
 
 public class DirectionMessage implements AbstractMessage, Serializable {
 
-	private final boolean foreward;
-	private byte funktion;
+	private final boolean forward;
+	private byte function;
 	private final byte slot;
 
-	public DirectionMessage(byte slot, boolean foreward) {
+	public DirectionMessage(byte slot, boolean forward) {
 		this.slot = slot;
-		this.foreward = foreward;
+		this.forward = forward;
 	}
 
-	public DirectionMessage(byte slot, byte funktion) {
+	public DirectionMessage(byte slot, byte function) {
 		this.slot = slot;
-		this.foreward = (funktion == 0);
-		this.funktion = funktion;
+		this.forward = (function == 0);
+		this.function = function;
 	}
 
-	public byte getFunktion() {
-		return this.funktion;
+	public byte getFunction() {
+		return this.function;
 	}
 
 	@Override
 	public LocoNetMessage toLocoNetMessage() {
-		if (this.foreward)
+		if (this.forward)
 			return new LocoNetMessage(OPC_LOCO_SPD, slot, (byte) 0);
 		else
 			return new LocoNetMessage(OPC_LOCO_SPD, slot, (byte) 32);

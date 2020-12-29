@@ -337,6 +337,11 @@ public class GuiCreateRailroad implements Initializable {
             Notifications.create().darkStyle().title(Ref.language.getString("window.error")).text(Ref.language.getString("error.invalid_railroad")).showError();
             return;
         }
+
+        Sensor.getAllSensors().clear();
+        Switch.getAllSwitches().clear();
+        AbstractRailroadElement.clearElements();
+
         final AbstractRailroadElement[][] railroadElements = this.getRailroad();
         new Thread(() -> {
             while (openWindows != 0) {

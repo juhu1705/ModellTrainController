@@ -5,13 +5,11 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Level;
 
 import de.noisruker.loconet.LocoNetConnection;
-import de.noisruker.loconet.messages.LocoNetMessage;
-import de.noisruker.loconet.messages.MessageType;
-import de.noisruker.loconet.messages.SpeedMessage;
+import de.noisruker.loconet.messages.*;
 import de.noisruker.loconet.LocoNet;
-import de.noisruker.loconet.messages.TrainSlotMessage;
 import de.noisruker.util.Config;
 import de.noisruker.util.Ref;
 import de.noisruker.util.Util;
@@ -199,8 +197,14 @@ public class Train implements Serializable, Comparable<Train> {
 		this.standardForward = standardForward;
 	}
 
-	public void setForward(boolean forward) {
-		this.forward = forward;
+	public void setDirection(boolean direction) {
+		this.forward = this.standardForward() == direction;
+		DirectionMessage message = new DirectionMessage(slot, direction);
+		try {
+			message.send();
+		} catch (IOException e) {
+			Ref.LOGGER.log(Level.WARNING, "Lost connection to LocoNet!", e);
+		}
 	}
 
 	public void setPicturePath(String path) {

@@ -1,5 +1,6 @@
 package de.noisruker.gui;
 
+import de.noisruker.loconet.messages.DirectionMessage;
 import de.noisruker.railroad.Train;
 import de.noisruker.util.Config;
 import de.noisruker.util.Ref;
@@ -37,7 +38,7 @@ public class GuiControlTrain implements Initializable {
     public Label header, labelSpeed;
 
     @FXML
-    public Slider speed;
+    public Slider speed, direction;
 
     @FXML
     public ImageView picture;
@@ -68,7 +69,7 @@ public class GuiControlTrain implements Initializable {
 
     public void onChoosePicture(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Picture", ".png", ".jpg"));
+        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Picture", "*.png", "*.jpg"));
         fileChooser.setTitle(Ref.language.getString("window.choose_picture"));
         if(t.getPicturePath() != null && !t.getPicturePath().isBlank()) {
             File file = new File(t.getPicturePath());
@@ -163,5 +164,17 @@ public class GuiControlTrain implements Initializable {
 
         this.loadPicture();
         toAdd = null;
+
+        direction.valueProperty().addListener((observableValue, oldVal, newVal) -> {
+            if(newVal.doubleValue() % 1 != 0) {
+                direction.setValue(newVal.intValue());
+                return;
+            }
+            if(newVal.intValue() == 0)
+                t.stopTrain();
+            else
+                t.setDirection(newVal.intValue() == 1);
+        });
+        direction.setValue(1);
     }
 }

@@ -19,25 +19,35 @@ public class BasicTrains {
     protected BasicTrains() {}
 
     private ArrayList<TableView<Train>> trains = new ArrayList<>();
+    private ArrayList<TableInputHandler> handlers = new ArrayList<>();
 
     public void addTable(TableView<Train> trains) {
         this.trains.add(trains);
     }
 
-    public void setTrains(final ArrayList<Train> all_trains) {
+    public void addTableWithHandler(TableInputHandler handler) {
+        this.handlers.add(handler);
+    }
+
+    public void setTrains(final ArrayList<Train> allTrains) {
         Platform.runLater(() -> {
-            Ref.LOGGER.info(all_trains.toString());
+            Ref.LOGGER.info(allTrains.toString());
 
             for(TableView<Train> t: this.trains) {
                 t.getItems().clear();
                 t.refresh();
-                t.setItems(FXCollections.observableArrayList(all_trains));
+                t.setItems(FXCollections.observableArrayList(allTrains));
                 t.sort();
             }
+            handlers.forEach(handler -> handler.onHandleTrains(allTrains));
         });
     }
 
     public void removeTable(TableView<Train> trains) {
         this.trains.remove(trains);
+    }
+
+    public interface TableInputHandler {
+        public void onHandleTrains(final ArrayList<Train> allTrains);
     }
 }
