@@ -1,5 +1,6 @@
 package de.noisruker.loconet.messages;
 
+import static de.noisruker.loconet.messages.MessageType.OPC_LOCO_DIRF;
 import static de.noisruker.loconet.messages.MessageType.OPC_LOCO_SPD;
 
 import java.io.IOException;
@@ -29,9 +30,9 @@ public class DirectionMessage implements AbstractMessage, Serializable {
 	@Override
 	public LocoNetMessage toLocoNetMessage() {
 		if (this.forward)
-			return new LocoNetMessage(OPC_LOCO_SPD, slot, (byte) 0);
+			return new LocoNetMessage(OPC_LOCO_DIRF, slot, (byte) 0);
 		else
-			return new LocoNetMessage(OPC_LOCO_SPD, slot, (byte) 32);
+			return new LocoNetMessage(OPC_LOCO_DIRF, slot, (byte) 32);
 	}
 
 	@Override

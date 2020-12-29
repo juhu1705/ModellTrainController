@@ -154,7 +154,8 @@ public class Train implements Serializable, Comparable<Train> {
 	public void setSpeed(byte speed) {
 		if (speed > this.maxSpeed || speed < 0)
 			return;
-		this.speed = (byte) (speed + 1);
+
+		this.speed = speed == 0 ? 0 : (byte) (speed + 1);
 		this.trainSpeedChangeListener.forEach(a -> a.onSpeedChanged(this.speed));
 	}
 
@@ -401,7 +402,7 @@ public class Train implements Serializable, Comparable<Train> {
 			else
 				this.setActualSpeed((byte) (this.actualSpeed + 10));
 		} else if(this.speed < this.actualSpeed) {
-			if(this.speed + 1 > this.actualSpeed)
+			if(this.speed + 10 > this.actualSpeed)
 				this.setActualSpeed(this.speed);
 			else
 				this.setActualSpeed((byte) (this.actualSpeed - 10));

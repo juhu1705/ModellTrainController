@@ -168,7 +168,6 @@ public class GuiControlTrain implements Initializable {
         direction.valueProperty().addListener((observableValue, oldVal, newVal) -> {
             if(newVal.doubleValue() % 1 != 0) {
                 direction.setValue(newVal.intValue());
-                return;
             }
             if(newVal.intValue() == 0)
                 t.stopTrain();

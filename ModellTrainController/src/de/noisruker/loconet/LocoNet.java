@@ -7,6 +7,7 @@ import java.util.Objects;
 
 import de.noisruker.gui.GuiAddTrain;
 import de.noisruker.gui.GuiEditTrain;
+import de.noisruker.gui.GuiMain;
 import de.noisruker.gui.tables.BasicTrains;
 import de.noisruker.loconet.messages.*;
 import de.noisruker.main.GUILoader;
@@ -263,6 +264,7 @@ public class LocoNet {
 			train.setParameters(params[0], Byte.parseByte(params[2]), Byte.parseByte(params[3]), Byte.parseByte(params[4]), Boolean.parseBoolean(params[5]));
 			if(params[1] != null)
 				train.setPicturePath(params[1]);
+			GuiMain.getInstance().updateTrains();
 		} else if(GuiAddTrain.actual == null) {
 			while (GuiEditTrain.train != null) {
 				try {

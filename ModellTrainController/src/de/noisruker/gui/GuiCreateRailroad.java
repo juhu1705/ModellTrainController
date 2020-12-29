@@ -438,7 +438,7 @@ public class GuiCreateRailroad implements Initializable {
     }
 
     private void handleAddSwitch(int x, int y) {
-        while (GuiEditSwitch.isInUse()) {
+        while (GuiEditSwitch.isInUse() || GuiEditSensor.isInUse()) {
             try {
                 Thread.sleep(500);
             } catch (InterruptedException ignored) { }
@@ -465,7 +465,7 @@ public class GuiCreateRailroad implements Initializable {
     }
 
     private void handleAddSensor(int x, int y) {
-        while (GuiEditSensor.isInUse()) {
+        while (GuiEditSensor.isInUse() || GuiEditSwitch.isInUse()) {
             try {
                 Thread.sleep(500);
             } catch (InterruptedException ignored) { }
