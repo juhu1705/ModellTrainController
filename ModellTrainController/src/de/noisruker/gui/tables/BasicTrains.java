@@ -30,6 +30,7 @@ public class BasicTrains {
 
             for(TableView<Train> t: this.trains) {
                 t.getItems().clear();
+                t.refresh();
                 t.setItems(FXCollections.observableArrayList(all_trains));
                 t.sort();
             }

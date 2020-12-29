@@ -66,6 +66,8 @@ public class GuiAddTrain implements Initializable {
     public void close(WindowEvent event) {
         BasicTrains.getInstance().removeTable(this.trains);
         Util.runNext(() -> {
+            //TODO: Trains added not due to this window is open must be added with the edit Train window
+            //TODO: Only show new trains in this train display
             for(Train t: LocoNet.getInstance().getTrains()) {
                 GuiEditTrain.train = t;
 
@@ -83,6 +85,7 @@ public class GuiAddTrain implements Initializable {
             }
             BasicTrains.getInstance().setTrains(LocoNet.getInstance().getTrains());
         });
+        actual = null;
     }
 
     public void onClose(ActionEvent event) {

@@ -1,6 +1,7 @@
 package de.noisruker.railroad;
 
 import de.noisruker.gui.GuiMain;
+import de.noisruker.loconet.LocoNet;
 import de.noisruker.railroad.elements.*;
 import de.noisruker.util.Ref;
 import org.xml.sax.Attributes;
@@ -140,6 +141,16 @@ public class RailroadReader implements ContentHandler {
                         Byte.parseByte(params.get("address")), false,
                         new Position(Integer.parseInt(params.get("posX")), Integer.parseInt(params.get("posY"))),
                         RailRotation.valueOf(params.get("rotation")));
+        });
+        registerReader("train", params -> {
+            if(areAllKeysContained(params, "address", "name", "picture", "max", "normal", "min", "direction"))
+                LocoNet.getInstance().addSavedTrain(Byte.parseByte(params.get("address")),
+                        params.get("name"),
+                        params.get("picture").equals("") ? null : params.get("picture"),
+                        Byte.parseByte(params.get("max")),
+                        Byte.parseByte(params.get("normal")),
+                        Byte.parseByte(params.get("min")),
+                        Boolean.parseBoolean(params.get("direction")));
         });
     }
 

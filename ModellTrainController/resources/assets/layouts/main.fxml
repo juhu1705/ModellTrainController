@@ -126,7 +126,7 @@
                 </Tab>
                 <Tab closable="false" text="%tab.sections">
                      <content>
-                        <TreeView prefHeight="200.0" prefWidth="200.0" />
+                        <TreeView fx:id="sensors" prefHeight="200.0" prefWidth="200.0" />
                      </content>
                      <graphic>
                         <FontIcon />
@@ -134,7 +134,7 @@
                 </Tab>
                   <Tab closable="false" text="%tab.switches">
                      <content>
-                        <TreeView prefHeight="200.0" prefWidth="200.0" />
+                        <TreeView fx:id="switches" prefHeight="200.0" prefWidth="200.0" />
                      </content>
                      <graphic>
                         <FontIcon />

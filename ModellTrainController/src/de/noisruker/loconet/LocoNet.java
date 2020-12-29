@@ -2,15 +2,24 @@ package de.noisruker.loconet;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Objects;
 
+import de.noisruker.gui.GuiAddTrain;
+import de.noisruker.gui.GuiEditTrain;
 import de.noisruker.gui.tables.BasicTrains;
 import de.noisruker.loconet.messages.*;
+import de.noisruker.main.GUILoader;
 import de.noisruker.railroad.AbstractRailroadElement;
 import de.noisruker.railroad.Railroad;
 import de.noisruker.railroad.elements.Sensor;
 import de.noisruker.railroad.Train;
 import de.noisruker.util.Ref;
+import de.noisruker.util.Util;
+import javafx.application.Platform;
 import jssc.SerialPortException;
+
+import javax.annotation.Nullable;
 
 public class LocoNet {
 
@@ -29,6 +38,8 @@ public class LocoNet {
 
 	public ArrayList<Action> actions = new ArrayList<>();
 
+	private HashMap<Byte, String[]> trainsToAdd = new HashMap<>();
+
 	public static LocoNet getInstance() {
 		return instance == null ? instance = new LocoNet() : instance;
 	}
@@ -40,6 +51,19 @@ public class LocoNet {
 	private LocoNetConnection connection;
 
 	protected LocoNet() {
+	}
+
+	public void addSavedTrain(byte address, String name, @Nullable String picturePath, byte maxSpeed, byte normalSpeed, byte minSpeed, boolean standardDirection) {
+		String[] params = new String[] {
+				name,
+				picturePath,
+				Byte.toString(maxSpeed),
+				Byte.toString(normalSpeed),
+				Byte.toString(minSpeed),
+				Boolean.toString(standardDirection)
+		};
+		trainsToAdd.put(address, params);
+		Train.addTrain(address);
 	}
 
 	private void addTrain(Train train) {
@@ -192,11 +216,7 @@ public class LocoNet {
 
 				Ref.LOGGER.info("Write requested Train to slot: " + m.getSlot());
 
-
-
-
-
-				if(!this.getTrains().contains(m.getAddress())) {
+				if(!this.trainExists(m.getAddress())) {
 					LocoNet.getRailroad().stopTrainControlSystem();
 
 					while(!LocoNet.getRailroad().isControlSystemStopped()) {
@@ -205,7 +225,10 @@ public class LocoNet {
 						} catch (InterruptedException ignored) { }
 					}
 
-					this.addTrain(new Train(m.getAddress(), m.getSlot()));
+					final Train train;
+					this.addTrain(train = new Train(m.getAddress(), m.getSlot()));
+
+					Util.runNext(() -> this.handleTrainAppearance(train));
 				}
 
 				BasicTrains.getInstance().setTrains(this.getTrains());
@@ -232,6 +255,34 @@ public class LocoNet {
 			}
 		});
 
+	}
+
+	private void handleTrainAppearance(Train train) {
+		if(trainsToAdd.containsKey(train.getAddress())) {
+			String[] params = trainsToAdd.get(train.getAddress());
+			train.setParameters(params[0], Byte.parseByte(params[2]), Byte.parseByte(params[3]), Byte.parseByte(params[4]), Boolean.parseBoolean(params[5]));
+			if(params[1] != null)
+				train.setPicturePath(params[1]);
+		} else if(GuiAddTrain.actual == null) {
+			while (GuiEditTrain.train != null) {
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException ignore) { }
+			}
+			GuiEditTrain.train = train;
+			Platform.runLater(() -> Objects.requireNonNull(
+					Util.openWindow("/assets/layouts/edit_train.fxml",
+							Ref.language.getString("window.edit_train"),
+							GUILoader.getPrimaryStage()))
+					.setResizable(true));
+		}
+	}
+
+	public boolean trainExists(byte address) {
+		for(Train t: trains)
+			if(t.getAddress() == address)
+				return true;
+		return false;
 	}
 
 }

@@ -55,7 +55,7 @@ public class GuiMain implements Initializable {
     public int start;
 
     @FXML
-    public TreeView<String> tree, trains;
+    public TreeView<String> tree, trains, sensors, switches;
 
     @FXML
     public VBox railroadSection;
@@ -63,7 +63,7 @@ public class GuiMain implements Initializable {
     public ArrayList<HBox> railroadLines = new ArrayList<>();
     public HashMap<HBox, ArrayList<ImageView>> railroadCells = new HashMap<>();
 
-    public TreeItem<String> trainsRoot;
+    public TreeItem<String> trainsRoot, switchesRoot, sensorsRoot;
 
     @FXML
     public Menu theme, language;
@@ -185,8 +185,6 @@ public class GuiMain implements Initializable {
                 view.setLayoutX(32);
                 view.setLayoutY(32);
                 view.setSmooth(true);
-                int finalY = y;
-                int finalX = x;
                 view.setPickOnBounds(true);
                 box.getChildren().add(view);
                 railroadCells.get(box).add(view);
@@ -222,6 +220,15 @@ public class GuiMain implements Initializable {
         trainsRoot = new TreeItem<>(Ref.language.getString("label.trains"));
         trains.setRoot(this.trainsRoot);
         trains.setShowRoot(false);
+
+        sensorsRoot = new TreeItem<>("");
+        sensors.setRoot(this.sensorsRoot);
+        sensors.setShowRoot(false);
+
+        switchesRoot = new TreeItem<>("");
+        switches.setRoot(this.switchesRoot);
+        switches.setShowRoot(false);
+
         this.updateTrains();
 
         try {
@@ -284,6 +291,9 @@ public class GuiMain implements Initializable {
                 }
             }
         }
+
+        for(Train t: LocoNet.getInstance().getTrains())
+            t.saveTo(bw);
 
         bw.append("</railroad>");
         bw.newLine();

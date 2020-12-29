@@ -18,8 +18,15 @@ import org.codehaus.plexus.component.configurator.converters.basic.UriConverter;
 import javax.swing.*;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class Switch extends AbstractRailroadElement {
+
+	private static ArrayList<Switch> allSwitches = new ArrayList<>();
+
+	public static ArrayList<Switch> getAllSwitches() {
+		return allSwitches;
+	}
 
 	private boolean state;
 	private final byte address;
@@ -32,6 +39,7 @@ public class Switch extends AbstractRailroadElement {
 		this.address = address;
 		this.type = type;
 		this.normalPosition = normalPosition;
+		Switch.allSwitches.add(this);
 	}
 
 	public SwitchMessage getMessage(boolean state) {

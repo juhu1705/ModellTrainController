@@ -11,8 +11,15 @@ import javafx.scene.image.Image;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class Sensor extends AbstractRailroadElement {
+
+	private static ArrayList<Sensor> allSensors;
+
+	public static ArrayList<Sensor> getAllSensors() {
+		return allSensors;
+	}
 
 	private final int address;
 
@@ -22,6 +29,7 @@ public class Sensor extends AbstractRailroadElement {
 		super("sensor", position, rotation);
 		this.address = address;
 		this.state = state;
+		Sensor.allSensors.add(this);
 	}
 
 	@Override

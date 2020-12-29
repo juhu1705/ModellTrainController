@@ -1,5 +1,6 @@
 package de.noisruker.railroad;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import de.noisruker.loconet.LocoNet;
 import de.noisruker.loconet.messages.TrainSlotMessage;
 import de.noisruker.util.Config;
 import de.noisruker.util.Ref;
+import de.noisruker.util.Util;
 import jssc.SerialPortException;
 
 public class Train implements Serializable, Comparable<Train> {
@@ -555,6 +557,23 @@ public class Train implements Serializable, Comparable<Train> {
 
 	public interface TrainSpeedChangeListener {
 		public void onSpeedChanged(byte newSpeed);
+	}
+
+	public void saveTo(BufferedWriter writer) throws IOException {
+		Util.setWriter(writer, "train");
+
+		Util.writeParameterToBuffer("address", Byte.toString(this.address));
+
+		Util.writeParameterToBuffer("name", this.name);
+		Util.writeParameterToBuffer("picture", this.picture == null ? "" : this.picture);
+
+		Util.writeParameterToBuffer("max", Byte.toString(this.maxSpeed));
+		Util.writeParameterToBuffer("normal", Byte.toString(this.normalSpeed));
+		Util.writeParameterToBuffer("min", Byte.toString(this.minSpeed));
+
+		Util.writeParameterToBuffer("direction", Boolean.toString(this.standardForward));
+
+		Util.closeWriting();
 	}
 
 }
