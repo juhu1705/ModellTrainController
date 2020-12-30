@@ -10,6 +10,7 @@ import de.noisruker.railroad.RailRotation;
 import de.noisruker.util.Util;
 import javafx.application.Platform;
 import javafx.scene.image.Image;
+import javafx.scene.layout.HBox;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -72,8 +73,14 @@ public class Sensor extends AbstractRailroadElement {
 	public void onLocoNetMessage(AbstractMessage message) {
 		if(message instanceof SensorMessage) {
 			SensorMessage m = (SensorMessage) message;
-			if(m.getAddress() == this.getAddress())
+			if(m.getAddress() == this.getAddress()) {
 				this.setState(m.getState());
+				Platform.runLater(() -> {
+					GuiMain gui = GuiMain.getInstance();
+					HBox box = gui.railroadLines.get(this.position.getY());
+					gui.railroadCells.get(box).get(this.position.getX()).setImage(this.getImage());
+				});
+			}
 		}
 	}
 
