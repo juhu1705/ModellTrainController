@@ -47,21 +47,32 @@ public class LocoNetMessageSender {
 			return;
 		isRunning = true;
 		new Thread(() -> {
-			while (!messages.isEmpty()) {
-				while (!LocoNetMessageReceiver.messageChecked()) {
-
-				}
-				if(messages.size() < 1)
-					break;
-				byte[] message = messages.remove(0);
-				LocoNetMessageReceiver.setCheckMessage(message);
+			while(true) {
 				try {
-					this.connection.send(Util.addCheckSum(message));
-				} catch (PortNotOpenException | SerialPortException e) {
-					Ref.LOGGER.log(Level.SEVERE, "LocoNet Connection failed", e);
+					Thread.sleep(100);
+				} catch (InterruptedException ignored) { }
+				while (!messages.isEmpty()) {
+					int i = 0;
+					while (!LocoNetMessageReceiver.messageChecked()) {
+						if(i == 20)
+							break;
+						i++;
+						try {
+							Thread.sleep(100);
+						} catch (InterruptedException ignored) { }
+					}
+
+					if (messages.size() < 1)
+						break;
+					byte[] message = messages.remove(0);
+					LocoNetMessageReceiver.setCheckMessage(message);
+					try {
+						this.connection.send(Util.addCheckSum(message));
+					} catch (PortNotOpenException | SerialPortException e) {
+						Ref.LOGGER.log(Level.SEVERE, "LocoNet Connection failed", e);
+					}
 				}
 			}
-			isRunning = false;
 		}).start();
 	}
 
