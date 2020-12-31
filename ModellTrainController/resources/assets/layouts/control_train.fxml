@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="446.0" spacing="20.0" styleClass="background" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.noisruker.gui.GuiControlTrain">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="264.0" prefWidth="336.0" spacing="20.0" styleClass="background" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.noisruker.gui.GuiControlTrain">
    <padding>
       <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
    </padding>
@@ -23,7 +23,45 @@
             <Font name="System Bold" size="18.0" />
          </font>
       </Label>
-      <HBox prefHeight="142.0" prefWidth="426.0" spacing="20.0">
+      <HBox spacing="20.0">
+         <children>
+            <VBox>
+               <children>
+                  <Slider fx:id="speed" orientation="VERTICAL" prefHeight="207.0" prefWidth="14.0" />
+                  <Label fx:id="labelSpeed" alignment="CENTER" maxWidth="1.7976931348623157E308" />
+               </children>
+            </VBox>
+            <VBox maxWidth="1.7976931348623157E308" spacing="10.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <Button fx:id="max" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onMaxSpeed" text="%button.max_speed">
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </Button>
+                  <Button fx:id="normal" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onNormalSpeed" text="%button.normal_speed" />
+                  <Button fx:id="min" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onMinSpeed" text="%button.min_speed" />
+                  <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onStop" text="%button.stop_train" />
+                  <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onStopImmediately" text="%button.stop_immediately" />
+               </children>
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+            </VBox>
+            <VBox alignment="CENTER">
+               <children>
+                  <Slider fx:id="direction" blockIncrement="1.0" max="1.0" min="-1.0" orientation="VERTICAL" prefHeight="170.0" prefWidth="14.0" value="1.0" />
+                  <Hyperlink onAction="#showMore" prefHeight="23.0" text="%label.more" />
+               </children>
+            </VBox>
+         </children>
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+         <padding>
+            <Insets left="20.0" right="20.0" />
+         </padding>
+      </HBox>
+      <HBox fx:id="more" prefHeight="142.0" prefWidth="426.0" spacing="20.0" visible="false">
          <children>
             <VBox>
                <children>
@@ -41,43 +79,6 @@
                </contextMenu>
             </ListView>
          </children>
-      </HBox>
-      <HBox spacing="20.0">
-         <children>
-            <VBox>
-               <children>
-                  <Slider fx:id="speed" orientation="VERTICAL" />
-                  <Label fx:id="labelSpeed" alignment="CENTER" maxWidth="1.7976931348623157E308" />
-               </children>
-            </VBox>
-            <VBox maxWidth="1.7976931348623157E308" spacing="10.0" HBox.hgrow="ALWAYS">
-               <children>
-                  <Button fx:id="max" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onMaxSpeed" text="%button.max_speed">
-                     <VBox.margin>
-                        <Insets />
-                     </VBox.margin>
-                  </Button>
-                  <Button fx:id="normal" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onNormalSpeed" text="%button.normal_speed" />
-                  <Button fx:id="min" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onMinSpeed" text="%button.min_speed" />
-                  <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onStopImmediately" text="%button.stop_train" />
-               </children>
-               <padding>
-                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-               </padding>
-            </VBox>
-            <VBox>
-               <children>
-                  <Slider fx:id="direction" blockIncrement="1.0" max="1.0" min="-1.0" orientation="VERTICAL" />
-                  <Label />
-               </children>
-            </VBox>
-         </children>
-         <VBox.margin>
-            <Insets />
-         </VBox.margin>
-         <padding>
-            <Insets left="20.0" right="20.0" />
-         </padding>
       </HBox>
    </children>
 </VBox>

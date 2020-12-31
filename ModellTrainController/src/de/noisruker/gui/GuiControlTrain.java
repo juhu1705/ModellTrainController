@@ -18,8 +18,10 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 
 import java.io.File;
@@ -44,6 +46,9 @@ public class GuiControlTrain implements Initializable {
     public ImageView picture;
 
     @FXML
+    public HBox more;
+
+    @FXML
     public ListView<String> standardValues;
 
     private Train.TrainSpeedChangeListener changeListener = newSpeed -> Platform.runLater(() -> this.speed.setValue(newSpeed - 1));
@@ -63,8 +68,25 @@ public class GuiControlTrain implements Initializable {
             t.applyMaxSpeed();
     }
 
+    public void onStop(ActionEvent event) {
+        if(Config.mode.equals(Config.MODE_MANUAL))
+            t.setSpeed((byte) 0);
+    }
+
     public void onStopImmediately(ActionEvent event) {
         Util.runNext(t::stopTrainImmediately);
+    }
+
+    public void showMore(ActionEvent event) {
+        if(!more.isVisible()) {
+            more.setVisible(true);
+            Window window = ((Hyperlink) event.getSource()).getScene().getWindow();
+            window.setHeight(window.getHeight() + 200);
+        } else {
+            more.setVisible(false);
+            Window window = ((Hyperlink) event.getSource()).getScene().getWindow();
+            window.setHeight(window.getHeight() - 200);
+        }
     }
 
     public void onChoosePicture(ActionEvent event) {

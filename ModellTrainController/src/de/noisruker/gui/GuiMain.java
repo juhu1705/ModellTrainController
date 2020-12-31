@@ -18,6 +18,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
 import javafx.scene.control.*;
+import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
@@ -73,6 +74,11 @@ public class GuiMain implements Initializable {
     @FXML
     public VBox config;
 
+    private Train actual;
+
+    @FXML
+    public Label trainName;
+
     private AbstractRailroadElement[][] railroadElements = null;
 
     public void applyRailroad(final AbstractRailroadElement[][] railroad) {
@@ -110,6 +116,31 @@ public class GuiMain implements Initializable {
                     this.railroadCells.get(box).get(x).setImage(RailroadImages.EMPTY_2);
             }
         }
+    }
+
+    public void onNormalSpeed(ActionEvent event) {
+        if(Config.mode.equals(Config.MODE_MANUAL) && actual != null)
+            actual.applyNormalSpeed();
+    }
+
+    public void onMinSpeed(ActionEvent event) {
+        if(Config.mode.equals(Config.MODE_MANUAL) && actual != null)
+            actual.applyBreakSpeed();
+    }
+
+    public void onMaxSpeed(ActionEvent event) {
+        if(Config.mode.equals(Config.MODE_MANUAL) && actual != null)
+            actual.applyMaxSpeed();
+    }
+
+    public void onStop(ActionEvent event) {
+        if(Config.mode.equals(Config.MODE_MANUAL) && actual != null)
+            actual.setSpeed((byte) 0);
+    }
+
+    public void onStopImmediately(ActionEvent event) {
+        if(actual != null)
+            Util.runNext(actual::stopTrainImmediately);
     }
 
     public void onCreateRailroad(ActionEvent event) {
@@ -299,6 +330,14 @@ public class GuiMain implements Initializable {
         } catch (IOException | SAXException e) {
             Ref.LOGGER.log(Level.WARNING, "Loading of Railroad failed", e);
         }
+
+        this.trains.selectionModelProperty().addListener((observableValue, oldVal, newVal) -> {
+            for(Train train: LocoNet.getInstance().getTrains())
+                if(train.equals(newVal.getSelectedItem().getValue())) {
+                    this.actual = train;
+                    trainName.setText(newVal.getSelectedItem().getValue());
+                }
+        });
     }
 
     private void initRailroad() throws IOException, SAXException {
