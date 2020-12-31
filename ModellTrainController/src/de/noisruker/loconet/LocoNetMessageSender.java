@@ -45,12 +45,14 @@ public class LocoNetMessageSender {
 	public void sendMessages() {
 		if(isRunning)
 			return;
+		isRunning = true;
 		new Thread(() -> {
-			isRunning = true;
 			while (!messages.isEmpty()) {
 				while (!LocoNetMessageReceiver.messageChecked()) {
 
 				}
+				if(messages.size() < 1)
+					break;
 				byte[] message = messages.remove(0);
 				LocoNetMessageReceiver.setCheckMessage(message);
 				try {
