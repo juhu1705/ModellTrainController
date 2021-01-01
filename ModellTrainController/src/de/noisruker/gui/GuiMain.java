@@ -376,7 +376,6 @@ public class GuiMain implements Initializable {
         switches.setRoot(this.switchesRoot);
         switches.setShowRoot(false);
 
-
         this.updateSensors();
         this.updateSwitches();
 
