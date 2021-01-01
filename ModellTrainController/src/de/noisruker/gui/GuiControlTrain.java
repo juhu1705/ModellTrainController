@@ -132,9 +132,9 @@ public class GuiControlTrain implements Initializable {
                 } catch (InterruptedException ignored) { }
             }
             GuiEditTrain.train = this.t;
-            Util.openWindow("/assets/layouts/edit_train.fxml",
-                    Ref.language.getString("window.edit_train"),
-                    (Stage) ((Button) event.getSource()).getScene().getWindow());
+            Platform.runLater(() ->
+                    Util.openWindow("/assets/layouts/edit_train.fxml",
+                        Ref.language.getString("window.edit_train"), null));
         });
     }
 

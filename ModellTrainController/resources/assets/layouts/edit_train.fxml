@@ -39,7 +39,7 @@
       <Label maxWidth="1.7976931348623157E308" text="%label.max_speed" />
       <HBox alignment="CENTER_LEFT" spacing="10.0">
          <children>
-            <Slider fx:id="maxSpeed" blockIncrement="1.0" max="127.0" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
+            <Slider fx:id="maxSpeed" blockIncrement="1.0" max="124.0" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
                <tooltip>
                   <Tooltip text="%tooltip.max_speed" />
                </tooltip>
