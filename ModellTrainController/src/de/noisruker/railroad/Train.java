@@ -106,7 +106,7 @@ public class Train implements Serializable, Comparable<Train> {
 	}
 
 	private Train(byte address, byte slot, byte speed) {
-		this(address, slot, speed, (byte) 124, (byte) 90, (byte) 35, true);
+		this(address, slot, speed, (byte) 124, (byte) 80, (byte) 35, true);
 	}
 
 	private Train(byte address, byte slot, byte speed, byte maxSpeed, byte normalSpeed, byte minSpeed,

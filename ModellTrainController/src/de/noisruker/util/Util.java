@@ -225,6 +225,15 @@ public class Util {
 		return false;
     }
 
+	public static boolean isNameInvalid(String name, int address) {
+		for(Train t: LocoNet.getInstance().getTrains())
+			if(t.getAddress() != address)
+				if(t.equals(name))
+					return true;
+
+		return false;
+	}
+
     public static boolean fileEndsWith(String toCheck, String... strings) {
 		for(String s: strings) {
 			if (toCheck.endsWith(s))

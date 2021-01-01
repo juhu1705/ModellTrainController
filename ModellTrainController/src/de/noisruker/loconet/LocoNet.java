@@ -217,6 +217,9 @@ public class LocoNet {
 
 				Ref.LOGGER.info("Write requested Train to slot: " + m.getSlot());
 
+				if(m.getAddress() == 0)
+					return;
+
 				if(!this.trainExists(m.getAddress())) {
 					LocoNet.getRailroad().stopTrainControlSystem();
 
@@ -264,8 +267,7 @@ public class LocoNet {
 			train.setParameters(params[0], Byte.parseByte(params[2]), Byte.parseByte(params[3]), Byte.parseByte(params[4]), Boolean.parseBoolean(params[5]));
 			if(params[1] != null)
 				train.setPicturePath(params[1]);
-			GuiMain.getInstance().updateTrains();
-		} else if(GuiAddTrain.actual == null) {
+		} else {
 			while (GuiEditTrain.train != null) {
 				try {
 					Thread.sleep(100);
@@ -278,6 +280,7 @@ public class LocoNet {
 							GUILoader.getPrimaryStage()))
 					.setResizable(true));
 		}
+		GuiMain.getInstance().updateTrains();
 	}
 
 	public boolean trainExists(byte address) {

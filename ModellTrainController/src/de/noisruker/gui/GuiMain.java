@@ -18,6 +18,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
@@ -191,6 +192,54 @@ public class GuiMain implements Initializable {
                 Platform.runLater(() -> Util.openWindow("/assets/layouts/control_train.fxml", finalT.getName(), null));
             });
         }
+    }
+
+    public void onDeleteTrain(ActionEvent event) {
+        if(this.trains.getSelectionModel() == null || this.trains.getSelectionModel().getSelectedItem() == null) {
+            Notifications.create().darkStyle().title(Ref.language.getString("window.error")).text(Ref.language.getString("error.no_train_selected")).showError();
+            return;
+        }
+
+        String s = this.trains.getSelectionModel().getSelectedItem().getValue();
+        Train t = null;
+        for(Train train: LocoNet.getInstance().getTrains())
+            if(train.equals(s))
+                t = train;
+        if(t == null)
+            Notifications.create().darkStyle().title(Ref.language.getString("window.error")).text(Ref.language.getString("error.no_train_selected")).showError();
+        else {
+            LocoNet.getInstance().getTrains().remove(t);
+            this.updateTrains();
+        }
+    }
+
+    public void onEditTrain(ActionEvent event) {
+        if(this.trains.getSelectionModel() == null || this.trains.getSelectionModel().getSelectedItem() == null) {
+            Notifications.create().darkStyle().title(Ref.language.getString("window.error")).text(Ref.language.getString("error.no_train_selected")).showError();
+            return;
+        }
+
+        String s = this.trains.getSelectionModel().getSelectedItem().getValue();
+        Train t = null;
+        for(Train train: LocoNet.getInstance().getTrains())
+            if(train.equals(s))
+                t = train;
+        if(t == null)
+            Notifications.create().darkStyle().title(Ref.language.getString("window.error")).text(Ref.language.getString("error.no_train_selected")).showError();
+        else {
+            Train finalT = t;
+            Util.runNext(() -> {
+                while (GuiEditTrain.train != null) {
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException ignored) { }
+                }
+                GuiEditTrain.train = finalT;
+                Util.openWindow("/assets/layouts/edit_train.fxml",
+                        Ref.language.getString("window.edit_train"), GUILoader.getPrimaryStage());
+            });
+        }
+
     }
 
     public void onSave(ActionEvent event) {

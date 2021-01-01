@@ -11,6 +11,7 @@ import de.noisruker.util.Ref;
 import de.noisruker.util.Util;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -19,73 +20,113 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import jssc.SerialPortException;
+import org.controlsfx.control.ToggleSwitch;
 import org.controlsfx.glyphfont.FontAwesome;
+import org.controlsfx.validation.ValidationResult;
+import org.controlsfx.validation.ValidationSupport;
+import org.controlsfx.validation.Validator;
 
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
+import static de.noisruker.loconet.LocoNet.*;
+
 public class GuiAddTrain implements Initializable {
 
     public static GuiAddTrain actual = null;
 
-    private ArrayList<Train> old;
-
     @FXML
-    public TableView<Train> trains;
-
-    @FXML
-    public TableColumn<Train, String> address, slot;
-
-    @FXML
-    public Spinner<Integer> newAddress;
+    public Spinner<Integer> address;
 
     @FXML
     public Label messages;
 
     @FXML
-    public ProgressBar progress;
+    public Label labelMinSpeed, labelNormalSpeed, labelMaxSpeed, error;
 
-    public void onAdd(ActionEvent event) {
-        if(newAddress.getValue() == null)
-            return;
-        for(Train t: LocoNet.getInstance().getTrains())
-            if(t.getAddress() == newAddress.getValue())
-                return;
+    @FXML
+    public TextField name;
 
-        messages.setText(Ref.language.getString("label.waiting_for_response"));
-        progress.setProgress(-1d);
+    @FXML
+    public Slider minSpeed, normalSpeed, maxSpeed;
 
-        Util.runNext(() -> {
-            Train.addTrain(newAddress.getValue().byteValue());
-        });
+    @FXML
+    public ToggleSwitch standardDirection;
+
+    @FXML
+    public Button set;
+
+    public void onSet(ActionEvent e) {
+        error.setText("");
+
+        if(this.minSpeed.getValue() > this.maxSpeed.getValue())
+            error.setText(Ref.language.getString("label.error.min_speed"));
+
+        if(this.normalSpeed.getValue() < this.minSpeed.getValue())
+            error.setText(Ref.language.getString("label.error.normal_speed"));
+
+        if(this.maxSpeed.getValue() < this.normalSpeed.getValue())
+            error.setText(Ref.language.getString("label.error.max_speed"));
+
+        if(error.getText().isBlank()) {
+            getInstance().addSavedTrain(address.getValue().byteValue(), name.getText(), null, (byte) maxSpeed.getValue(), (byte) normalSpeed.getValue(), (byte) minSpeed.getValue(), standardDirection.isSelected());
+
+            GuiMain.getInstance().updateTrains();
+            ((Stage)((Button) e.getSource()).getScene().getWindow()).close();
+        }
     }
 
-    public void onAdded(SortEvent e) {
-        progress.setProgress(0);
-        messages.setText(Ref.language.getString("label.waiting_for_input"));
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        if(GuiEditTrain.train == null) {
+            return;
+        }
+
+        this.minSpeed.valueProperty().addListener((ObservableValue<? extends Number> observableValue, Number oldVal, Number newVal) -> {
+            this.labelMinSpeed.setText(Integer.toString(newVal.intValue()));
+            this.maxSpeed.setMin(newVal.intValue() + 1);
+            this.normalSpeed.setMin(newVal.intValue());
+        });
+
+        this.normalSpeed.valueProperty().addListener((ObservableValue<? extends Number> observableValue, Number oldVal, Number newVal) -> {
+            this.labelNormalSpeed.setText(Integer.toString(newVal.intValue()));
+        });
+
+        this.maxSpeed.valueProperty().addListener((ObservableValue<? extends Number> observableValue, Number oldVal, Number newVal) -> {
+            this.labelMaxSpeed.setText(Integer.toString(newVal.intValue()));
+            this.minSpeed.setMax(newVal.intValue() - 1);
+            this.normalSpeed.setMax(newVal.intValue());
+        });
+
+        this.minSpeed.setValue(35);
+
+        this.maxSpeed.setValue(124);
+
+        this.normalSpeed.setValue(80);
+
+        this.standardDirection.setSelected(true);
+
+        ValidationSupport support = new ValidationSupport();
+
+        Validator<String> hasInput = (c, str) -> ValidationResult.fromErrorIf(c, Ref.language.getString("invalid.no_input"),
+                str == null || str.isBlank() || Util.isNameInvalid(str, this.address.getValue()));
+
+        support.registerValidator(this.name, true, hasInput);
+
+        set.disableProperty().bind(support.invalidProperty());
+
+        GuiEditTrain.train = null;
+
+        this.address.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 255, 1));
+        actual = this;
     }
 
     public void close(WindowEvent event) {
-        BasicTrains.getInstance().removeTable(this.trains);
         Util.runNext(() -> {
-            for(Train t: LocoNet.getInstance().getTrains()) {
-                GuiEditTrain.train = t;
 
-                Platform.runLater(() -> Objects.requireNonNull(
-                        Util.openWindow("/assets/layouts/edit_train.fxml",
-                                Ref.language.getString("window.edit_train"),
-                                GUILoader.getPrimaryStage()))
-                        .setResizable(true));
-
-                while (GuiEditTrain.train != null) {
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException ignore) { }
-                }
-            }
-            BasicTrains.getInstance().setTrains(LocoNet.getInstance().getTrains());
+            BasicTrains.getInstance().setTrains(getInstance().getTrains());
         });
         actual = null;
     }
@@ -93,31 +134,6 @@ public class GuiAddTrain implements Initializable {
     public void onClose(ActionEvent event) {
         ((Stage) ((Button) event.getSource()).getScene().getWindow()).close();
         this.close(null);
-    }
-
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        old = LocoNet.getInstance().getTrains();
-
-        BasicTrains.getInstance().addTableWithHandler(this::onHandleNewTrains);
-
-        this.address.setCellValueFactory(t -> new SimpleStringProperty(String.valueOf(t.getValue().getAddress())));
-        this.slot.setCellValueFactory(t -> new SimpleStringProperty(String.valueOf(t.getValue().getSlot())));
-
-        this.newAddress.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 255, 1));
-        actual = this;
-    }
-
-    private void onHandleNewTrains(final ArrayList<Train> trains) {
-        ArrayList<Train> toAdd = new ArrayList<>();
-        for(Train t: trains) {
-            if(!old.contains(t))
-                toAdd.add(t);
-        }
-        this.trains.getItems().clear();
-        this.trains.refresh();
-        this.trains.setItems(FXCollections.observableArrayList(toAdd));
-        this.trains.sort();
     }
 
 }
