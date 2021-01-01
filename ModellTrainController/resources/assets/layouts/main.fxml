@@ -97,7 +97,7 @@
                            <children>
                               <SplitPane dividerPositions="0.5" maxWidth="1.7976931348623157E308" prefHeight="481.0" prefWidth="387.0">
                                  <items>
-                                    <TreeView fx:id="trains" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                    <TreeView fx:id="trains" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#onTrainSelectionChanged">
                                        <contextMenu>
                                           <ContextMenu>
                                             <items>

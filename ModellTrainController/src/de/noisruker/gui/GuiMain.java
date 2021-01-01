@@ -24,6 +24,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -141,6 +142,15 @@ public class GuiMain implements Initializable {
     public void onStopImmediately(ActionEvent event) {
         if(actual != null)
             Util.runNext(actual::stopTrainImmediately);
+    }
+
+    public void onTrainSelectionChanged(MouseEvent event) {
+        String name = this.trains.getSelectionModel().getSelectedItem().getValue();
+        for(Train train: LocoNet.getInstance().getTrains())
+            if(train.equals(name)) {
+                this.actual = train;
+                trainName.setText(name);
+            }
     }
 
     public void onCreateRailroad(ActionEvent event) {
@@ -330,14 +340,6 @@ public class GuiMain implements Initializable {
         } catch (IOException | SAXException e) {
             Ref.LOGGER.log(Level.WARNING, "Loading of Railroad failed", e);
         }
-
-        this.trains.selectionModelProperty().addListener((observableValue, oldVal, newVal) -> {
-            for(Train train: LocoNet.getInstance().getTrains())
-                if(train.equals(newVal.getSelectedItem().getValue())) {
-                    this.actual = train;
-                    trainName.setText(newVal.getSelectedItem().getValue());
-                }
-        });
     }
 
     private void initRailroad() throws IOException, SAXException {
