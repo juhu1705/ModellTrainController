@@ -1,21 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Slider?>
-<?import javafx.scene.control.Spinner?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.Tooltip?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-<?import org.controlsfx.control.ToggleSwitch?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import org.controlsfx.control.*?>
 
-
-<VBox prefHeight="361.0" prefWidth="381.0" spacing="20.0" styleClass="background" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<VBox prefHeight="361.0" prefWidth="381.0" spacing="20.0" styleClass="background" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.noisruker.gui.GuiAddTrain">
    <children>
       <Label text="%label.address" />
-      <Spinner fx:id="address" maxWidth="1.7976931348623157E308" />
+      <Spinner fx:id="address" editable="true" maxWidth="1.7976931348623157E308" />
       <Label text="%label.name" />
       <TextField fx:id="name" />
       <Label maxWidth="1.7976931348623157E308" text="%label.min_speed" />

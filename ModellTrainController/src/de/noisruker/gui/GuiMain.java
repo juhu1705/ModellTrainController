@@ -236,8 +236,8 @@ public class GuiMain implements Initializable {
                     } catch (InterruptedException ignored) { }
                 }
                 GuiEditTrain.train = finalT;
-                Util.openWindow("/assets/layouts/edit_train.fxml",
-                        Ref.language.getString("window.edit_train"), GUILoader.getPrimaryStage());
+                Platform.runLater(() -> Util.openWindow("/assets/layouts/edit_train.fxml",
+                        Ref.language.getString("window.edit_train"), GUILoader.getPrimaryStage()));
             });
         }
 
@@ -364,11 +364,6 @@ public class GuiMain implements Initializable {
             this.language.getItems().add(language);
         }
 
-        LocoNetMessageReceiver.getInstance().registerListener(message -> {
-            if(message instanceof TrainSlotMessage) {
-                this.updateTrains();
-            }
-        });
         trainsRoot = new TreeItem<>(Ref.language.getString("label.trains"));
         trains.setRoot(this.trainsRoot);
         trains.setShowRoot(false);
@@ -381,7 +376,7 @@ public class GuiMain implements Initializable {
         switches.setRoot(this.switchesRoot);
         switches.setShowRoot(false);
 
-        this.updateTrains();
+
         this.updateSensors();
         this.updateSwitches();
 

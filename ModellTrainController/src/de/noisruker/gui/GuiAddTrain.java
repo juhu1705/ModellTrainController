@@ -80,10 +80,6 @@ public class GuiAddTrain implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        if(GuiEditTrain.train == null) {
-            return;
-        }
-
         this.minSpeed.valueProperty().addListener((ObservableValue<? extends Number> observableValue, Number oldVal, Number newVal) -> {
             this.labelMinSpeed.setText(Integer.toString(newVal.intValue()));
             this.maxSpeed.setMin(newVal.intValue() + 1);
