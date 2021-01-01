@@ -93,38 +93,34 @@
               <tabs>
                 <Tab closable="false" text="%tab.trains">
                      <content>
-                        <VBox>
-                           <children>
-                              <SplitPane dividerPositions="0.5" maxWidth="1.7976931348623157E308" prefHeight="481.0" prefWidth="387.0">
-                                 <items>
-                                    <TreeView fx:id="trains" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#onTrainSelectionChanged">
-                                       <contextMenu>
-                                          <ContextMenu>
-                                            <items>
-                                              <MenuItem mnemonicParsing="false" onAction="#onStartTrainControl" text="%button.open" />
-                                              <MenuItem mnemonicParsing="false" onAction="#onEditTrain" text="%button.edit" />
-                                              <MenuItem mnemonicParsing="false" onAction="#onDeleteTrain" text="%button.delete" />
-                                            </items>
-                                          </ContextMenu>
-                                       </contextMenu>
-                                    </TreeView>
-                                    <VBox prefHeight="200.0" prefWidth="100.0" spacing="20.0">
-                                       <children>
-                                          <Label fx:id="trainName" alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" />
-                                          <Button contentDisplay="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onMaxSpeed" text="%button.max_speed" />
-                                          <Button contentDisplay="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onNormalSpeed" text="%button.normal_speed" />
-                                          <Button contentDisplay="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onMinSpeed" text="%button.min_speed" />
-                                          <Button contentDisplay="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onStop" text="%button.stop_train" />
-                                          <Button contentDisplay="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onStopImmediately" text="%button.stop_immediately" />
-                                       </children>
-                                       <padding>
-                                          <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-                                       </padding>
-                                    </VBox>
-                                 </items>
-                              </SplitPane>
-                           </children>
-                        </VBox>
+                         <SplitPane dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                             <items>
+                                 <TreeView fx:id="trains" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#onTrainSelectionChanged">
+                                     <contextMenu>
+                                         <ContextMenu>
+                                             <items>
+                                                 <MenuItem mnemonicParsing="false" onAction="#onStartTrainControl" text="%button.open" />
+                                                 <MenuItem mnemonicParsing="false" onAction="#onEditTrain" text="%button.edit" />
+                                                 <MenuItem mnemonicParsing="false" onAction="#onDeleteTrain" text="%button.delete" />
+                                             </items>
+                                         </ContextMenu>
+                                     </contextMenu>
+                                 </TreeView>
+                                 <VBox maxHeight="1.7976931348623157E308" prefHeight="200.0" prefWidth="100.0" spacing="20.0">
+                                     <children>
+                                         <Label fx:id="trainName" alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" />
+                                         <Button contentDisplay="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onMaxSpeed" text="%button.max_speed" />
+                                         <Button contentDisplay="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onNormalSpeed" text="%button.normal_speed" />
+                                         <Button contentDisplay="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onMinSpeed" text="%button.min_speed" />
+                                         <Button contentDisplay="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onStop" text="%button.stop_train" />
+                                         <Button contentDisplay="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onStopImmediately" text="%button.stop_immediately" />
+                                     </children>
+                                     <padding>
+                                         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                                     </padding>
+                                 </VBox>
+                             </items>
+                         </SplitPane>
                      </content>
                      <graphic>
                         <FontIcon />

@@ -151,6 +151,7 @@ public class GuiMain implements Initializable {
             if(train.equals(name)) {
                 this.actual = train;
                 trainName.setText(name);
+                Util.runNext(() -> train.setDirection(true));
             }
     }
 
@@ -404,11 +405,13 @@ public class GuiMain implements Initializable {
 
         xmlReader.setContentHandler(new RailroadReader());
         xmlReader.parse(inputSource);
-
     }
 
     public void updateTrains() {
-        trainsRoot.getChildren().clear();
+        if(trainsRoot == null || trainsRoot.getChildren() == null)
+            return;
+        if(!trainsRoot.getChildren().isEmpty())
+            trainsRoot.getChildren().clear();
         for(Train t: LocoNet.getInstance().getTrains()) {
             TreeItem<String> train = new TreeItem<>(t.getName());
             trainsRoot.getChildren().add(train);

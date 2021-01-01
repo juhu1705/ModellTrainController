@@ -200,7 +200,7 @@ public class Train implements Serializable, Comparable<Train> {
 
 	public void setDirection(boolean direction) {
 		this.forward = this.standardForward() == direction;
-		DirectionMessage message = new DirectionMessage(slot, direction);
+		DirectionMessage message = new DirectionMessage(slot, this.forward);
 		try {
 			message.send();
 		} catch (IOException e) {
