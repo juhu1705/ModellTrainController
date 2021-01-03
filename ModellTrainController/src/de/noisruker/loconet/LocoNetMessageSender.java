@@ -42,6 +42,10 @@ public class LocoNetMessageSender {
 		//this.connection.send(Util.addCheckSum(message));
 	}
 
+	public boolean areAllMessagesSend() {
+		return messages.isEmpty();
+	}
+
 	public void sendMessages() {
 		if(isRunning)
 			return;

@@ -33,7 +33,6 @@ public class Sensor extends AbstractRailroadElement {
 		this.address = address;
 		this.state = state;
 		Sensor.allSensors.add(this);
-		Platform.runLater(() -> GuiMain.getInstance().updateSensors());
 	}
 
 	@Override
@@ -77,11 +76,12 @@ public class Sensor extends AbstractRailroadElement {
 			SensorMessage m = (SensorMessage) message;
 			if(m.getAddress() == this.getAddress()) {
 				this.setState(m.getState());
-				Platform.runLater(() -> {
-					GuiMain gui = GuiMain.getInstance();
-					HBox box = gui.railroadLines.get(this.position.getY());
-					gui.railroadCells.get(box).get(this.position.getX()).setImage(this.getImage());
-				});
+				if(GuiMain.getInstance() != null)
+					Platform.runLater(() -> {
+						GuiMain gui = GuiMain.getInstance();
+						HBox box = gui.railroadLines.get(this.position.getY());
+						gui.railroadCells.get(box).get(this.position.getX()).setImage(this.getImage());
+					});
 			}
 		}
 	}

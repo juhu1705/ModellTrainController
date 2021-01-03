@@ -220,7 +220,7 @@ public class LocoNet {
 
 				if(m.getAddress() == 0) {
 					Platform.runLater(() -> Notifications.create().darkStyle().title(Ref.language.getString("error.train_not_present"))
-							.text(Ref.language.getString("error.add_train_manual")).owner(GuiMain.getInstance())
+							.text(Ref.language.getString("error.add_train_manual")).owner(GUILoader.getPrimaryStage())
 							.showError());
 					return;
 				}

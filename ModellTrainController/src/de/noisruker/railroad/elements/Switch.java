@@ -40,7 +40,6 @@ public class Switch extends AbstractRailroadElement {
 		this.type = type;
 		this.normalPosition = normalPosition;
 		Switch.allSwitches.add(this);
-		Platform.runLater(() -> GuiMain.getInstance().updateSwitches());
 	}
 
 	public SwitchMessage getMessage(boolean state) {
@@ -233,11 +232,12 @@ public class Switch extends AbstractRailroadElement {
 			SwitchMessage switchMessage = (SwitchMessage) message;
 			if(switchMessage.getAddress() == this.address) {
 				this.state = switchMessage.getState();
-				Platform.runLater(() -> {
-					GuiMain gui = GuiMain.getInstance();
-					HBox box = gui.railroadLines.get(this.position.getY());
-					gui.railroadCells.get(box).get(this.position.getX()).setImage(this.getImage());
-				});
+				if(GuiMain.getInstance() != null)
+					Platform.runLater(() -> {
+						GuiMain gui = GuiMain.getInstance();
+						HBox box = gui.railroadLines.get(this.position.getY());
+						gui.railroadCells.get(box).get(this.position.getX()).setImage(this.getImage());
+					});
 			}
 		}
 	}

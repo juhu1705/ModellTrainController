@@ -3,6 +3,7 @@ package de.noisruker.gui;
 import de.noisruker.config.ConfigManager;
 import de.noisruker.gui.progress.Progress;
 import de.noisruker.loconet.LocoNetConnection;
+import de.noisruker.loconet.LocoNetMessageSender;
 import de.noisruker.loconet.messages.SwitchMessage;
 import de.noisruker.main.GUILoader;
 import de.noisruker.loconet.LocoNet;
@@ -160,6 +161,12 @@ public class GuiLoading implements Initializable {
 
             Progress.getInstance().setProgress(1);
             Progress.getInstance().setProgressDescription(Ref.language.getString("info.start_window"));
+
+            while (!LocoNetMessageSender.getInstance().areAllMessagesSend()) {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException ignored) { }
+            }
 
             Platform.runLater(() -> {
                 Util.updateWindow(GUILoader.getPrimaryStage(), "/assets/layouts/main.fxml").setResizable(true);
