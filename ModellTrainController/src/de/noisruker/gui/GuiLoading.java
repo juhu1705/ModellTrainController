@@ -7,6 +7,7 @@ import de.noisruker.loconet.messages.SwitchMessage;
 import de.noisruker.main.GUILoader;
 import de.noisruker.loconet.LocoNet;
 import de.noisruker.railroad.Train;
+import de.noisruker.railroad.elements.Switch;
 import de.noisruker.util.Config;
 import de.noisruker.util.Ref;
 import de.noisruker.util.Util;
@@ -20,12 +21,14 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import jssc.SerialPortException;
 import jssc.SerialPortList;
+import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
 
 public class GuiLoading implements Initializable {
 
@@ -139,9 +142,21 @@ public class GuiLoading implements Initializable {
             Progress.getInstance().setProgressDescription(Ref.language.getString("info.connection_complete"));
             Progress.getInstance().setProgress(-1);
 
+            Progress.getInstance().setProgressDescription(Ref.language.getString("info.load_railroad"));
+
             try {
-                Thread.sleep(1000);
-            } catch (InterruptedException ignored) { }
+                LocoNet.getRailroad().initRailroad();
+            } catch (IOException | SAXException e) {
+                Ref.LOGGER.log(Level.WARNING, "Loading of Railroad failed", e);
+            }
+
+            Progress.getInstance().setProgressDescription(Ref.language.getString("info.init_switches"));
+            Progress.getInstance().setProgress(0);
+
+            for(int i = 0; i < Switch.getAllSwitches().size(); i++) {
+                Switch.getAllSwitches().get(i).setAndUpdateState(false);
+                Progress.getInstance().setProgress(((double)i) / ((double)Switch.getAllSwitches().size()));
+            }
 
             Progress.getInstance().setProgress(1);
             Progress.getInstance().setProgressDescription(Ref.language.getString("info.start_window"));

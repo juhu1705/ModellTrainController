@@ -81,24 +81,17 @@ public class GuiMain implements Initializable {
     @FXML
     public Label trainName;
 
-    private AbstractRailroadElement[][] railroadElements = null;
-
-    public void applyRailroad(final AbstractRailroadElement[][] railroad) {
+    public void checkOutRailroad() {
         Platform.runLater(() -> {
-            if(railroad.length < 100)
-                return;
-            this.railroadElements = railroad;
             this.updateRailroad();
         });
     }
 
-    public AbstractRailroadElement[][] getRailroad() {
-        return railroadElements;
-    }
-
     private void updateRailroad() {
-        if(railroadElements == null)
+        if(LocoNet.getRailroad().getRailroad() == null)
             return;
+
+        final AbstractRailroadElement[][] railroadElements = LocoNet.getRailroad().getRailroad();
 
         for(int y = 0; y < 100; y++) {
             HBox box = this.railroadLines.get(y);
@@ -113,8 +106,6 @@ public class GuiMain implements Initializable {
                             s.changeDirection();
                             this.railroadCells.get(box).get(finalX).setImage(railroadElements[finalX][finalY].getImage());
                         });
-                        Switch s = (Switch) railroadElements[finalX][finalY];
-                        s.setAndUpdateState(false);
                     }
                 } else
                     this.railroadCells.get(box).get(x).setImage(RailroadImages.EMPTY_2);
@@ -278,7 +269,7 @@ public class GuiMain implements Initializable {
 
     public void onLoad(ActionEvent event) {
         try {
-            this.initRailroad();
+            LocoNet.getRailroad().initRailroad();
         } catch (IOException | SAXException e) {
             Ref.LOGGER.log(Level.WARNING, "Loading of Railroad failed", e);
         }
@@ -298,7 +289,7 @@ public class GuiMain implements Initializable {
             return;
 
         try {
-            openRailroad(selected.getPath());
+            LocoNet.getRailroad().openRailroad(selected.getPath());
         } catch (IOException | SAXException e) {
             Ref.LOGGER.log(Level.SEVERE, "Error due to write railroad data!", e);
         }
@@ -380,28 +371,12 @@ public class GuiMain implements Initializable {
 
         this.updateSensors();
         this.updateSwitches();
+        this.updateTrains();
 
-        try {
-            this.initRailroad();
-        } catch (IOException | SAXException e) {
-            Ref.LOGGER.log(Level.WARNING, "Loading of Railroad failed", e);
-        }
+        this.checkOutRailroad();
     }
 
-    private void initRailroad() throws IOException, SAXException {
-        if (Files.exists(FileSystems.getDefault().getPath(Ref.HOME_FOLDER + "railroad.mtc"),
-                LinkOption.NOFOLLOW_LINKS))
-            openRailroad(Ref.HOME_FOLDER + "railroad.mtc");
-    }
 
-    public void openRailroad(String input) throws SAXException, IOException {
-        XMLReader xmlReader = XMLReaderFactory.createXMLReader();
-
-        InputSource inputSource = new InputSource(new FileReader(input));
-
-        xmlReader.setContentHandler(new RailroadReader());
-        xmlReader.parse(inputSource);
-    }
 
     public void updateTrains() {
         if(trainsRoot == null || trainsRoot.getChildren() == null)
@@ -441,8 +416,10 @@ public class GuiMain implements Initializable {
         if (output == null)
             throw new IOException("No file to write to!");
 
-        if(railroadElements == null)
+        if(LocoNet.getRailroad().getRailroad() == null)
             return;
+
+        final AbstractRailroadElement[][] railroadElements = LocoNet.getRailroad().getRailroad();
 
         FileWriter fw;
         BufferedWriter bw;

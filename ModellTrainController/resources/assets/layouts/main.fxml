@@ -102,6 +102,7 @@
                                                  <MenuItem mnemonicParsing="false" onAction="#onStartTrainControl" text="%button.open" />
                                                  <MenuItem mnemonicParsing="false" onAction="#onEditTrain" text="%button.edit" />
                                                  <MenuItem mnemonicParsing="false" onAction="#onDeleteTrain" text="%button.delete" />
+                                                 <MenuItem mnemonicParsing="false" onAction="#onAddTrains" text="%menu.add_train" />
                                              </items>
                                          </ContextMenu>
                                      </contextMenu>

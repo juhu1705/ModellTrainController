@@ -1,5 +1,6 @@
 package de.noisruker.gui;
 
+import de.noisruker.loconet.LocoNet;
 import de.noisruker.main.GUILoader;
 import de.noisruker.railroad.*;
 import de.noisruker.railroad.elements.*;
@@ -349,7 +350,7 @@ public class GuiCreateRailroad implements Initializable {
                     Thread.sleep(100);
                 } catch (InterruptedException ignored) { }
             }
-            GuiMain.getInstance().applyRailroad(railroadElements);
+            LocoNet.getRailroad().applyRailroad(railroadElements);
         }).start();
         ((Stage) (((Button)event.getSource()).getScene().getWindow())).close();
     }
