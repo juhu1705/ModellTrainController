@@ -54,7 +54,7 @@ public class LocoNetMessageSender {
 				while (!messages.isEmpty()) {
 					int i = 0;
 					while (!LocoNetMessageReceiver.messageChecked()) {
-						if(i == 20)
+						if(i == 5)
 							break;
 						i++;
 						try {

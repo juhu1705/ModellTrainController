@@ -53,8 +53,13 @@ public class LocoNetConnection {
 				} catch (SerialPortException e) {
 					Ref.LOGGER.config("Cannot read byte");
 				}
-				if (actual == null)
+				if (actual == null) {
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException ignored) { }
 					continue;
+				}
+
 
 				byte nextByte = actual[0];
 

@@ -49,7 +49,7 @@ public class LocoNetMessageReceiver {
 		new Thread(() -> {
 			while (shouldRun) {
 				try {
-					Thread.sleep(10);
+					Thread.sleep(100);
 				} catch (InterruptedException ignored) {
 
 				}

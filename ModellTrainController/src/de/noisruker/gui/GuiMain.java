@@ -113,6 +113,8 @@ public class GuiMain implements Initializable {
                             s.changeDirection();
                             this.railroadCells.get(box).get(finalX).setImage(railroadElements[finalX][finalY].getImage());
                         });
+                        Switch s = (Switch) railroadElements[finalX][finalY];
+                        s.setAndUpdateState(false);
                     }
                 } else
                     this.railroadCells.get(box).get(x).setImage(RailroadImages.EMPTY_2);

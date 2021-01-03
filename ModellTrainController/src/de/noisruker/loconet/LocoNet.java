@@ -19,6 +19,7 @@ import de.noisruker.util.Ref;
 import de.noisruker.util.Util;
 import javafx.application.Platform;
 import jssc.SerialPortException;
+import org.controlsfx.control.Notifications;
 
 import javax.annotation.Nullable;
 
@@ -208,17 +209,21 @@ public class LocoNet {
 			}
 
 			if (l instanceof TrainSlotMessage) {
-				if(checkConnection == ((TrainSlotMessage) l).getAddress()) {
+				if(checkConnection == ((TrainSlotMessage) l).getAddress() || (((TrainSlotMessage) l).getAddress() == 0 && checkConnection != -1)) {
 					connectionChecked = true;
 					checkConnection = -1;
 					return;
 				}
 				TrainSlotMessage m = ((TrainSlotMessage) l);
 
-				Ref.LOGGER.info("Write requested Train to slot: " + m.getSlot());
+				Ref.LOGGER.info("Write requested Train to slot: " + m.getSlot() + " Address: " + m.getAddress() + " Check Connection: " + checkConnection);
 
-				if(m.getAddress() == 0)
+				if(m.getAddress() == 0) {
+					Platform.runLater(() -> Notifications.create().darkStyle().title(Ref.language.getString("error.train_not_present"))
+							.text(Ref.language.getString("error.add_train_manual")).owner(GuiMain.getInstance())
+							.showError());
 					return;
+				}
 
 				if(!this.trainExists(m.getAddress())) {
 					LocoNet.getRailroad().stopTrainControlSystem();
@@ -280,7 +285,8 @@ public class LocoNet {
 							GUILoader.getPrimaryStage()))
 					.setResizable(true));
 		}
-		GuiMain.getInstance().updateTrains();
+		if(GuiMain.getInstance() != null)
+			GuiMain.getInstance().updateTrains();
 	}
 
 	public boolean trainExists(byte address) {
