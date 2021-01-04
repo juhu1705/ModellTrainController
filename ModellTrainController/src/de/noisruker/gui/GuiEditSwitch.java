@@ -68,7 +68,7 @@ public class GuiEditSwitch implements Initializable {
 
     public void onFinished(ActionEvent event) {
         direction = directionOn.isSelected();
-        switchAddress = address.getValue().byteValue();
+        switchAddress = (byte) (address.getValue().byteValue() - (byte) 1);
 
         ((Stage) (((Button)event.getSource()).getScene().getWindow())).close();
     }
@@ -90,7 +90,7 @@ public class GuiEditSwitch implements Initializable {
         pictureOn.setImage(this.getPictureOn(i));
         pictureOff.setImage(this.getPictureOff(i));
 
-        address.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 125, 1));
+        address.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 125, 1));
 
         i = getHoverForm(railroadCells.get(railroadLines.get(posY)).get(posX).getImage());
 

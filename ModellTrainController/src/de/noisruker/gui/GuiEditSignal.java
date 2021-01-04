@@ -53,7 +53,7 @@ public class GuiEditSignal implements Initializable {
     public Spinner<Integer> address;
 
     public void onFinished(ActionEvent event) {
-        signalAddress = address.getValue().byteValue();
+        signalAddress = (byte) (address.getValue().byteValue() - 1);
 
         ((Stage) (((Button)event.getSource()).getScene().getWindow())).close();
     }
@@ -70,7 +70,7 @@ public class GuiEditSignal implements Initializable {
             }
         }
 
-        address.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 125, 1));
+        address.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 125, 1));
 
         Image i = getHoverForm(railroadCells.get(railroadLines.get(posY)).get(posX).getImage());
 

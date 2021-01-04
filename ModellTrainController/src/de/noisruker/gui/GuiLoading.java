@@ -86,7 +86,7 @@ public class GuiLoading implements Initializable {
                     GuiLoading.startLocoNet();
                 } else {
                     Util.updateWindow(GUILoader.getPrimaryStage(), "/assets/layouts/init_settings.fxml");
-                    Platform.runLater(() -> Util.updateWindow(GUILoader.getPrimaryStage(), "/assets/layouts/main.fxml").setResizable(true));
+                    //Platform.runLater(() -> Util.updateWindow(GUILoader.getPrimaryStage(), "/assets/layouts/main.fxml").setResizable(true));
                 }
             });
         }).start();
@@ -155,7 +155,7 @@ public class GuiLoading implements Initializable {
             Progress.getInstance().setProgress(0);
 
             for(int i = 0; i < Switch.getAllSwitches().size(); i++) {
-                Switch.getAllSwitches().get(i).setAndUpdateState(false);
+                Switch.getAllSwitches().get(i).setAndUpdateState(true);
                 Progress.getInstance().setProgress(((double)i) / ((double)Switch.getAllSwitches().size()));
             }
 

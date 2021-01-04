@@ -495,7 +495,7 @@ public class GuiCreateRailroad implements Initializable {
         Util.runNext(() -> {
             this.handleAddSignal(x, y);
             railroadElements[x][y] = new Signal(GuiEditSignal.getSignalAddress(), rotation, new Position(x, y));
-            GuiEditSwitch.reset();
+            GuiEditSignal.reset();
             openWindows--;
         });
     }
