@@ -4,7 +4,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.control.RadioButton;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.image.Image;
@@ -18,23 +17,23 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 
-public class GuiEditSensor implements Initializable {
+public class GuiEditSignal implements Initializable {
 
-    private static byte switchAddress = -1;
+    private static byte signalAddress = -1;
     private static int posX = -1, posY = -1;
 
     public static ArrayList<HBox> railroadLines = new ArrayList<>();
     public static HashMap<HBox, ArrayList<ImageView>> railroadCells = new HashMap<>();
 
-    public static void setSensorToEdit(int posX, int posY, ArrayList<HBox> railroadLines, HashMap<HBox, ArrayList<ImageView>> railroadCells) {
-        GuiEditSensor.posX = posX;
-        GuiEditSensor.posY = posY;
-        GuiEditSensor.railroadLines = railroadLines;
-        GuiEditSensor.railroadCells = railroadCells;
+    public static void setSignalToEdit(int posX, int posY, ArrayList<HBox> railroadLines, HashMap<HBox, ArrayList<ImageView>> railroadCells) {
+        GuiEditSignal.posX = posX;
+        GuiEditSignal.posY = posY;
+        GuiEditSignal.railroadLines = railroadLines;
+        GuiEditSignal.railroadCells = railroadCells;
     }
 
-    public static byte getSensorAddress() {
-        return switchAddress;
+    public static byte getSignalAddress() {
+        return signalAddress;
     }
 
     public static boolean isInUse() {
@@ -42,7 +41,7 @@ public class GuiEditSensor implements Initializable {
     }
 
     public static void reset() {
-        switchAddress = -1;
+        signalAddress = -1;
         posX = -1;
         posY = -1;
     }
@@ -54,7 +53,7 @@ public class GuiEditSensor implements Initializable {
     public Spinner<Integer> address;
 
     public void onFinished(ActionEvent event) {
-        switchAddress = address.getValue().byteValue();
+        signalAddress = address.getValue().byteValue();
 
         ((Stage) (((Button)event.getSource()).getScene().getWindow())).close();
     }
@@ -120,10 +119,10 @@ public class GuiEditSensor implements Initializable {
     }
 
     private Image getHoverForm(Image image) {
-        if(image.equals(RailroadImages.STRAIGHT_SENSOR_HORIZONTAL))
-            return RailroadImages.STRAIGHT_SENSOR_HORIZONTAL_HOVER;
-        else if(image.equals(RailroadImages.STRAIGHT_SENSOR_VERTICAL))
-            return RailroadImages.STRAIGHT_SENSOR_VERTICAL_HOVER;
+        if(image.equals(RailroadImages.SIGNAL_HORIZONTAL))
+            return RailroadImages.SIGNAL_HORIZONTAL_HOVER;
+        else if(image.equals(RailroadImages.SIGNAL_VERTICAL))
+            return RailroadImages.SIGNAL_VERTICAL_HOVER;
         return image;
     }
 }

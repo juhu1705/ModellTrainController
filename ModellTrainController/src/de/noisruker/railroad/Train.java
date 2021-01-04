@@ -75,7 +75,7 @@ public class Train implements Serializable, Comparable<Train> {
 	/**
 	 * Parameters for the auto drive progress
 	 */
-	protected int lastPosition = -1, actualPosition = -1, destination = -1, startWay = -1, startPos = -1, waiting = 0, useConnection = -1;
+	protected Position pos, next, prev, destination = null;
 
 	/**
 	 * Adds a train with the given slot and address. This Method is only called by {@link LocoNet the LocoNet instance}
@@ -172,14 +172,6 @@ public class Train implements Serializable, Comparable<Train> {
 		this.maxSpeed = maxSpeed;
 	}
 
-	/**
-	 * Sets this trains last position to a sensor
-	 * @param lposition The sensors address
-	 */
-	public void setLastPosition(int lposition) {
-		this.lastPosition = lposition;
-	}
-
 	public void setStandardForward(boolean standardForward) {
 		this.standardForward = standardForward;
 	}
@@ -236,14 +228,6 @@ public class Train implements Serializable, Comparable<Train> {
 
 	public byte getSlot() {
 		return this.slot;
-	}
-
-	public int getActualPosition() {
-		return this.actualPosition;
-	}
-
-	public int getLastPosition() {
-		return this.lastPosition;
 	}
 
 	public String getPicturePath() {
@@ -378,5 +362,7 @@ public class Train implements Serializable, Comparable<Train> {
 
 		Util.closeWriting();
 	}
+
+
 
 }

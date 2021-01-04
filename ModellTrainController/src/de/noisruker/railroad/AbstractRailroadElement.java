@@ -57,6 +57,10 @@ public abstract class AbstractRailroadElement implements SaveAble {
 
     public abstract Position getToPos(Position from);
 
+    public Position getPosition() {
+        return this.position;
+    }
+
     public void onRemoveElement() {
         RAILROAD_ELEMENTS.remove(this);
     }

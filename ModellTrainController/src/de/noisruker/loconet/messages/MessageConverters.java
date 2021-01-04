@@ -52,9 +52,9 @@ public class MessageConverters {
 //		Ref.LOGGER.info(values[1] + "");
 
 		if (values[1] == (byte) 16)
-			state = true;
-		else if (values[1] == (byte) 48)
 			state = false;
+		else if (values[1] == (byte) 48)
+			state = true;
 		else
 			return null;
 

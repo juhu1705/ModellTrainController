@@ -246,7 +246,7 @@ public class Switch extends AbstractRailroadElement {
 	public Position getToPos(Position from) {
 		if(isPositionValid(from))
 			return getNextPositionSwitchSpecial(from, this.state);
-		return null;
+		return getNextPositionSwitchSpecial(from, !this.state);
 	}
 
 	public boolean isPositionValid(Position from) {

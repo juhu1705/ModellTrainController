@@ -4,6 +4,7 @@ import de.noisruker.gui.GuiMain;
 import de.noisruker.loconet.LocoNet;
 import de.noisruker.railroad.elements.*;
 import de.noisruker.util.Ref;
+import de.noisruker.util.Util;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
@@ -35,7 +36,7 @@ public class RailroadReader implements ContentHandler {
 
     @Override
     public void startDocument() throws SAXException {
-
+        Util.prepareNewRailroad();
     }
 
     @Override
@@ -143,6 +144,13 @@ public class RailroadReader implements ContentHandler {
                         Byte.parseByte(params.get("address")), false,
                         new Position(Integer.parseInt(params.get("posX")), Integer.parseInt(params.get("posY"))),
                         RailRotation.valueOf(params.get("rotation")));
+        });
+        registerReader("signal", params -> {
+            if(areAllKeysContained(params, "posX", "posY", "rotation", "address"))
+                railroad[Integer.parseInt(params.get("posX"))][Integer.parseInt(params.get("posY"))] = new Signal(
+                        Byte.parseByte(params.get("address")),
+                        RailRotation.valueOf(params.get("rotation")),
+                        new Position(Integer.parseInt(params.get("posX")), Integer.parseInt(params.get("posY"))));
         });
         registerReader("train", params -> {
             if(areAllKeysContained(params, "address", "name", "picture", "max", "normal", "min", "direction"))

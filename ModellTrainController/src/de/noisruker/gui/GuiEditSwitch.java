@@ -150,6 +150,10 @@ public class GuiEditSwitch implements Initializable {
             return RailroadImages.STRAIGHT_SENSOR_HORIZONTAL;
         else if(image.equals(RailroadImages.STRAIGHT_SENSOR_VERTICAL_HOVER))
             return RailroadImages.STRAIGHT_SENSOR_VERTICAL;
+        else if(image.equals(RailroadImages.SIGNAL_VERTICAL_HOVER))
+            return RailroadImages.SIGNAL_VERTICAL;
+        else if(image.equals(RailroadImages.SIGNAL_HORIZONTAL_HOVER))
+            return RailroadImages.SIGNAL_HORIZONTAL;
         else if(RailroadImages.HOVER_IMAGES.contains(image))
             return RailroadImages.EMPTY_2;
         else if(image.equals(RailroadImages.EMPTY))

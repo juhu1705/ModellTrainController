@@ -5,8 +5,10 @@ import de.noisruker.loconet.messages.SensorMessage;
 import de.noisruker.loconet.messages.SwitchMessage;
 import de.noisruker.loconet.LocoNet;
 import de.noisruker.loconet.LocoNetMessageReceiver;
+import de.noisruker.railroad.elements.Sensor;
 import de.noisruker.util.Ref;
 import javafx.application.Platform;
+import javafx.geometry.Pos;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -72,10 +74,15 @@ public class Railroad {
     public int trainsWithDestination() {
         int counter = 0;
         for(Train t: LocoNet.getInstance().getTrains()) {
-            if(t.destination != -1)
+            if(t.destination != null)
                 counter++;
         }
         return counter;
+    }
+
+    public Railway findWay(Sensor from, Sensor to, Position dir) {
+        findWay(from, to, dir);
+        return new Railway(from.getPosition(), to.getPosition(), dir);
     }
 
     public void trainEnter(final int nodeAddress) {

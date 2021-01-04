@@ -36,7 +36,7 @@ public class SwitchMessage implements AbstractMessage, Serializable {
 
 	@Override
 	public LocoNetMessage toLocoNetMessage() {
-		if (on)
+		if (!on)
 			return new LocoNetMessage(OPC_SW_REQ, address, (byte) 16);
 		else
 			return new LocoNetMessage(OPC_SW_REQ, address, (byte) 48);

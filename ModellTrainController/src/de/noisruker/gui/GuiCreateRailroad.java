@@ -36,7 +36,7 @@ public class GuiCreateRailroad implements Initializable {
     public int startX = -1, startY = -1, mouseX = 0, mouseY = 0;
 
     @FXML
-    public ToggleButton straight, curve, RSwitch, LSwitch, LRSwitch, delete, sensor, directional, shouldHide, end;
+    public ToggleButton straight, curve, RSwitch, LSwitch, LRSwitch, delete, sensor, directional, shouldHide, end, signal;
 
     @FXML
     public VBox railroadSection;
@@ -55,8 +55,8 @@ public class GuiCreateRailroad implements Initializable {
         SENSOR,
         DIRECTIONAL,
         END,
+        SIGNAL,
         DELETE
-
     }
 
     public Rotation rotation = Rotation.NORTH;
@@ -116,6 +116,15 @@ public class GuiCreateRailroad implements Initializable {
                     case WEST:
                     case EAST:
                         return AsHover ? RailroadImages.STRAIGHT_HORIZONTAL_HOVER : RailroadImages.STRAIGHT_HORIZONTAL;
+                }
+            case SIGNAL:
+                switch (rotation) {
+                    case NORTH:
+                    case SOUTH:
+                        return AsHover ? RailroadImages.SIGNAL_VERTICAL_HOVER : RailroadImages.SIGNAL_VERTICAL;
+                    case WEST:
+                    case EAST:
+                        return AsHover ? RailroadImages.SIGNAL_HORIZONTAL_HOVER : RailroadImages.SIGNAL_HORIZONTAL;
                 }
             case DIRECTIONAL:
                 switch (rotation) {
@@ -217,6 +226,7 @@ public class GuiCreateRailroad implements Initializable {
         sensor.setSelected(false);
         end.setSelected(false);
         directional.setSelected(false);
+        signal.setSelected(false);
         mode = EditMode.STRAIGHT;
         this.hover_image = getImageForModeAndRotation(true);
     }
@@ -231,6 +241,7 @@ public class GuiCreateRailroad implements Initializable {
         sensor.setSelected(false);
         end.setSelected(false);
         directional.setSelected(false);
+        signal.setSelected(false);
         mode = EditMode.CURVE;
         this.hover_image = getImageForModeAndRotation(true);
     }
@@ -245,6 +256,7 @@ public class GuiCreateRailroad implements Initializable {
         sensor.setSelected(false);
         end.setSelected(false);
         directional.setSelected(false);
+        signal.setSelected(false);
         mode = EditMode.SWITCH_R;
         this.hover_image = getImageForModeAndRotation(true);
     }
@@ -259,6 +271,7 @@ public class GuiCreateRailroad implements Initializable {
         sensor.setSelected(false);
         end.setSelected(false);
         directional.setSelected(false);
+        signal.setSelected(false);
         mode = EditMode.SWITCH_L;
         this.hover_image = getImageForModeAndRotation(true);
     }
@@ -273,6 +286,7 @@ public class GuiCreateRailroad implements Initializable {
         sensor.setSelected(false);
         end.setSelected(false);
         directional.setSelected(false);
+        signal.setSelected(false);
         mode = EditMode.SWITCH_L_R;
         this.hover_image = getImageForModeAndRotation(true);
     }
@@ -287,6 +301,7 @@ public class GuiCreateRailroad implements Initializable {
         sensor.setSelected(false);
         end.setSelected(false);
         directional.setSelected(false);
+        signal.setSelected(false);
         mode = EditMode.DELETE;
         this.hover_image = getImageForModeAndRotation(true);
     }
@@ -301,6 +316,7 @@ public class GuiCreateRailroad implements Initializable {
         delete.setSelected(false);
         end.setSelected(false);
         directional.setSelected(false);
+        signal.setSelected(false);
         mode = EditMode.SENSOR;
         this.hover_image = getImageForModeAndRotation(true);
     }
@@ -315,6 +331,7 @@ public class GuiCreateRailroad implements Initializable {
         delete.setSelected(false);
         end.setSelected(false);
         directional.setSelected(true);
+        signal.setSelected(false);
         mode = EditMode.DIRECTIONAL;
         this.hover_image = getImageForModeAndRotation(true);
     }
@@ -329,7 +346,23 @@ public class GuiCreateRailroad implements Initializable {
         delete.setSelected(false);
         end.setSelected(true);
         directional.setSelected(false);
+        signal.setSelected(false);
         mode = EditMode.END;
+        this.hover_image = getImageForModeAndRotation(true);
+    }
+
+    public void onSetModeToSignal(ActionEvent event) {
+        sensor.setSelected(false);
+        curve.setSelected(false);
+        straight.setSelected(false);
+        RSwitch.setSelected(false);
+        LSwitch.setSelected(false);
+        LRSwitch.setSelected(false);
+        delete.setSelected(false);
+        end.setSelected(false);
+        directional.setSelected(false);
+        signal.setSelected(true);
+        mode = EditMode.SIGNAL;
         this.hover_image = getImageForModeAndRotation(true);
     }
 
@@ -357,6 +390,7 @@ public class GuiCreateRailroad implements Initializable {
 
     public AbstractRailroadElement[][] getRailroad() {
         AbstractRailroadElement[][] railroadElements = new AbstractRailroadElement[100][100];
+        Util.prepareNewRailroad();
         for(int y = 0; y < 100; y++) {
             HBox box1 = this.railroadLines.get(y);
             ArrayList<ImageView> cells = this.railroadCells.get(box1);
@@ -417,12 +451,13 @@ public class GuiCreateRailroad implements Initializable {
                     railroadElements[x][y] = new RailroadDirectionalLine(RailRotation.EAST, new Position(x, y));
                 } else if(cells.get(x).getImage().equals(RailroadImages.STRAIGHT_WEST)) {
                     railroadElements[x][y] = new RailroadDirectionalLine(RailRotation.WEST, new Position(x, y));
+                } else if(cells.get(x).getImage().equals(RailroadImages.SIGNAL_HORIZONTAL)) {
+                    this.handleSignal(railroadElements, RailRotation.WEST, x, y);
+                } else if(cells.get(x).getImage().equals(RailroadImages.SIGNAL_VERTICAL)) {
+                    this.handleSignal(railroadElements, RailRotation.NORTH, x, y);
                 }
-
-
             }
         }
-
         return railroadElements;
     }
 
@@ -439,7 +474,7 @@ public class GuiCreateRailroad implements Initializable {
     }
 
     private void handleAddSwitch(int x, int y) {
-        while (GuiEditSwitch.isInUse() || GuiEditSensor.isInUse()) {
+        while (GuiEditSwitch.isInUse() || GuiEditSensor.isInUse() || GuiEditSignal.isInUse()) {
             try {
                 Thread.sleep(500);
             } catch (InterruptedException ignored) { }
@@ -455,6 +490,44 @@ public class GuiCreateRailroad implements Initializable {
         }
     }
 
+    private void handleSignal(AbstractRailroadElement[][] railroadElements, RailRotation rotation, int x, int y) {
+        openWindows++;
+        Util.runNext(() -> {
+            this.handleAddSignal(x, y);
+            railroadElements[x][y] = new Signal(GuiEditSignal.getSignalAddress(), rotation, new Position(x, y));
+            GuiEditSwitch.reset();
+            openWindows--;
+        });
+    }
+
+    private void handleAddSignal(int x, int y) {
+        while (GuiEditSwitch.isInUse() || GuiEditSensor.isInUse() || GuiEditSignal.isInUse()) {
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException ignored) { }
+        }
+
+        GuiEditSignal.setSignalToEdit(x, y, railroadLines, railroadCells);
+        this.openInLoopSignal();
+
+        while (GuiEditSignal.getSignalAddress() == -1) {
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException ignored) { }
+        }
+    }
+
+    private void openInLoopSignal() {
+        Platform.runLater(() -> {
+            Stage s = Util.openWindow("/assets/layouts/create_signal.fxml", Ref.language.getString("window.railroad"), GUILoader.getPrimaryStage());
+            if(s == null)
+                return;
+
+            s.setAlwaysOnTop(true);
+            s.setOnCloseRequest(windowEvent -> this.openInLoopSignal());
+        });
+    }
+
     private void handleSensor(AbstractRailroadElement[][] railroadElements, RailRotation rotation, int x, int y) {
         openWindows++;
         Util.runNext(() -> {
@@ -466,7 +539,7 @@ public class GuiCreateRailroad implements Initializable {
     }
 
     private void handleAddSensor(int x, int y) {
-        while (GuiEditSensor.isInUse() || GuiEditSwitch.isInUse()) {
+        while (GuiEditSensor.isInUse() || GuiEditSwitch.isInUse() || GuiEditSignal.isInUse()) {
             try {
                 Thread.sleep(500);
             } catch (InterruptedException ignored) { }
@@ -619,6 +692,7 @@ public class GuiCreateRailroad implements Initializable {
                             case SENSOR:
                             case END:
                             case DIRECTIONAL:
+                            case SIGNAL:
                             case DELETE:
                                 this.setImage(finalX, finalY, getImageForModeAndRotation(false));
                                 break;

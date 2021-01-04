@@ -88,6 +88,18 @@
                   <Tooltip text="%tooltip.sensor" />
                </tooltip>
             </ToggleButton>
+            <ToggleButton fx:id="signal" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" onAction="#onSetModeToSignal" text="ToggleButton">
+               <graphic>
+                  <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../textures/railroad/straight_rails/straight_signal_vertical.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+               <tooltip>
+                  <Tooltip text="%tooltip.curve" />
+               </tooltip>
+            </ToggleButton>
             <ToggleButton fx:id="directional" contentDisplay="GRAPHIC_ONLY" layoutX="318.0" layoutY="11.0" mnemonicParsing="false" onAction="#onSetModeToDirectional" text="ToggleButton">
                <tooltip>
                   <Tooltip text="%tooltip.directional" />

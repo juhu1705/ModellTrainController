@@ -10,6 +10,7 @@ import de.noisruker.railroad.AbstractRailroadElement;
 import de.noisruker.railroad.RailroadReader;
 import de.noisruker.railroad.Train;
 import de.noisruker.railroad.elements.Sensor;
+import de.noisruker.railroad.elements.Signal;
 import de.noisruker.railroad.elements.Switch;
 import de.noisruker.util.*;
 import javafx.application.Platform;
@@ -106,6 +107,14 @@ public class GuiMain implements Initializable {
                             s.changeDirection();
                             this.railroadCells.get(box).get(finalX).setImage(railroadElements[finalX][finalY].getImage());
                         });
+                    } else if(railroadElements[x][y] instanceof Signal) {
+                        int finalX = x;
+                        int finalY = y;
+                        this.railroadCells.get(box).get(x).setOnMouseClicked(event -> {
+                            Signal s = (Signal) railroadElements[finalX][finalY];
+                            s.changeState();
+                            this.railroadCells.get(box).get(finalX).setImage(railroadElements[finalX][finalY].getImage());
+                        });
                     }
                 } else
                     this.railroadCells.get(box).get(x).setImage(RailroadImages.EMPTY_2);
@@ -139,6 +148,8 @@ public class GuiMain implements Initializable {
     }
 
     public void onTrainSelectionChanged(MouseEvent event) {
+        if(this.trains.getSelectionModel().getSelectedItem() == null)
+            return;
         String name = this.trains.getSelectionModel().getSelectedItem().getValue();
         for(Train train: LocoNet.getInstance().getTrains())
             if(train.equals(name)) {

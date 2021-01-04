@@ -6,6 +6,9 @@ import de.noisruker.loconet.LocoNet;
 import de.noisruker.loconet.messages.MessageType;
 import de.noisruker.main.GUILoader;
 import de.noisruker.railroad.Train;
+import de.noisruker.railroad.elements.Sensor;
+import de.noisruker.railroad.elements.Signal;
+import de.noisruker.railroad.elements.Switch;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -262,5 +265,11 @@ public class Util {
     public static void writeParameterToBuffer(String param, String value) throws IOException {
 		writer.append("  <" + param + ">" + value + "</" + param + ">");
 		writer.newLine();
+	}
+
+	public static void prepareNewRailroad() {
+		Switch.getAllSwitches().clear();
+		Sensor.getAllSensors().clear();
+		Signal.getAllSignals().clear();
 	}
 }

@@ -69,6 +69,8 @@ public class RailroadImages {
     public static final Image END_EAST_HOVER = new Image("/assets/textures/railroad/ends/end_east_hover.png");
     public static final Image END_SOUTH_HOVER = new Image("/assets/textures/railroad/ends/end_south_hover.png");
     public static final Image END_WEST_HOVER = new Image("/assets/textures/railroad/ends/end_west_hover.png");
+    public static final Image SIGNAL_VERTICAL_HOVER = new Image("/assets/textures/railroad/straight_rails/straight_signal_vertical_hover.png");
+    public static final Image SIGNAL_HORIZONTAL_HOVER = new Image("/assets/textures/railroad/straight_rails/straight_signal_horizontal_hover.png");
 
     public static final Image SWITCH_SOUTH_LEFT_ON = new Image("/assets/textures/railroad/switches/s/switch_left_on.png");
     public static final Image SWITCH_SOUTH_LEFT_OFF = new Image("/assets/textures/railroad/switches/s/switch_left_off.png");
@@ -106,6 +108,13 @@ public class RailroadImages {
     public static final Image SWITCH_WEST_STRAIGHT_RIGHT_ON = new Image("/assets/textures/railroad/switches/w/switch_straight_on_right.png");
     public static final Image SWITCH_WEST_STRAIGHT_RIGHT_OFF = new Image("/assets/textures/railroad/switches/w/switch_straight_off_right.png");
 
+    public static final Image SIGNAL_VERTICAL = new Image("/assets/textures/railroad/straight_rails/straight_signal_vertical.png");
+    public static final Image SIGNAL_VERTICAL_ON = new Image("/assets/textures/railroad/straight_rails/straight_signal_vertical_on.png");
+    public static final Image SIGNAL_VERTICAL_OFF = new Image("/assets/textures/railroad/straight_rails/straight_signal_vertical_off.png");
+    public static final Image SIGNAL_HORIZONTAL = new Image("/assets/textures/railroad/straight_rails/straight_signal_horizontal.png");
+    public static final Image SIGNAL_HORIZONTAL_ON = new Image("/assets/textures/railroad/straight_rails/straight_signal_horizontal_on.png");
+    public static final Image SIGNAL_HORIZONTAL_OFF = new Image("/assets/textures/railroad/straight_rails/straight_signal_horizontal_off.png");
+
     public static final ArrayList<Image> NORTH_IMAGES = new ArrayList<>();
     public static final ArrayList<Image> EAST_IMAGES = new ArrayList<>();
     public static final ArrayList<Image> SOUTH_IMAGES = new ArrayList<>();
@@ -117,15 +126,20 @@ public class RailroadImages {
                 SWITCH_EAST_1_HOVER, SWITCH_EAST_2_HOVER, SWITCH_EAST_3_HOVER, SWITCH_NORTH_1_HOVER, SWITCH_NORTH_2_HOVER,
                 SWITCH_NORTH_3_HOVER, SWITCH_WEST_1_HOVER, SWITCH_WEST_2_HOVER, SWITCH_WEST_3_HOVER, SWITCH_SOUTH_1_HOVER,
                 SWITCH_SOUTH_2_HOVER, SWITCH_SOUTH_3_HOVER, END_NORTH_HOVER, END_EAST_HOVER, END_SOUTH_HOVER, END_WEST_HOVER, STRAIGHT_NORTH_HOVER,
-                STRAIGHT_SOUTH_HOVER, STRAIGHT_EAST_HOVER, STRAIGHT_WEST_HOVER, STRAIGHT_SENSOR_VERTICAL_HOVER, STRAIGHT_SENSOR_HORIZONTAL_HOVER));
+                STRAIGHT_SOUTH_HOVER, STRAIGHT_EAST_HOVER, STRAIGHT_WEST_HOVER, STRAIGHT_SENSOR_VERTICAL_HOVER, STRAIGHT_SENSOR_HORIZONTAL_HOVER,
+                SIGNAL_VERTICAL_HOVER, SIGNAL_HORIZONTAL_HOVER));
         NORTH_IMAGES.addAll(Arrays.asList(STRAIGHT_VERTICAL, STRAIGHT_SENSOR_VERTICAL, END_NORTH, STRAIGHT_NORTH, STRAIGHT_SOUTH, CURVE_NORTH_WEST, CURVE_NORTH_EAST,
-                SWITCH_NORTH_1, SWITCH_NORTH_2, SWITCH_NORTH_3, SWITCH_SOUTH_1, SWITCH_SOUTH_2, SWITCH_WEST_1, SWITCH_EAST_2, SWITCH_WEST_3, SWITCH_EAST_3));
+                SWITCH_NORTH_1, SWITCH_NORTH_2, SWITCH_NORTH_3, SWITCH_SOUTH_1, SWITCH_SOUTH_2, SWITCH_WEST_1, SWITCH_EAST_2, SWITCH_WEST_3, SWITCH_EAST_3,
+                SIGNAL_VERTICAL));
         EAST_IMAGES.addAll(Arrays.asList(STRAIGHT_HORIZONTAL, STRAIGHT_SENSOR_HORIZONTAL, END_EAST, STRAIGHT_EAST, STRAIGHT_WEST, CURVE_SOUTH_EAST, CURVE_NORTH_EAST,
-                SWITCH_EAST_1, SWITCH_EAST_2, SWITCH_EAST_3, SWITCH_WEST_1, SWITCH_WEST_2, SWITCH_NORTH_1, SWITCH_SOUTH_2, SWITCH_NORTH_3, SWITCH_SOUTH_3));
+                SWITCH_EAST_1, SWITCH_EAST_2, SWITCH_EAST_3, SWITCH_WEST_1, SWITCH_WEST_2, SWITCH_NORTH_1, SWITCH_SOUTH_2, SWITCH_NORTH_3, SWITCH_SOUTH_3,
+                SIGNAL_HORIZONTAL));
         SOUTH_IMAGES.addAll(Arrays.asList(STRAIGHT_VERTICAL, STRAIGHT_SENSOR_VERTICAL, END_SOUTH, STRAIGHT_NORTH, STRAIGHT_SOUTH, CURVE_SOUTH_WEST, CURVE_SOUTH_EAST,
-                SWITCH_NORTH_1, SWITCH_NORTH_2, SWITCH_SOUTH_3, SWITCH_SOUTH_1, SWITCH_SOUTH_2, SWITCH_WEST_2, SWITCH_EAST_1, SWITCH_WEST_3, SWITCH_EAST_3));
+                SWITCH_NORTH_1, SWITCH_NORTH_2, SWITCH_SOUTH_3, SWITCH_SOUTH_1, SWITCH_SOUTH_2, SWITCH_WEST_2, SWITCH_EAST_1, SWITCH_WEST_3, SWITCH_EAST_3,
+                SIGNAL_VERTICAL));
         WEST_IMAGES.addAll(Arrays.asList(STRAIGHT_HORIZONTAL, STRAIGHT_SENSOR_HORIZONTAL, END_WEST, STRAIGHT_EAST, STRAIGHT_WEST, CURVE_SOUTH_WEST, CURVE_NORTH_WEST,
-                SWITCH_EAST_1, SWITCH_EAST_2, SWITCH_WEST_3, SWITCH_WEST_1, SWITCH_WEST_2, SWITCH_NORTH_2, SWITCH_SOUTH_1, SWITCH_NORTH_3, SWITCH_SOUTH_3));
+                SWITCH_EAST_1, SWITCH_EAST_2, SWITCH_WEST_3, SWITCH_WEST_1, SWITCH_WEST_2, SWITCH_NORTH_2, SWITCH_SOUTH_1, SWITCH_NORTH_3, SWITCH_SOUTH_3,
+                SIGNAL_HORIZONTAL));
     }
 
 }
