@@ -3,6 +3,7 @@ package de.noisruker.railroad.elements;
 import de.noisruker.gui.GuiMain;
 import de.noisruker.gui.RailroadImages;
 import de.noisruker.loconet.messages.AbstractMessage;
+import de.noisruker.loconet.messages.SensorMessage;
 import de.noisruker.loconet.messages.SwitchMessage;
 import de.noisruker.railroad.AbstractRailroadElement;
 import de.noisruker.railroad.Position;
@@ -15,6 +16,7 @@ import javafx.scene.layout.HBox;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Signal extends AbstractRailroadElement {
 
@@ -26,6 +28,7 @@ public class Signal extends AbstractRailroadElement {
 
     private boolean state;
     private final byte address;
+    private boolean listen = false;
 
     public Signal(byte address, RailRotation rotation, Position position) {
         super("signal", position, rotation);
@@ -84,6 +87,12 @@ public class Signal extends AbstractRailroadElement {
                         gui.railroadCells.get(box).get(this.position.getX()).setImage(this.getImage());
                     });
             }
+        } else if(listen && message instanceof SensorMessage) {
+            SensorMessage sensorMessage = (SensorMessage) message;
+            if(!sensorMessage.getState()) {
+                listen = false;
+                this.setAndUpdateState(false);
+            }
         }
     }
 
@@ -109,6 +118,10 @@ public class Signal extends AbstractRailroadElement {
         return null;
     }
 
+    public void listen() {
+        this.listen = true;
+    }
+
     public void changeState() {
         this.setAndUpdateState(!this.state);
     }
@@ -117,4 +130,16 @@ public class Signal extends AbstractRailroadElement {
         return address;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Signal signal = (Signal) o;
+        return address == signal.address;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), address);
+    }
 }

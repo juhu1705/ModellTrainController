@@ -19,6 +19,7 @@ import javax.swing.*;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Switch extends AbstractRailroadElement {
 
@@ -244,6 +245,17 @@ public class Switch extends AbstractRailroadElement {
 
 	@Override
 	public Position getToPos(Position from) {
+		if(!isSwitchPossible(from))
+			switch (rotation) {
+				case NORTH:
+					return new Position(super.position.getX(), super.position.getY() - 1);
+				case WEST:
+					return new Position(super.position.getX() - 1, super.position.getY());
+				case EAST:
+					return new Position(super.position.getX() + 1, super.position.getY());
+				case SOUTH:
+					return new Position(super.position.getX(), super.position.getY() + 1);
+			}
 		if(isPositionValid(from))
 			return getNextPositionSwitchSpecial(from, this.state);
 		return getNextPositionSwitchSpecial(from, !this.state);
@@ -623,6 +635,20 @@ public class Switch extends AbstractRailroadElement {
 		return isPositionValid(from);
 	}
 
+	public boolean isSwitchPossible(Position from) {
+		switch (rotation) {
+			case NORTH:
+				return from.equals(new Position(super.position.getX(), super.position.getY() - 1));
+			case WEST:
+				return from.equals(new Position(super.position.getX() - 1, super.position.getY()));
+			case EAST:
+				return from.equals(new Position(super.position.getX() + 1, super.position.getY()));
+			case SOUTH:
+				return from.equals(new Position(super.position.getX(), super.position.getY() + 1));
+		}
+		return false;
+	}
+
 	public void changeDirection() {
 		this.setAndUpdateState(!this.state);
 	}
@@ -637,4 +663,16 @@ public class Switch extends AbstractRailroadElement {
 		LEFT_RIGHT
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Switch aSwitch = (Switch) o;
+		return address == aSwitch.address;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(address);
+	}
 }

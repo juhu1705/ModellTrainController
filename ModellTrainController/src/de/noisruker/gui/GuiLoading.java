@@ -159,7 +159,7 @@ public class GuiLoading implements Initializable {
                 Progress.getInstance().setProgress(((double)i) / ((double)Switch.getAllSwitches().size()));
             }
 
-            Progress.getInstance().setProgress(1);
+            Progress.getInstance().setProgress(-1);
             Progress.getInstance().setProgressDescription(Ref.language.getString("info.start_window"));
 
             while (!LocoNetMessageSender.getInstance().areAllMessagesSend()) {

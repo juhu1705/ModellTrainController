@@ -15,6 +15,7 @@ import javafx.scene.layout.HBox;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Sensor extends AbstractRailroadElement {
 
@@ -43,12 +44,16 @@ public class Sensor extends AbstractRailroadElement {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (!(obj instanceof Sensor))
-			return false;
-		Sensor s = (Sensor) obj;
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Sensor sensor = (Sensor) o;
+		return address == sensor.address;
+	}
 
-		return s.address == this.address;
+	@Override
+	public int hashCode() {
+		return Objects.hash(super.hashCode(), address);
 	}
 
 	public void setState(boolean state) {

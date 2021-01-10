@@ -41,6 +41,10 @@ public class Railroad {
         return railroadElements;
     }
 
+    public AbstractRailroadElement getElementByPosition(Position position) {
+        return this.railroadElements[position.getX()][position.getY()];
+    }
+
     public void init() {
         LocoNetMessageReceiver.getInstance().registerListener(l -> {
             if (l instanceof SensorMessage) {
@@ -81,8 +85,7 @@ public class Railroad {
     }
 
     public Railway findWay(Sensor from, Sensor to, Position dir) {
-        findWay(from, to, dir);
-        return new Railway(from.getPosition(), to.getPosition(), dir);
+        return new Railway(from.getPosition(), to.getPosition(), dir).calculateRailway();
     }
 
     public void trainEnter(final int nodeAddress) {
