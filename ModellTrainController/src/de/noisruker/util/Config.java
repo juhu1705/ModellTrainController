@@ -2,6 +2,7 @@ package de.noisruker.util;
 
 import de.noisruker.config.ConfigElement;
 import de.noisruker.config.ConfigManager;
+import de.noisruker.gui.GuiMain;
 import de.noisruker.main.GUILoader;
 import javafx.collections.FXCollections;
 import jfxtras.styles.jmetro.JMetro;
@@ -101,8 +102,16 @@ public class Config {
                     e.printStackTrace();
                 }
 
-                if(GUILoader.getPrimaryStage() != null)
+                if(GUILoader.getPrimaryStage() != null) {
                     Util.updateWindow(GUILoader.getPrimaryStage(), "/assets/layouts/main.fxml");
+                    GUILoader.getPrimaryStage().setTitle(Ref.language.getString("window." + Ref.PROJECT_NAME));
+                }
+            });
+
+            ConfigManager.getInstance().registerActionListener("mode", () -> {
+                if(GuiMain.getInstance() != null) {
+                    GuiMain.getInstance().setMode();
+                }
             });
 
             if (!Files.exists(FileSystems.getDefault().getPath(Ref.HOME_FOLDER + "config.cfg"),

@@ -16,15 +16,13 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.control.TreeView?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.input.KeyCodeCombination?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="521.0" prefWidth="821.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.noisruker.gui.GuiMain">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="513.0" prefWidth="821.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.noisruker.gui.GuiMain">
    <top>
       <VBox BorderPane.alignment="CENTER">
          <children>
@@ -73,21 +71,14 @@
                <items>
                   <ComboBox nodeOrientation="LEFT_TO_RIGHT" prefWidth="150.0" />
                   <Separator orientation="VERTICAL" prefHeight="25.0" prefWidth="0.0" />
-                   <Button contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" onAction="#onCreateRailroad" text="Button">
-                     <graphic>
-                        <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../textures/railroad/switches/s/switch_up_down.png" />
-                           </image>
-                        </ImageView>
-                     </graphic></Button>
+                   <Button contentDisplay="CENTER" mnemonicParsing="false" onAction="#onCreateRailroad" text="%button.create_railroad" />
                </items>
             </ToolBar>
          </children>
       </VBox>
    </top>
    <center>
-      <SplitPane dividerPositions="0.5" BorderPane.alignment="CENTER">
+      <SplitPane dividerPositions="0.5" prefHeight="507.0" prefWidth="821.0" BorderPane.alignment="CENTER">
          <items>
             <TabPane prefHeight="200.0" prefWidth="200.0" side="LEFT" tabClosingPolicy="UNAVAILABLE">
               <tabs>
@@ -107,19 +98,41 @@
                                          </ContextMenu>
                                      </contextMenu>
                                  </TreeView>
-                                 <VBox maxHeight="1.7976931348623157E308" prefHeight="200.0" prefWidth="100.0" spacing="20.0">
-                                     <children>
-                                         <Label fx:id="trainName" alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" />
-                                         <Button contentDisplay="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onMaxSpeed" text="%button.max_speed" />
-                                         <Button contentDisplay="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onNormalSpeed" text="%button.normal_speed" />
-                                         <Button contentDisplay="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onMinSpeed" text="%button.min_speed" />
-                                         <Button contentDisplay="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onStop" text="%button.stop_train" />
-                                         <Button contentDisplay="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onStopImmediately" text="%button.stop_immediately" />
-                                     </children>
-                                     <padding>
-                                         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-                                     </padding>
-                                 </VBox>
+                              <VBox fx:id="controls" prefHeight="200.0" prefWidth="100.0">
+                                 <children>
+                                         <Label fx:id="trainName" alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308">
+                                       <VBox.margin>
+                                          <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                                       </VBox.margin>
+                                    </Label>
+                                       <VBox fx:id="manualControls" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="250.0" prefHeight="250.0" spacing="20.0">
+                                           <children>
+                                               <Button contentDisplay="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onMaxSpeed" text="%button.max_speed" />
+                                               <Button contentDisplay="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onNormalSpeed" text="%button.normal_speed" />
+                                               <Button contentDisplay="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onMinSpeed" text="%button.min_speed" />
+                                               <Button contentDisplay="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onStop" text="%button.stop_train" />
+                                               <Button contentDisplay="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onStopImmediately" text="%button.stop_immediately" />
+                                           </children>
+                                           <padding>
+                                               <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                                           </padding>
+                                       <opaqueInsets>
+                                          <Insets />
+                                       </opaqueInsets>
+                                       </VBox>
+                                    <VBox fx:id="automaticControls" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="20.0">
+                                       <children>
+                                          <Label text="%label.actual_position" />
+                                          <ComboBox fx:id="actualPosition" maxWidth="1.7976931348623157E308" />
+                                          <Label text="%label.drive_to" />
+                                          <ComboBox fx:id="newPosition" maxWidth="1.7976931348623157E308" />
+                                       </children>
+                                       <padding>
+                                          <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                                       </padding>
+                                    </VBox>
+                                 </children>
+                              </VBox>
                              </items>
                          </SplitPane>
                      </content>

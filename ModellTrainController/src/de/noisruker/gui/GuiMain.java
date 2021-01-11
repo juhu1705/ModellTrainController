@@ -14,6 +14,7 @@ import de.noisruker.railroad.elements.Signal;
 import de.noisruker.railroad.elements.Switch;
 import de.noisruker.util.*;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -75,7 +76,10 @@ public class GuiMain implements Initializable {
     public Menu theme, language;
 
     @FXML
-    public VBox config;
+    public VBox config, controls, manualControls, automaticControls;
+
+    @FXML
+    public ComboBox<String> actualPosition, newPosition;
 
     private Train actual;
 
@@ -319,6 +323,11 @@ public class GuiMain implements Initializable {
         }
     }
 
+    public void onActualPositionEdited(ActionEvent event) {
+        if(!this.actualPosition.getValue().isEmpty())
+            this.newPosition.setDisable(false);
+    }
+
     public void onClose(ActionEvent event) {
         Util.onClose(event);
     }
@@ -385,9 +394,56 @@ public class GuiMain implements Initializable {
         this.updateTrains();
 
         this.checkOutRailroad();
+
+        this.setMode();
+        this.actualPosition.addEventHandler(ActionEvent.ANY, this::onActualPositionEdited);
+        this.newPosition.addEventHandler(ActionEvent.ANY, this::onActualPositionEdited);
+
     }
 
+    public void setMode() {
+        switch (Config.mode) {
+            case Config.MODE_MANUAL:
+                this.manualControls.setMinHeight(250);
+                this.manualControls.setPrefHeight(250);
+                this.manualControls.setVisible(true);
+                this.automaticControls.setVisible(false);
+                this.controls.setVisible(true);
+                break;
+            case Config.MODE_PLAN:
+                this.manualControls.setMinHeight(0);
+                this.manualControls.setPrefHeight(0);
+                this.manualControls.setVisible(false);
+                this.automaticControls.setVisible(true);
+                this.controls.setVisible(true);
+                this.updatePlanMode();
+                break;
+            case Config.MODE_RANDOM:
+                this.manualControls.setVisible(false);
+                this.automaticControls.setVisible(false);
+                this.controls.setVisible(false);
+                break;
+        }
+    }
 
+    public void updatePlanMode() {
+        ArrayList<String> sensors = new ArrayList<>();
+        for(Sensor s: Sensor.getAllSensors()) {
+            sensors.add(s.toString());
+        }
+        if(sensors.isEmpty()) {
+            this.actualPosition.setDisable(true);
+            this.newPosition.setDisable(true);
+            return;
+        }
+        this.actualPosition.setDisable(false);
+        this.actualPosition.setItems(FXCollections.observableArrayList(sensors));
+        this.newPosition.setItems(FXCollections.observableArrayList(sensors));
+
+        if(!this.actualPosition.getValue().isEmpty()) {
+            this.newPosition.setDisable(true);
+        }
+    }
 
     public void updateTrains() {
         if(trainsRoot == null || trainsRoot.getChildren() == null)
@@ -406,6 +462,7 @@ public class GuiMain implements Initializable {
             TreeItem<String> train = new TreeItem<>("Sensor: " + s.getAddress());
             sensorsRoot.getChildren().add(train);
         }
+        this.updatePlanMode();
     }
 
     public void updateSwitches() {

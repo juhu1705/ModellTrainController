@@ -55,7 +55,7 @@ public class GUILoader extends Application {
             s.getStylesheets().add(Ref.DARK_THEME_FIXES);
 
         s.getStylesheets().add(Ref.THEME_IMPROVEMENTS);
-        stage.setTitle(Ref.PROJECT_NAME);
+        stage.setTitle(Ref.language.getString("window." + Ref.PROJECT_NAME));
         stage.setScene(s);
         stage.centerOnScreen();
         stage.initStyle(StageStyle.DECORATED);

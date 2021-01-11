@@ -111,4 +111,9 @@ public class Sensor extends AbstractRailroadElement {
 		}
 		return null;
 	}
+
+	@Override
+	public String toString() {
+		return "Sensor: " + address;
+	}
 }

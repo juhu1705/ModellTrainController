@@ -86,7 +86,7 @@ public class Ref {
 			//LOGGER.log(Level.SEVERE, "Error while reading pom.xml", e);
 		}
 		if (model == null)
-			PROJECT_NAME = "ModellTrainController";
+			PROJECT_NAME = "train_controller";
 		else
 			PROJECT_NAME = model.getName();
 	}
