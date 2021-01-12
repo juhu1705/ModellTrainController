@@ -8,6 +8,7 @@ import de.noisruker.util.Ref;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class Railway {
@@ -18,7 +19,7 @@ public class Railway {
 
     private HashMap<Integer, AbstractRailroadElement> way = new HashMap<>();
 
-    private ArrayList<Switch> waitForSwitch = new ArrayList<>();
+    private HashMap<Switch, Integer> waitForSwitch = new HashMap<>();
 
     private int actualIndex = 0, startIndex = 0, positionIndex = 0;
 
@@ -87,8 +88,10 @@ public class Railway {
             if(element == null)
                 break;
 
-            if(element instanceof Switch)
-                this.waitForSwitch.add((Switch) element);
+            if(element instanceof Switch) {
+                Switch s = (Switch) element;
+                this.waitForSwitch.put(s, this.positionIndex);
+            }
 
             element = next();
         }
@@ -98,11 +101,9 @@ public class Railway {
     }
 
     public void activateSwitches() {
-        for(Switch s: this.waitForSwitch) {
-            boolean state = true;
-            if(this.usedSwitches.containsKey(s) && this.usedSwitches.get(s).wayFalse)
-                state = false;
-            s.setAndUpdateState(state);
+        for(Map.Entry<Switch, Integer> r: this.waitForSwitch.entrySet()) {
+            r.getKey().setSwitchTo(this.way.get(r.getValue() - 1).getPosition(),
+                    this.way.get(r.getValue() + 1).getPosition());
         }
         this.waitForSwitch.clear();
     }
