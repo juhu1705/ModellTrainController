@@ -329,13 +329,13 @@ public class GuiMain implements Initializable {
                     case NORTH, SOUTH -> {
                         this.directionText.setText(Ref.language.getString("button.bottom_driving"));
                         Position p = new Position(s.getPosition().getX(), s.getPosition().getY() - 1);
-                        if (this.actual.getPrevPosition() != null)
+                        if (this.actual.getPrevPosition() == null)
                             this.actual.setLastPosition(p);
                     }
                     case EAST, WEST -> {
                         this.directionText.setText(Ref.language.getString("button.right_driving"));
                         Position p1 = new Position(s.getPosition().getX() - 1, s.getPosition().getY());
-                        if (this.actual.getPrevPosition() != null)
+                        if (this.actual.getPrevPosition() == null)
                             this.actual.setLastPosition(p1);
                     }
                 }
@@ -452,8 +452,12 @@ public class GuiMain implements Initializable {
 
         this.setMode();
         this.actualPosition.addEventHandler(ActionEvent.ANY, this::onActualPositionEdited);
-        this.newPosition.addEventHandler(ActionEvent.ANY, this::onActualPositionEdited);
-
+        this.newPosition.addEventHandler(ActionEvent.ANY, this::onDestinationChanged);
+        this.direction.selectedProperty().addListener((o, oldValue, newValue) -> {
+            if(oldValue != newValue) {
+                this.onPrevPositionChanged(null);
+            }
+        });
     }
 
     public void setMode() {

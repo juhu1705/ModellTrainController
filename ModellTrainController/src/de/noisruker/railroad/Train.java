@@ -342,15 +342,20 @@ public class Train implements Serializable, Comparable<Train> {
 
 	private void checkDriving() {
 		if(this.railway == null && this.destination != null) {
+			Ref.LOGGER.info("Checking!");
 			this.railway = LocoNet.getRailroad().findWay(this.actualSensor, this.destination, this.prev);
-			if(railway == null)
+			if(railway == null) {
 				Ref.LOGGER.severe("Could not find a way!");
+				return;
+			}
 			this.railway.init(this);
 			if(this.destination == null) {
 				this.railway = null;
+				Ref.LOGGER.info("Hups!");
 				return;
 			}
 			this.applyNormalSpeed();
+			Ref.LOGGER.info("Go!");
 		} else if(this.railway != null && this.destination != null && this.speed == 0) {
 			if(this.nextSensor != null && this.nextSensor.isFree(this)) {
 				this.nextSensor.addTrain(this);

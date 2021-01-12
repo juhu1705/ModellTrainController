@@ -7,6 +7,7 @@ import de.noisruker.loconet.messages.SensorMessage;
 import de.noisruker.railroad.Position;
 import de.noisruker.railroad.RailRotation;
 import de.noisruker.railroad.Train;
+import de.noisruker.util.Ref;
 import de.noisruker.util.Util;
 import javafx.application.Platform;
 import javafx.scene.image.Image;
@@ -148,15 +149,13 @@ public class Sensor extends AbstractRailroadElement {
 	@Override
 	public Position getToPos(Position from) {
 		switch (rotation) {
-			case NORTH:
-			case SOUTH:
+			case NORTH, SOUTH:
 				if(from.equals(new Position(position.getX(), position.getY() + 1)))
 					return new Position(position.getX(), position.getY() - 1);
 				else if(from.equals(new Position(position.getX(), position.getY() - 1)))
 					return new Position(position.getX(), position.getY() + 1);
 				break;
-			case WEST:
-			case EAST:
+			case WEST, EAST:
 				if(from.equals(new Position(position.getX() - 1, position.getY())))
 					return new Position(position.getX() + 1, position.getY());
 				else if(from.equals(new Position(position.getX() + 1, position.getY())))

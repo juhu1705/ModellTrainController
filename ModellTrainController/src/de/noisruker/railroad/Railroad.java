@@ -115,8 +115,6 @@ public class Railroad {
         stopTrainControlSystem = true;
     }
 
-
-
     private void trainControl() {
         isStopped = false;
         stopTrainControlSystem = false;
@@ -135,7 +133,7 @@ public class Railroad {
 
                 if (toWait < 0) buffer = -toWait;
                 else {
-                    this.wait(toWait);
+                    Thread.sleep(toWait);
                     buffer = 0L;
                 }
             }

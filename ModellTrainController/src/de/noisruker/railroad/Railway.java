@@ -4,6 +4,7 @@ import de.noisruker.loconet.LocoNet;
 import de.noisruker.railroad.elements.AbstractRailroadElement;
 import de.noisruker.railroad.elements.Sensor;
 import de.noisruker.railroad.elements.Switch;
+import de.noisruker.util.Ref;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,8 +26,8 @@ public class Railway {
         this.from = from;
         this.to = to;
         this.lastPos = lastPosition;
-        this.actual = this.from;
-        appendElement(LocoNet.getRailroad().getElementByPosition(this.actual));
+        this.actual = lastPosition;
+        appendElement(LocoNet.getRailroad().getElementByPosition(from));
     }
 
     public AbstractRailroadElement getLastElement() {
@@ -70,10 +71,13 @@ public class Railway {
     }
 
     private AbstractRailroadElement goAhead() {
+        Ref.LOGGER.info("Go from " + this.getLastElement());
         Position newPos = this.getLastElement().getToPos(this.lastPos);
+        Ref.LOGGER.info("To " + newPos);
         if(newPos == null || newPos.equals(this.lastPos))
             return null;
         this.appendElement(LocoNet.getRailroad().getElementByPosition(newPos));
+
         return this.getLastElement();
     }
 
