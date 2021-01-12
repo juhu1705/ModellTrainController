@@ -16,6 +16,7 @@ import de.noisruker.railroad.elements.Sensor;
 import de.noisruker.util.Config;
 import de.noisruker.util.Ref;
 import de.noisruker.util.Util;
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import jssc.SerialPortException;
 
@@ -286,9 +287,30 @@ public class Train implements Serializable, Comparable<Train> {
 	/* Methods for the automatic driving process */
 
 	public void trainEnter(int nodeAddress) {
+		Ref.LOGGER.info("Check 1: " + (this.destination != null && this.destination.getAddress() == nodeAddress));
+		Ref.LOGGER.info("Check 2: " + (this.destination != null && this.destination.isFree(this)));
+		Ref.LOGGER.info("Check 3: " + (this.destination.equals(this.nextSensor) || this.destination.equals(this.nextNextSensor)));
+		if(this.destination != null && this.destination.getAddress() == nodeAddress && this.destination.isFree(this) &&
+				(this.destination.equals(this.nextSensor) || this.destination.equals(this.nextNextSensor))) {
+			this.destination.addTrain(this);
+			this.stopNext = true;
+			this.applyBreakSpeed();
+			this.previousSensor = this.actualSensor;
+			this.actualSensor = this.destination;
+			Ref.LOGGER.info("Last Position: " + this.previousSensor + "; " + this.actualSensor);
+			if(GuiMain.getInstance() != null)
+				Platform.runLater(() -> GuiMain.getInstance().actualPosition.setValue(this.actualSensor.toString()));
+			return;
+		}
 		if(this.nextSensor != null && this.nextSensor.getAddress() == nodeAddress && this.destination != null && this.railway != null) {
+			Ref.LOGGER.info("Last Position: " + this.previousSensor + "; " + this.actualSensor + "; " + nextSensor);
 			Sensor s = this.railway.getNextSensor();
 			if(s == null) {
+				this.previousSensor = this.actualSensor;
+				this.actualSensor = this.nextSensor;
+				this.nextSensor = this.nextNextSensor;
+				if(GuiMain.getInstance() != null)
+					Platform.runLater(() -> GuiMain.getInstance().actualPosition.setValue(this.actualSensor.toString()));
 				return;
 			}
 
@@ -304,19 +326,9 @@ public class Train implements Serializable, Comparable<Train> {
 			this.nextNextSensor = s;
 
 			if(GuiMain.getInstance() != null)
-				GuiMain.getInstance().actualPosition.setValue(this.actualSensor.toString());
+				Platform.runLater(() -> GuiMain.getInstance().actualPosition.setValue(this.actualSensor.toString()));
 		}
-		if(this.destination != null && this.destination.getAddress() == nodeAddress && this.destination.isFree(this) &&
-				(this.destination.equals(this.nextSensor) || this.destination.equals(this.nextNextSensor))) {
-			this.destination.addTrain(this);
-			this.stopNext = true;
-			this.applyBreakSpeed();
-			this.previousSensor = this.actualSensor;
-			this.actualSensor = this.destination;
 
-			if(GuiMain.getInstance() != null)
-				GuiMain.getInstance().actualPosition.setValue(this.actualSensor.toString());
-		}
 	}
 
 	public void trainLeft(int nodeAddress) {
@@ -329,6 +341,7 @@ public class Train implements Serializable, Comparable<Train> {
 			this.railway = null;
 			this.nextSensor = null;
 			this.nextNextSensor = null;
+			this.stopNext = false;
 		}
 	}
 

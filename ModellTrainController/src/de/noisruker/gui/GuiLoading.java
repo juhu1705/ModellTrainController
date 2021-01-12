@@ -163,7 +163,7 @@ public class GuiLoading implements Initializable {
                 Switch.getAllSwitches().get(i).setAndUpdateState(true);
                 Progress.getInstance().setProgress(((double)i) / ((double)Switch.getAllSwitches().size()));
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(200);
                 } catch (InterruptedException ignored) { }
             }
 
@@ -178,9 +178,11 @@ public class GuiLoading implements Initializable {
                 Signal.getAllSignals().get(i).setAndUpdateState(false);
                 Progress.getInstance().setProgress(((double)i) / ((double)Signal.getAllSignals().size()));
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(200);
                 } catch (InterruptedException ignored) { }
             }
+
+            LocoNet.getRailroad().init();
 
             try {
                 Thread.sleep(500);

@@ -259,7 +259,7 @@ public class LocoNet {
 			if (l instanceof SensorMessage) {
 				SensorMessage s = (SensorMessage) l;
 
-				Ref.LOGGER.fine("Sensor " + s.getAddress() + " changed state to " + s.getState() + ".");
+				//Ref.LOGGER.fine("Sensor " + s.getAddress() + " changed state to " + s.getState() + ".");
 			}
 		});
 

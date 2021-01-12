@@ -73,13 +73,13 @@ public class Sensor extends AbstractRailroadElement {
 		return false;
 	}
 
-	public void onTrainLeft(byte address) {
+	public void onTrainLeft(int address) {
 		if(address == this.getAddress()) {
 			this.securitySavedTrain = this.trainLeft();
 		}
 	}
 
-	public void onTrainEnter(byte address) {
+	public void onTrainEnter(int address) {
 		if(address == this.address) {
 			if (securitySavedTrain != null && this.train == null)
 				this.addTrain(securitySavedTrain);
@@ -177,6 +177,6 @@ public class Sensor extends AbstractRailroadElement {
 	public boolean isFree(Train train) {
 		if(this.train == train) return true;
 		if(this.train != null) return false;
-		return this.getState();
+		return !this.getState();
 	}
 }

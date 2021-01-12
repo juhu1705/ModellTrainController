@@ -85,6 +85,7 @@ public class Railway {
     public Sensor getNextSensor() {
         AbstractRailroadElement element = next();
         while (!(element instanceof Sensor)) {
+            Ref.LOGGER.info("Element: " + element);
             if(element == null)
                 break;
 
@@ -95,15 +96,13 @@ public class Railway {
 
             element = next();
         }
-        if(element != null)
-            return (Sensor) element;
-        return null;
+        return (Sensor) element;
     }
 
     public void activateSwitches() {
         for(Map.Entry<Switch, Integer> r: this.waitForSwitch.entrySet()) {
-            r.getKey().setSwitchTo(this.way.get(r.getValue() - 1).getPosition(),
-                    this.way.get(r.getValue() + 1).getPosition());
+            Ref.LOGGER.info("Switch " + r.getKey().setSwitchTo(this.way.get(r.getValue() - 1).getPosition(),
+                    this.way.get(r.getValue() + 1).getPosition()));
         }
         this.waitForSwitch.clear();
     }
