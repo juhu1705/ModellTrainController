@@ -44,7 +44,7 @@ public class Railway {
 
     public Switch goToLastSwitch() {
         AbstractRailroadElement actual = removeLast();
-        while(!(actual instanceof Switch)) {
+        while(!(actual instanceof Switch) || !((Switch) actual).isSwitchPossible(getPreviousElement().getPosition())) {
             actual = removeLast();
         }
         Switch aSwitch = (Switch) actual;
@@ -85,7 +85,6 @@ public class Railway {
     public Sensor getNextSensor() {
         AbstractRailroadElement element = next();
         while (!(element instanceof Sensor)) {
-            Ref.LOGGER.info("Element: " + element);
             if(element == null)
                 break;
 
@@ -183,11 +182,17 @@ public class Railway {
                             if(usedSwitches.get(aSwitch).wayFalse)
                                 return;
 
-                            aSwitch.getNextPositionSwitchSpecial(this.lastPos, false);
+                            Position newPos = aSwitch.getNextPositionSwitchSpecial(this.lastPos, false);
+                            if(newPos == null || newPos.equals(this.lastPos))
+                                return;
+                            this.appendElement(LocoNet.getRailroad().getElementByPosition(newPos));
                             usedSwitches.get(aSwitch).wayFalse = true;
                             this.checkLastElement();
                         } else {
-                            aSwitch.getNextPositionSwitchSpecial(this.lastPos, false);
+                            Position newPos = aSwitch.getNextPositionSwitchSpecial(this.lastPos, false);
+                            if(newPos == null || newPos.equals(this.lastPos))
+                                return;
+                            this.appendElement(LocoNet.getRailroad().getElementByPosition(newPos));
                             indicator.wayFalse = true;
                             this.checkLastElement();
                         }

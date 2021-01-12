@@ -382,6 +382,9 @@ public class Train implements Serializable, Comparable<Train> {
 				}
 			}
 		}
+		if(this.speed < this.normalSpeed && !this.stopNext && this.destination != null && this.speed != 0 && this.railway != null) {
+			this.applyNormalSpeed();
+		}
 	}
 
 	private void updateSpeed() {
