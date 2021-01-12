@@ -3,7 +3,6 @@ package de.noisruker.railroad;
 import de.noisruker.gui.GuiMain;
 import de.noisruker.loconet.LocoNet;
 import de.noisruker.railroad.elements.*;
-import de.noisruker.util.Ref;
 import de.noisruker.util.Util;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;

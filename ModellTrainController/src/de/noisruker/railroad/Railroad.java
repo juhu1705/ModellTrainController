@@ -2,13 +2,12 @@ package de.noisruker.railroad;
 
 import de.noisruker.gui.GuiMain;
 import de.noisruker.loconet.messages.SensorMessage;
-import de.noisruker.loconet.messages.SwitchMessage;
 import de.noisruker.loconet.LocoNet;
 import de.noisruker.loconet.LocoNetMessageReceiver;
+import de.noisruker.railroad.elements.AbstractRailroadElement;
 import de.noisruker.railroad.elements.Sensor;
 import de.noisruker.util.Ref;
-import javafx.application.Platform;
-import javafx.geometry.Pos;
+import javafx.scene.shape.TriangleMesh;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -20,8 +19,6 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 
 public class Railroad {
 
@@ -84,8 +81,8 @@ public class Railroad {
         return counter;
     }
 
-    public Railway findWay(Sensor from, Sensor to, Position dir) {
-        return new Railway(from.getPosition(), to.getPosition(), dir).calculateRailway();
+    public Railway findWay(Sensor from, Sensor to, Position lastPosition) {
+        return new Railway(from.getPosition(), to.getPosition(), lastPosition).calculateRailway();
     }
 
     public void trainEnter(final int nodeAddress) {
@@ -98,6 +95,7 @@ public class Railroad {
 
     public void update() {
         LocoNet.getInstance().getTrains().forEach(Train::update);
+        Sensor.getAllSensors().forEach(Sensor::update);
     }
 
     private boolean stopTrainControlSystem = true;
@@ -117,14 +115,32 @@ public class Railroad {
         stopTrainControlSystem = true;
     }
 
+
+
     private void trainControl() {
         isStopped = false;
         stopTrainControlSystem = false;
-        while(!stopTrainControlSystem) {
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException ignored) { }
-            this.update();
+
+        long timeout = 1000L / 2;
+
+        long buffer = 0L;
+        try {
+            while (!stopTrainControlSystem) {
+                long start = System.currentTimeMillis();
+
+                // INFO: Update here
+                this.update();
+
+                long toWait = (timeout - buffer) - (System.currentTimeMillis() - start);
+
+                if (toWait < 0) buffer = -toWait;
+                else {
+                    this.wait(toWait);
+                    buffer = 0L;
+                }
+            }
+        } catch (InterruptedException e) {
+            Ref.LOGGER.info("Stop updates");
         }
         isStopped = true;
     }

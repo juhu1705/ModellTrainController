@@ -1,7 +1,6 @@
 package de.noisruker.gui;
 
-import de.noisruker.railroad.AbstractRailroadElement;
-import javafx.scene.image.ImageView;
+import de.noisruker.railroad.elements.AbstractRailroadElement;
 
 public class Railroad {
 

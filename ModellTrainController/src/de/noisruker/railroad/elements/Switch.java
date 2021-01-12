@@ -4,18 +4,13 @@ import de.noisruker.gui.GuiMain;
 import de.noisruker.gui.RailroadImages;
 import de.noisruker.loconet.messages.AbstractMessage;
 import de.noisruker.loconet.messages.SwitchMessage;
-import de.noisruker.loconet.LocoNetConnection.PortNotOpenException;
-import de.noisruker.railroad.AbstractRailroadElement;
 import de.noisruker.railroad.Position;
 import de.noisruker.railroad.RailRotation;
 import de.noisruker.util.Util;
 import javafx.application.Platform;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
-import jssc.SerialPortException;
-import org.codehaus.plexus.component.configurator.converters.basic.UriConverter;
 
-import javax.swing.*;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;

@@ -1,0 +1,1 @@
+sudo chmod +s mvn clean javafx:run

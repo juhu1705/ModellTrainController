@@ -150,6 +150,13 @@ public class Util {
 		return stage;
 	}
 
+	public static Sensor getSensorByString(String s, ArrayList<Sensor> sensors) {
+		for(Sensor sensor: sensors)
+			if(sensor.toString().equals(s))
+				return sensor;
+		return null;
+	}
+
 	private static final ArrayList<Runnable> runnables = new ArrayList<>();
 	private static boolean isRunning = false;
 

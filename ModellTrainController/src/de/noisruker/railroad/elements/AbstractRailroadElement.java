@@ -1,7 +1,9 @@
-package de.noisruker.railroad;
+package de.noisruker.railroad.elements;
 
-import com.sun.javafx.geom.Vec2d;
 import de.noisruker.loconet.messages.AbstractMessage;
+import de.noisruker.railroad.Position;
+import de.noisruker.railroad.RailRotation;
+import de.noisruker.railroad.Train;
 import de.noisruker.util.SaveAble;
 import de.noisruker.util.Util;
 import javafx.scene.image.Image;
@@ -77,5 +79,9 @@ public abstract class AbstractRailroadElement implements SaveAble {
     @Override
     public int hashCode() {
         return Objects.hash(position);
+    }
+
+    public RailRotation getRotation() {
+        return this.rotation;
     }
 }

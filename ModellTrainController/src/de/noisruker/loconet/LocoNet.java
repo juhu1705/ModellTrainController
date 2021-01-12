@@ -5,13 +5,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 
-import de.noisruker.gui.GuiAddTrain;
 import de.noisruker.gui.GuiEditTrain;
 import de.noisruker.gui.GuiMain;
 import de.noisruker.gui.tables.BasicTrains;
 import de.noisruker.loconet.messages.*;
 import de.noisruker.main.GUILoader;
-import de.noisruker.railroad.AbstractRailroadElement;
+import de.noisruker.railroad.elements.AbstractRailroadElement;
 import de.noisruker.railroad.Railroad;
 import de.noisruker.railroad.elements.Sensor;
 import de.noisruker.railroad.Train;

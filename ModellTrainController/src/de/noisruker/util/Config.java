@@ -3,7 +3,9 @@ package de.noisruker.util;
 import de.noisruker.config.ConfigElement;
 import de.noisruker.config.ConfigManager;
 import de.noisruker.gui.GuiMain;
+import de.noisruker.loconet.LocoNet;
 import de.noisruker.main.GUILoader;
+import de.noisruker.railroad.Train;
 import javafx.collections.FXCollections;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
@@ -114,6 +116,9 @@ public class Config {
             ConfigManager.getInstance().registerActionListener("mode", () -> {
                 if(GuiMain.getInstance() != null) {
                     GuiMain.getInstance().setMode();
+                }
+                for(Train t: LocoNet.getInstance().getTrains()) {
+                    t.stopTrain();
                 }
             });
 

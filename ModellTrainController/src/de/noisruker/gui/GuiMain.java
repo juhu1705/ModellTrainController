@@ -1,13 +1,10 @@
 package de.noisruker.gui;
 
 import de.noisruker.config.ConfigManager;
-import de.noisruker.config.FieldHandler;
 import de.noisruker.loconet.LocoNet;
-import de.noisruker.loconet.LocoNetMessageReceiver;
-import de.noisruker.loconet.messages.TrainSlotMessage;
 import de.noisruker.main.GUILoader;
-import de.noisruker.railroad.AbstractRailroadElement;
-import de.noisruker.railroad.RailroadReader;
+import de.noisruker.railroad.Position;
+import de.noisruker.railroad.elements.AbstractRailroadElement;
 import de.noisruker.railroad.Train;
 import de.noisruker.railroad.elements.Sensor;
 import de.noisruker.railroad.elements.Signal;
@@ -18,25 +15,20 @@ import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Cursor;
 import javafx.scene.control.*;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.controlsfx.control.Notifications;
-import org.xml.sax.InputSource;
+import org.controlsfx.control.ToggleSwitch;
 import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
 
 import java.awt.*;
 import java.io.*;
@@ -84,12 +76,13 @@ public class GuiMain implements Initializable {
     private Train actual;
 
     @FXML
-    public Label trainName;
+    public Label trainName, directionText;
+
+    @FXML
+    public ToggleSwitch direction;
 
     public void checkOutRailroad() {
-        Platform.runLater(() -> {
-            this.updateRailroad();
-        });
+        Platform.runLater(this::updateRailroad);
     }
 
     private void updateRailroad() {
@@ -324,8 +317,67 @@ public class GuiMain implements Initializable {
     }
 
     public void onActualPositionEdited(ActionEvent event) {
-        if(!this.actualPosition.getValue().isEmpty())
+        if(this.actualPosition.getValue() != null) {
             this.newPosition.setDisable(false);
+            this.direction.setDisable(false);
+            if(this.actual != null) {
+                Sensor s = Util.getSensorByString(this.actualPosition.getValue(), Sensor.getAllSensors());
+                if(s == null)
+                    return;
+                this.actual.setActualPosition(s);
+                switch (s.getRotation()) {
+                    case NORTH, SOUTH -> {
+                        this.directionText.setText(Ref.language.getString("button.bottom_driving"));
+                        Position p = new Position(s.getPosition().getX(), s.getPosition().getY() - 1);
+                        if (this.actual.getPrevPosition() != null)
+                            this.actual.setLastPosition(p);
+                    }
+                    case EAST, WEST -> {
+                        this.directionText.setText(Ref.language.getString("button.right_driving"));
+                        Position p1 = new Position(s.getPosition().getX() - 1, s.getPosition().getY());
+                        if (this.actual.getPrevPosition() != null)
+                            this.actual.setLastPosition(p1);
+                    }
+                }
+            }
+        }
+    }
+
+    public void onDestinationChanged(ActionEvent event) {
+        if(this.actual == null || this.newPosition.getValue() == null)
+            return;
+        Sensor s = Util.getSensorByString(this.newPosition.getValue(), Sensor.getAllSensors());
+        if(s == null)
+            return;
+        this.actual.setDestination(s);
+    }
+
+    public void onPrevPositionChanged(ActionEvent event) {
+        if(this.actual == null || this.actual.getActualPosition() == null)
+            return;
+        Sensor s = this.actual.getActualPosition();
+        switch(this.actual.getActualPosition().getRotation()) {
+            case NORTH:
+            case SOUTH:
+                this.directionText.setText(Ref.language.getString("button.bottom_driving"));
+                Position p;
+                if(this.direction.isSelected())
+                    p = new Position(s.getPosition().getX(), s.getPosition().getY() + 1);
+                else
+                    p = new Position(s.getPosition().getX(), s.getPosition().getY() - 1);
+                this.actual.setLastPosition(p);
+                break;
+            case EAST:
+            case WEST:
+                this.directionText.setText(Ref.language.getString("button.right_driving"));
+                Position p1;
+                if(this.direction.isSelected())
+                    p1 = new Position(s.getPosition().getX() + 1, s.getPosition().getY());
+                else
+                    p1 = new Position(s.getPosition().getX() - 1, s.getPosition().getY());
+                this.actual.setLastPosition(p1);
+                break;
+        }
     }
 
     public void onClose(ActionEvent event) {
@@ -395,6 +447,9 @@ public class GuiMain implements Initializable {
 
         this.checkOutRailroad();
 
+        if(!LocoNet.getInstance().getTrains().isEmpty())
+            actual = LocoNet.getInstance().getTrains().get(0);
+
         this.setMode();
         this.actualPosition.addEventHandler(ActionEvent.ANY, this::onActualPositionEdited);
         this.newPosition.addEventHandler(ActionEvent.ANY, this::onActualPositionEdited);
@@ -435,6 +490,7 @@ public class GuiMain implements Initializable {
         if(sensors.isEmpty()) {
             this.actualPosition.setDisable(true);
             this.newPosition.setDisable(true);
+            this.direction.setDisable(true);
             return;
         }
         this.actualPosition.setDisable(false);
@@ -443,6 +499,7 @@ public class GuiMain implements Initializable {
 
         if(this.actualPosition.getValue() == null || !this.actualPosition.getValue().isEmpty()) {
             this.newPosition.setDisable(true);
+            this.direction.setDisable(true);
         }
     }
 

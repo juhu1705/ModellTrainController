@@ -1,14 +1,13 @@
 package de.noisruker.railroad;
 
 import de.noisruker.loconet.LocoNet;
+import de.noisruker.railroad.elements.AbstractRailroadElement;
 import de.noisruker.railroad.elements.Sensor;
 import de.noisruker.railroad.elements.Switch;
-import org.controlsfx.control.NotificationPane;
-import org.controlsfx.control.Notifications;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map.Entry;
+import java.util.Objects;
 
 public class Railway {
 
@@ -18,7 +17,9 @@ public class Railway {
 
     private HashMap<Integer, AbstractRailroadElement> way = new HashMap<>();
 
-    private int actualIndex = 0, startIndex = 0;
+    private ArrayList<Switch> waitForSwitch = new ArrayList<>();
+
+    private int actualIndex = 0, startIndex = 0, positionIndex = 0;
 
     public Railway(Position from, Position to, Position lastPosition) {
         this.from = from;
@@ -70,23 +71,60 @@ public class Railway {
 
     private AbstractRailroadElement goAhead() {
         Position newPos = this.getLastElement().getToPos(this.lastPos);
-        if(newPos == null || newPos == this.getLastElement().getPosition())
+        if(newPos == null || newPos.equals(this.lastPos))
             return null;
         this.appendElement(LocoNet.getRailroad().getElementByPosition(newPos));
         return this.getLastElement();
     }
 
-    public void findSensor(Sensor s) {
+    public Sensor getNextSensor() {
+        AbstractRailroadElement element = next();
+        while (!(element instanceof Sensor)) {
+            if(element == null)
+                break;
 
+            if(element instanceof Switch)
+                this.waitForSwitch.add((Switch) element);
+
+            element = next();
+        }
+        if(element != null)
+            return (Sensor) element;
+        return null;
     }
 
-    public void findSwitch(Switch s) {
+    public void activateSwitches() {
+        for(Switch s: this.waitForSwitch) {
+            boolean state = true;
+            if(this.usedSwitches.containsKey(s) && this.usedSwitches.get(s).wayFalse)
+                state = false;
+            s.setAndUpdateState(state);
+        }
+        this.waitForSwitch.clear();
+    }
 
+    private AbstractRailroadElement next() {
+        positionIndex++;
+        if(positionIndex < this.actualIndex) {
+            return this.way.get(positionIndex);
+        }
+        positionIndex--;
+        return null;
+    }
+
+    private AbstractRailroadElement prev() {
+        positionIndex--;
+        if(positionIndex >= 0) {
+            return this.way.get(positionIndex);
+        }
+        positionIndex++;
+        return null;
     }
 
     public Railway calculateRailway() {
         do {
-            this.goAhead();
+            if(this.goAhead() == null)
+                return null;
         } while (!(this.getLastElement() instanceof Sensor));
         this.setStartIndex();
         this.checkLastElement();
@@ -155,6 +193,40 @@ public class Railway {
                 this.usedSwitches.put(s, new UsedWayIndicator());
                 s.getNextPositionSwitchSpecial(this.lastPos, true);
             }
+        }
+    }
+
+    public void setPositions(Train train) {
+        train.prev = Objects.requireNonNull(this.getPreviousElement()).getPosition();
+    }
+
+    public void init(Train train) {
+        train.nextSensor = this.getNextSensor();
+        if(train.nextSensor == null) {
+            train.destination = null;
+            return;
+        }
+        if(!train.nextSensor.isFree(train)) {
+            train.stopTrain();
+        } else {
+            train.nextSensor.addTrain(train);
+            this.activateSwitches();
+        }
+
+        if(train.nextSensor.equals(train.destination))
+            return;
+
+        train.nextNextSensor = this.getNextSensor();
+
+        if(train.nextNextSensor == null) {
+            train.destination = null;
+            return;
+        }
+        if(!train.nextNextSensor.isFree(train)) {
+            train.stopTrain();
+        } else {
+            train.nextNextSensor.addTrain(train);
+            this.activateSwitches();
         }
     }
 

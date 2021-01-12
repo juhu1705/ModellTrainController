@@ -5,7 +5,6 @@ import de.noisruker.gui.RailroadImages;
 import de.noisruker.loconet.messages.AbstractMessage;
 import de.noisruker.loconet.messages.SensorMessage;
 import de.noisruker.loconet.messages.SwitchMessage;
-import de.noisruker.railroad.AbstractRailroadElement;
 import de.noisruker.railroad.Position;
 import de.noisruker.railroad.RailRotation;
 import de.noisruker.util.Util;

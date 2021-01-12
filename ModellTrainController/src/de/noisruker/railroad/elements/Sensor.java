@@ -4,9 +4,9 @@ import de.noisruker.gui.GuiMain;
 import de.noisruker.gui.RailroadImages;
 import de.noisruker.loconet.messages.AbstractMessage;
 import de.noisruker.loconet.messages.SensorMessage;
-import de.noisruker.railroad.AbstractRailroadElement;
 import de.noisruker.railroad.Position;
 import de.noisruker.railroad.RailRotation;
+import de.noisruker.railroad.Train;
 import de.noisruker.util.Util;
 import javafx.application.Platform;
 import javafx.scene.image.Image;
@@ -39,6 +39,9 @@ public class Sensor extends AbstractRailroadElement {
 
 	private boolean state;
 
+	private Train train, securitySavedTrain;
+	private int cooldown = -1;
+
 	public Sensor(int address, boolean state, Position position, RailRotation rotation) {
 		super("sensor", position, rotation);
 		this.address = address;
@@ -59,6 +62,47 @@ public class Sensor extends AbstractRailroadElement {
 		if (o == null || getClass() != o.getClass()) return false;
 		Sensor sensor = (Sensor) o;
 		return address == sensor.address;
+	}
+
+	public boolean addTrain(Train t) {
+		if(this.train == null) {
+			this.train = t;
+			return true;
+		}
+		return false;
+	}
+
+	public void onTrainLeft(byte address) {
+		if(address == this.getAddress()) {
+			this.securitySavedTrain = this.trainLeft();
+		}
+	}
+
+	public void onTrainEnter(byte address) {
+		if(address == this.address) {
+			if (securitySavedTrain != null && this.train == null)
+				this.addTrain(securitySavedTrain);
+			this.securitySavedTrain = null;
+		}
+	}
+
+	public void update() {
+		if(this.securitySavedTrain != null) {
+			if(cooldown == -1)
+				cooldown = 4;
+			else {
+				cooldown--;
+				if(cooldown == 0)
+					this.securitySavedTrain = null;
+			}
+		} else if(cooldown >= 0)
+			cooldown = -1;
+	}
+
+	public Train trainLeft() {
+		Train t = this.train;
+		this.train = null;
+		return t;
 	}
 
 	@Override
@@ -125,5 +169,15 @@ public class Sensor extends AbstractRailroadElement {
 	@Override
 	public String toString() {
 		return "Sensor: " + address;
+	}
+
+	public Train getTrain() {
+		return this.train;
+	}
+
+	public boolean isFree(Train train) {
+		if(this.train == train) return true;
+		if(this.train != null) return false;
+		return this.getState();
 	}
 }

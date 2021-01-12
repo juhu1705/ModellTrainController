@@ -19,10 +19,12 @@
 <?import javafx.scene.input.KeyCodeCombination?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import org.controlsfx.control.ToggleSwitch?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="513.0" prefWidth="821.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.noisruker.gui.GuiMain">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="522.0" prefWidth="821.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.noisruker.gui.GuiMain">
    <top>
       <VBox BorderPane.alignment="CENTER">
          <children>
@@ -126,6 +128,12 @@
                                           <ComboBox fx:id="actualPosition" maxWidth="1.7976931348623157E308" />
                                           <Label text="%label.drive_to" />
                                           <ComboBox fx:id="newPosition" maxWidth="1.7976931348623157E308" />
+                                          <HBox spacing="20.0">
+                                             <children>
+                                                <ToggleSwitch fx:id="direction" prefHeight="18.0" prefWidth="32.0" />
+                                                <Label fx:id="directionText" prefHeight="17.0" prefWidth="125.0" />
+                                             </children>
+                                          </HBox>
                                        </children>
                                        <padding>
                                           <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
