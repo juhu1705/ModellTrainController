@@ -27,16 +27,19 @@ public class Config {
     public static final String MODE_RANDOM = "random";
     public static final String MODE_PLAN = "plan";
 
-    @ConfigElement(defaultValue = "false", type = "check", description = "startImmediately.description", name = "startImmediately.text", location = "config", visible = true)
+    @ConfigElement(defaultValue = "false", type = "check", description = "startImmediately.description", name = "startImmediately.text", location = "config.loconet", visible = true)
     public static boolean startImmediately;
 
     @ConfigElement(defaultValue = "false", type = "check", description = "fullScreen.description", name = "fullScreen.text", location = "config", visible = true)
     public static boolean fullScreen;
 
+    @ConfigElement(defaultValue = "true", type = "check", description = "tips.description", name = "tips.text", location = "config.controls", visible = true)
+    public static boolean tips;
+
     @ConfigElement(defaultValue = "", type = "choose", description = "port.description", name = "port.text", location = "config.loconet", visible = true)
     public static String port;
 
-    @ConfigElement(defaultValue = "", type = "choose", description = "mode.description", name = "mode.text", location = "config", visible = true)
+    @ConfigElement(defaultValue = "", type = "choose", description = "mode.description", name = "mode.text", location = "config.controls", visible = true)
     public static String mode;
 
     @ConfigElement(defaultValue = "DARK", type = "choose", description = "theme.description", name = "theme.text", location = "config", visible = true)

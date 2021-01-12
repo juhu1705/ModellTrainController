@@ -26,6 +26,16 @@ public class Signal extends AbstractRailroadElement {
         return allSignals;
     }
 
+    private static void addSignal(Signal s) {
+        for(int i = 0; i < allSignals.size(); i++) {
+            if (allSignals.get(i).address > s.address) {
+                allSignals.add(i, s);
+                return;
+            }
+        }
+        allSignals.add(s);
+    }
+
     private boolean state;
     private final byte address;
     private boolean listen = false;
@@ -33,7 +43,7 @@ public class Signal extends AbstractRailroadElement {
     public Signal(byte address, RailRotation rotation, Position position) {
         super("signal", position, rotation);
         this.address = address;
-        Signal.allSignals.add(this);
+        Signal.addSignal(this);
     }
 
     public SwitchMessage getMessage(boolean state) {

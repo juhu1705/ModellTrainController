@@ -416,7 +416,7 @@ public class GuiMain implements Initializable {
                 this.manualControls.setVisible(false);
                 this.automaticControls.setVisible(true);
                 this.controls.setVisible(true);
-                this.updatePlanMode();
+                Platform.runLater(this::updatePlanMode);
                 break;
             case Config.MODE_RANDOM:
                 this.manualControls.setVisible(false);
@@ -429,7 +429,8 @@ public class GuiMain implements Initializable {
     public void updatePlanMode() {
         ArrayList<String> sensors = new ArrayList<>();
         for(Sensor s: Sensor.getAllSensors()) {
-            sensors.add(s.toString());
+            if(!sensors.contains(s.toString()))
+                sensors.add(s.toString());
         }
         if(sensors.isEmpty()) {
             this.actualPosition.setDisable(true);
@@ -440,7 +441,7 @@ public class GuiMain implements Initializable {
         this.actualPosition.setItems(FXCollections.observableArrayList(sensors));
         this.newPosition.setItems(FXCollections.observableArrayList(sensors));
 
-        if(!this.actualPosition.getValue().isEmpty()) {
+        if(this.actualPosition.getValue() == null || !this.actualPosition.getValue().isEmpty()) {
             this.newPosition.setDisable(true);
         }
     }
@@ -462,7 +463,8 @@ public class GuiMain implements Initializable {
             TreeItem<String> train = new TreeItem<>("Sensor: " + s.getAddress());
             sensorsRoot.getChildren().add(train);
         }
-        this.updatePlanMode();
+        if(Config.mode.equals(Config.MODE_PLAN))
+            Platform.runLater(this::updatePlanMode);
     }
 
     public void updateSwitches() {

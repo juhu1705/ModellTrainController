@@ -25,6 +25,16 @@ public class Sensor extends AbstractRailroadElement {
 		return allSensors;
 	}
 
+	private static void addSensor(Sensor s) {
+		for(int i = 0; i < allSensors.size(); i++) {
+			if (allSensors.get(i).address > s.address) {
+				allSensors.add(i, s);
+				return;
+			}
+		}
+		allSensors.add(s);
+	}
+
 	private final int address;
 
 	private boolean state;
@@ -33,7 +43,7 @@ public class Sensor extends AbstractRailroadElement {
 		super("sensor", position, rotation);
 		this.address = address;
 		this.state = state;
-		Sensor.allSensors.add(this);
+		Sensor.addSensor(this);
 	}
 
 	@Override

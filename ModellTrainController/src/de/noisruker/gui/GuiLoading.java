@@ -8,6 +8,7 @@ import de.noisruker.loconet.messages.SwitchMessage;
 import de.noisruker.main.GUILoader;
 import de.noisruker.loconet.LocoNet;
 import de.noisruker.railroad.Train;
+import de.noisruker.railroad.elements.Signal;
 import de.noisruker.railroad.elements.Switch;
 import de.noisruker.util.Config;
 import de.noisruker.util.Ref;
@@ -66,7 +67,7 @@ public class GuiLoading implements Initializable {
                 Progress.getInstance().setProgressDescription(Ref.language.getString("info.update_check"));
                 Progress.getInstance().setProgress(0.5);
 
-                Thread.sleep(1000);
+                Thread.sleep(500);
 
                 Progress.getInstance().setProgressDescription(Ref.language.getString("info.waiting"));
                 Progress.getInstance().setProgress(0.75);
@@ -76,7 +77,7 @@ public class GuiLoading implements Initializable {
                 Progress.getInstance().setProgressDescription(Ref.language.getString("info.finished"));
                 Progress.getInstance().setProgress(1);
 
-                Thread.sleep(1000);
+                Thread.sleep(500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -143,6 +144,10 @@ public class GuiLoading implements Initializable {
             Progress.getInstance().setProgressDescription(Ref.language.getString("info.connection_complete"));
             Progress.getInstance().setProgress(-1);
 
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException ignored) { }
+
             Progress.getInstance().setProgressDescription(Ref.language.getString("info.load_railroad"));
 
             try {
@@ -157,7 +162,29 @@ public class GuiLoading implements Initializable {
             for(int i = 0; i < Switch.getAllSwitches().size(); i++) {
                 Switch.getAllSwitches().get(i).setAndUpdateState(true);
                 Progress.getInstance().setProgress(((double)i) / ((double)Switch.getAllSwitches().size()));
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException ignored) { }
             }
+
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException ignored) { }
+
+            Progress.getInstance().setProgressDescription(Ref.language.getString("info.init_signals"));
+            Progress.getInstance().setProgress(0);
+
+            for(int i = 0; i < Signal.getAllSignals().size(); i++) {
+                Signal.getAllSignals().get(i).setAndUpdateState(false);
+                Progress.getInstance().setProgress(((double)i) / ((double)Signal.getAllSignals().size()));
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException ignored) { }
+            }
+
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException ignored) { }
 
             Progress.getInstance().setProgress(-1);
             Progress.getInstance().setProgressDescription(Ref.language.getString("info.start_window"));

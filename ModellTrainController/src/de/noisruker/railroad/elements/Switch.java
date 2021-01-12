@@ -29,6 +29,16 @@ public class Switch extends AbstractRailroadElement {
 		return allSwitches;
 	}
 
+	private static void addSwitch(Switch s) {
+		for(int i = 0; i < allSwitches.size(); i++) {
+			if (allSwitches.get(i).address > s.address) {
+				allSwitches.add(i, s);
+				return;
+			}
+		}
+		allSwitches.add(s);
+	}
+
 	private boolean state;
 	private final byte address;
 
@@ -40,7 +50,7 @@ public class Switch extends AbstractRailroadElement {
 		this.address = address;
 		this.type = type;
 		this.normalPosition = normalPosition;
-		Switch.allSwitches.add(this);
+		Switch.addSwitch(this);
 	}
 
 	public SwitchMessage getMessage(boolean state) {
