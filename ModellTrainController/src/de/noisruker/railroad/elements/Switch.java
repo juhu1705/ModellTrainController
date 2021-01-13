@@ -654,17 +654,12 @@ public class Switch extends AbstractRailroadElement {
 	}
 
 	public boolean isSwitchPossible(Position from) {
-		switch (rotation) {
-			case NORTH:
-				return from.equals(new Position(super.position.getX(), super.position.getY() - 1));
-			case WEST:
-				return from.equals(new Position(super.position.getX() - 1, super.position.getY()));
-			case EAST:
-				return from.equals(new Position(super.position.getX() + 1, super.position.getY()));
-			case SOUTH:
-				return from.equals(new Position(super.position.getX(), super.position.getY() + 1));
-		}
-		return false;
+		return switch (rotation) {
+			case NORTH -> from.equals(new Position(super.position.getX(), super.position.getY() - 1));
+			case WEST -> from.equals(new Position(super.position.getX() - 1, super.position.getY()));
+			case EAST -> from.equals(new Position(super.position.getX() + 1, super.position.getY()));
+			case SOUTH -> from.equals(new Position(super.position.getX(), super.position.getY() + 1));
+		};
 	}
 
 	public void changeDirection() {

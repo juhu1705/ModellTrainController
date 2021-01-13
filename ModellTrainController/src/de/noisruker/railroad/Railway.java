@@ -6,7 +6,6 @@ import de.noisruker.railroad.elements.Sensor;
 import de.noisruker.railroad.elements.Switch;
 import de.noisruker.util.Ref;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -42,20 +41,18 @@ public class Railway {
         actualIndex++;
     }
 
-    public Switch goToLastSwitch() {
+    public void goToLastSwitch() {
         AbstractRailroadElement actual = removeLast();
-        while(!(actual instanceof Switch) || getPreviousElement() != null && !((Switch) actual).isSwitchPossible(getPreviousElement().getPosition())) {
-            if(getPreviousElement() == null)
-                break;
+        while(!(actual instanceof Switch) || !(this.lastPos != null && ((Switch) actual).isSwitchPossible(this.lastPos))) {
             if(actual == null)
                 break;
             actual = removeLast();
         }
-        if(!(actual instanceof Switch))
-            return null;
+        if(actual == null)
+            return;
         Switch aSwitch = (Switch) actual;
+        Ref.LOGGER.info("Test " + ((Switch) actual).isSwitchPossible(this.lastPos));
         appendElement(aSwitch);
-        return aSwitch;
     }
 
     public AbstractRailroadElement removeLast() {
@@ -165,8 +162,22 @@ public class Railway {
         if(s.isSwitchPossible(this.lastPos)) {
             if(usedSwitches.containsKey(s)) {
                 if(usedSwitches.get(s).wayFalse) {
+                    Ref.LOGGER.info("I am here");
                     this.removeLast();
                     this.goToLastSwitch();
+                    Ref.LOGGER.info("I am here 1");
+                    AbstractRailroadElement e = this.removeLast();
+                    if(e == null) {
+                        while (!getLastElement().equals(s))
+                            goAhead();
+                        goAhead();
+                        while (!(getLastElement() instanceof Switch) || !((Switch) getLastElement()).isSwitchPossible(this.lastPos))
+                            goAhead();
+                        return;
+                    } else {
+                        Ref.LOGGER.info("Check");
+                        this.appendElement(e);
+                    }
                     this.checkLastElement();
                     return;
                 }
