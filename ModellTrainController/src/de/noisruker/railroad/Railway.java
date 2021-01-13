@@ -44,12 +44,12 @@ public class Railway {
 
     public Switch goToLastSwitch() {
         AbstractRailroadElement actual = removeLast();
-        while(!(actual instanceof Switch) || (getPreviousElement() != null && !((Switch) actual).isSwitchPossible(getPreviousElement().getPosition()))) {
-            actual = removeLast();
+        while(!(actual instanceof Switch) || getPreviousElement() != null && !((Switch) actual).isSwitchPossible(getPreviousElement().getPosition())) {
             if(getPreviousElement() == null)
                 break;
             if(actual == null)
                 break;
+            actual = removeLast();
         }
         if(!(actual instanceof Switch))
             return null;
@@ -174,25 +174,20 @@ public class Railway {
                 if(!this.isEditable())
                     return;
 
-                if(usedSwitches.containsKey(s)) {
-                    UsedWayIndicator indicator = usedSwitches.get(s);
-                    if(indicator != null) {
-                        Position newPos = s.getNextPositionSwitchSpecial(this.lastPos, false);
-                        if(newPos == null || newPos.equals(this.lastPos))
-                            return;
-                        this.appendElement(LocoNet.getRailroad().getElementByPosition(newPos));
-                        indicator.wayFalse = true;
-                        this.checkLastElement();
-                    }
-                }
+                usedSwitches.get(s).wayFalse = true;
+                Position newPos = s.getNextPositionSwitchSpecial(this.lastPos, false);
+                if(newPos == null || newPos.equals(this.lastPos))
+                    return;
+                this.appendElement(LocoNet.getRailroad().getElementByPosition(newPos));
+
             } else {
                 this.usedSwitches.put(s, new UsedWayIndicator());
                 Position newPos = s.getNextPositionSwitchSpecial(this.lastPos, true);
                 if(newPos == null || newPos.equals(this.lastPos))
                     return;
                 this.appendElement(LocoNet.getRailroad().getElementByPosition(newPos));
-                this.checkLastElement();
             }
+            this.checkLastElement();
         }
     }
 
