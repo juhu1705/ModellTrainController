@@ -287,9 +287,6 @@ public class Train implements Serializable, Comparable<Train> {
 	/* Methods for the automatic driving process */
 
 	public void trainEnter(int nodeAddress) {
-		Ref.LOGGER.info("Check 1: " + (this.destination != null && this.destination.getAddress() == nodeAddress));
-		Ref.LOGGER.info("Check 2: " + (this.destination != null && this.destination.isFree(this)));
-		Ref.LOGGER.info("Check 3: " + (this.destination.equals(this.nextSensor) || this.destination.equals(this.nextNextSensor)));
 		if(this.destination != null && this.destination.getAddress() == nodeAddress && this.destination.isFree(this) &&
 				(this.destination.equals(this.nextSensor) || this.destination.equals(this.nextNextSensor))) {
 			this.destination.addTrain(this);
