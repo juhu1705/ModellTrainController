@@ -7,6 +7,7 @@ import de.noisruker.loconet.LocoNetMessageReceiver;
 import de.noisruker.railroad.elements.AbstractRailroadElement;
 import de.noisruker.railroad.elements.Sensor;
 import de.noisruker.util.Ref;
+import de.noisruker.util.Util;
 import javafx.scene.shape.TriangleMesh;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -45,16 +46,20 @@ public class Railroad {
     public void init() {
         LocoNetMessageReceiver.getInstance().registerListener(l -> {
             if (l instanceof SensorMessage) {
-                SensorMessage s = (SensorMessage) l;
+                final SensorMessage s = (SensorMessage) l;
 
                 Ref.LOGGER.info("Sensor " + s.getAddress() + "; State: " + s.getState());
 
-                if(s.getState())
-                    trainEnter(s.getAddress());
-                else
-                    trainLeft(s.getAddress());
+                Util.runNext(() -> this.handleMessage(s));
             }
         });
+    }
+
+    private void handleMessage(SensorMessage s) {
+        if(s.getState())
+            trainEnter(s.getAddress());
+        else
+            trainLeft(s.getAddress());
     }
 
     public void initRailroad() throws IOException, SAXException {

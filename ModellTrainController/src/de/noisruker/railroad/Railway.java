@@ -42,11 +42,15 @@ public class Railway {
     }
 
     public void goToLastSwitch() {
+        Position lastPos = this.lastPos;
         AbstractRailroadElement actual = removeLast();
-        while(!(actual instanceof Switch) || !(this.lastPos != null && ((Switch) actual).isSwitchPossible(this.lastPos))) {
+        while(!(actual instanceof Switch) || lastPos == null || !((Switch) actual).isSwitchPossible(lastPos)) {
             if(actual == null)
                 break;
+            lastPos = this.lastPos;
             actual = removeLast();
+            if(actual != null)
+                Ref.LOGGER.info("Actual: " + actual + "; Index: " + this.actualIndex + "; Position: " + actual.getPosition() + "; Last Position: " + this.lastPos + "; Possible: " + ((actual instanceof Switch) ? ((Switch) actual).isSwitchPossible(this.lastPos) : "Nop"));
         }
         if(actual == null)
             return;
@@ -62,7 +66,7 @@ public class Railway {
         actualIndex--;
         AbstractRailroadElement toRemove = way.remove(actualIndex);
 
-        this.lastPos = this.getPreviousElement() != null ? this.getPreviousElement().getPosition() : this.getLastElement().getToPos(this.actual);
+        this.lastPos = this.getPreviousElement() != null ? this.getPreviousElement().getPosition() : this.getLastElement().getToPos(toRemove.getPosition());
         this.actual = this.getLastElement().getPosition();
 
         return toRemove;
@@ -75,10 +79,7 @@ public class Railway {
     }
 
     private AbstractRailroadElement goAhead() {
-        Ref.LOGGER.info("Go from " + this.getLastElement());
         Position newPos = this.getLastElement().getToPos(this.lastPos);
-        Ref.LOGGER.info("To " + newPos);
-        Ref.LOGGER.info("Index: " + this.actualIndex);
         if(newPos == null || newPos.equals(this.lastPos))
             return null;
         this.appendElement(LocoNet.getRailroad().getElementByPosition(newPos));
@@ -129,6 +130,8 @@ public class Railway {
         return null;
     }
 
+    boolean fail = false;
+
     public Railway calculateRailway() {
         do {
             if(this.goAhead() == null)
@@ -136,11 +139,11 @@ public class Railway {
         } while (!(this.getLastElement() instanceof Sensor));
         this.setStartIndex();
         this.checkLastElement();
-        while (!this.to.equals(this.actual)) {
-            if(this.goAhead() != null)
-                this.checkLastElement();
-            else
+        while (!this.to.equals(this.actual) && !fail) {
+            if(this.goAhead() == null) {
                 this.goToLastSwitch();
+            }
+            this.checkLastElement();
         }
         return this;
     }
@@ -163,12 +166,15 @@ public class Railway {
         if(s.isSwitchPossible(this.lastPos)) {
             if(usedSwitches.containsKey(s)) {
                 if(usedSwitches.get(s).wayFalse) {
-                    Ref.LOGGER.info("I am here");
-                    this.removeLast();
+                    Ref.LOGGER.info("I am here " + this.removeLast() + "; Index: " + this.actualIndex);
+
                     this.goToLastSwitch();
-                    Ref.LOGGER.info("I am here 1");
+                    Ref.LOGGER.info("I am here 1 " + this.actualIndex + "; " + this.getLastElement());
+
                     AbstractRailroadElement e = this.removeLast();
+
                     if(e == null) {
+                        fail = true;
                         return;
                     } else {
                         Ref.LOGGER.info("Check");
