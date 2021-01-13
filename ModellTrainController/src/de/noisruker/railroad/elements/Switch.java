@@ -6,6 +6,7 @@ import de.noisruker.loconet.messages.AbstractMessage;
 import de.noisruker.loconet.messages.SwitchMessage;
 import de.noisruker.railroad.Position;
 import de.noisruker.railroad.RailRotation;
+import de.noisruker.util.Ref;
 import de.noisruker.util.Util;
 import javafx.application.Platform;
 import javafx.scene.image.Image;
@@ -631,11 +632,23 @@ public class Switch extends AbstractRailroadElement {
 	}
 
 	public boolean setSwitchTo(Position from, Position to) {
-		if(getNextPositionSwitchSpecial(from, true).equals(to))
+		Position pFrom = isSwitchPossible(from) ? from : to;
+		Position pTo = isSwitchPossible(from) ? to : from;
+
+		Ref.LOGGER.info("Udate switch " + this.address + "; From: " + from + "; to: " + to);
+		Ref.LOGGER.info("If true go to " + getNextPositionSwitchSpecial(from, true));
+		Ref.LOGGER.info("If false go to " + getNextPositionSwitchSpecial(from, false));
+
+		Ref.LOGGER.info("If true go to " + getNextPositionSwitchSpecial(pFrom, true));
+		Ref.LOGGER.info("If false go to " + getNextPositionSwitchSpecial(pFrom, false));
+
+		if(getNextPositionSwitchSpecial(pFrom, true).equals(pTo)) {
+			Ref.LOGGER.info("Set state to true");
 			this.setAndUpdateState(true);
-		else if(getNextPositionSwitchSpecial(from, false).equals(to))
+		} else if(getNextPositionSwitchSpecial(pFrom, false).equals(pTo)) {
+			Ref.LOGGER.info("Set state to false");
 			this.setAndUpdateState(false);
-		else
+		} else
 			return false;
 		return isPositionValid(from);
 	}

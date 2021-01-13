@@ -44,9 +44,15 @@ public class Railway {
 
     public Switch goToLastSwitch() {
         AbstractRailroadElement actual = removeLast();
-        while(!(actual instanceof Switch) || !((Switch) actual).isSwitchPossible(getPreviousElement().getPosition())) {
+        while(!(actual instanceof Switch) || (getPreviousElement() != null && !((Switch) actual).isSwitchPossible(getPreviousElement().getPosition()))) {
             actual = removeLast();
+            if(getPreviousElement() == null)
+                break;
+            if(actual == null)
+                break;
         }
+        if(!(actual instanceof Switch))
+            return null;
         Switch aSwitch = (Switch) actual;
         appendElement(aSwitch);
         return aSwitch;
@@ -99,6 +105,7 @@ public class Railway {
     }
 
     public void activateSwitches() {
+        Ref.LOGGER.info("Length: " + this.waitForSwitch.size());
         for(Map.Entry<Switch, Integer> r: this.waitForSwitch.entrySet()) {
             Ref.LOGGER.info("Switch " + r.getKey().setSwitchTo(this.way.get(r.getValue() - 1).getPosition(),
                     this.way.get(r.getValue() + 1).getPosition()));
@@ -163,7 +170,7 @@ public class Railway {
                     aSwitch = this.goToLastSwitch();
                 }
 
-                if(!this.isEditable()) {
+                if(aSwitch == null || !this.isEditable()) {
                     while(!s.equals(this.getLastElement()))
                         goAhead();
                     aSwitch = (Switch) this.getLastElement();
