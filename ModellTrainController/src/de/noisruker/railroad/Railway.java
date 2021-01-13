@@ -200,7 +200,11 @@ public class Railway {
                 }
             } else {
                 this.usedSwitches.put(s, new UsedWayIndicator());
-                s.getNextPositionSwitchSpecial(this.lastPos, true);
+                Position newPos = s.getNextPositionSwitchSpecial(this.lastPos, true);
+                if(newPos == null || newPos.equals(this.lastPos))
+                    return;
+                this.appendElement(LocoNet.getRailroad().getElementByPosition(newPos));
+                this.checkLastElement();
             }
         }
     }
