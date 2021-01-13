@@ -18,17 +18,12 @@ public class RailroadDirectionalLine extends AbstractRailroadElement {
 
     @Override
     public Image getImage() {
-        switch (rotation) {
-            case NORTH:
-                return RailroadImages.STRAIGHT_NORTH;
-            case WEST:
-                return RailroadImages.STRAIGHT_WEST;
-            case EAST:
-                return RailroadImages.STRAIGHT_EAST;
-            case SOUTH:
-                return RailroadImages.STRAIGHT_SOUTH;
-        }
-        return null;
+        return switch (rotation) {
+            case NORTH -> RailroadImages.STRAIGHT_NORTH;
+            case WEST -> RailroadImages.STRAIGHT_WEST;
+            case EAST -> RailroadImages.STRAIGHT_EAST;
+            case SOUTH -> RailroadImages.STRAIGHT_SOUTH;
+        };
     }
 
     @Override
@@ -36,17 +31,12 @@ public class RailroadDirectionalLine extends AbstractRailroadElement {
 
     @Override
     public Position getToPos(Position from) {
-        switch (rotation) {
-            case NORTH:
-                return new Position(position.getX(), position.getY() - 1);
-            case SOUTH:
-                return new Position(position.getX(), position.getY() + 1);
-            case WEST:
-                return new Position(position.getX() - 1, position.getY());
-            case EAST:
-                return new Position(position.getX() + 1, position.getY());
-        }
-        return null;
+        return switch (rotation) {
+            case NORTH -> new Position(position.getX(), position.getY() - 1);
+            case SOUTH -> new Position(position.getX(), position.getY() + 1);
+            case WEST -> new Position(position.getX() - 1, position.getY());
+            case EAST -> new Position(position.getX() + 1, position.getY());
+        };
     }
 
     @Override

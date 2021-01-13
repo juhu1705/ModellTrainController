@@ -78,6 +78,7 @@ public class Railway {
         Ref.LOGGER.info("Go from " + this.getLastElement());
         Position newPos = this.getLastElement().getToPos(this.lastPos);
         Ref.LOGGER.info("To " + newPos);
+        Ref.LOGGER.info("Index: " + this.actualIndex);
         if(newPos == null || newPos.equals(this.lastPos))
             return null;
         this.appendElement(LocoNet.getRailroad().getElementByPosition(newPos));
@@ -168,11 +169,6 @@ public class Railway {
                     Ref.LOGGER.info("I am here 1");
                     AbstractRailroadElement e = this.removeLast();
                     if(e == null) {
-                        while (!getLastElement().equals(s))
-                            goAhead();
-                        goAhead();
-                        while (!(getLastElement() instanceof Switch) || !((Switch) getLastElement()).isSwitchPossible(this.lastPos))
-                            goAhead();
                         return;
                     } else {
                         Ref.LOGGER.info("Check");
