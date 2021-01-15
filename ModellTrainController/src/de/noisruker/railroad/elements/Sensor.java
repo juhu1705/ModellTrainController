@@ -175,7 +175,7 @@ public class Sensor extends AbstractRailroadElement {
 	}
 
 	public boolean isFree(Train train) {
-		if(this.train == train) return true;
+		if(train.equals(this.train)) return true;
 		if(this.train != null) return false;
 		return !this.getState();
 	}

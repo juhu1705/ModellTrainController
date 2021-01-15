@@ -22,11 +22,14 @@ public class Railway {
 
     private int actualIndex = 0, startIndex = 0, positionIndex = 0;
 
-    public Railway(Position from, Position to, Position lastPosition) {
+    private final boolean priorWayTrue;
+
+    public Railway(Position from, Position to, Position lastPosition, boolean priorWayTrue) {
         this.from = from;
         this.to = to;
         this.lastPos = lastPosition;
         this.actual = lastPosition;
+        this.priorWayTrue = priorWayTrue;
         appendElement(LocoNet.getRailroad().getElementByPosition(from));
     }
 
@@ -145,7 +148,38 @@ public class Railway {
             }
             this.checkLastElement();
         }
+        this.handleDuplicatedSwitches();
+
+
+
         return this;
+    }
+
+    private void handleDuplicatedSwitches() {
+        HashMap<Switch, Integer> foundSwitches = new HashMap<>();
+        for(int i = 0; i < this.actualIndex; i++) {
+            AbstractRailroadElement e = this.way.get(i);
+            if(i >= this.startIndex) {
+                if (e instanceof Switch) {
+                    if (((Switch) e).isSwitchPossible(this.way.get(i - 1).getPosition())) {
+                        if(foundSwitches.containsKey(e)) {
+                            int firstIndex = foundSwitches.get(e);
+                            this.delete(firstIndex, i);
+                        } else
+                            foundSwitches.put((Switch) e, i);
+                    }
+                }
+            }
+        }
+    }
+
+    private void delete(final int start, final int to) {
+        for(int i = start; i < to; i++) {
+            this.way.remove(i);
+        }
+        for(int i = to; i < this.actualIndex; i++) {
+            this.way.put(start + i - to, this.way.get(i));
+        }
     }
 
     private void setStartIndex() {
@@ -188,14 +222,14 @@ public class Railway {
                     return;
 
                 usedSwitches.get(s).wayFalse = true;
-                Position newPos = s.getNextPositionSwitchSpecial(this.lastPos, false);
+                Position newPos = s.getNextPositionSwitchSpecial(this.lastPos, !this.priorWayTrue);
                 if(newPos == null || newPos.equals(this.lastPos))
                     return;
                 this.appendElement(LocoNet.getRailroad().getElementByPosition(newPos));
 
             } else {
                 this.usedSwitches.put(s, new UsedWayIndicator());
-                Position newPos = s.getNextPositionSwitchSpecial(this.lastPos, true);
+                Position newPos = s.getNextPositionSwitchSpecial(this.lastPos, this.priorWayTrue);
                 if(newPos == null || newPos.equals(this.lastPos))
                     return;
                 this.appendElement(LocoNet.getRailroad().getElementByPosition(newPos));
@@ -231,11 +265,20 @@ public class Railway {
             return;
         }
         if(!train.nextNextSensor.isFree(train)) {
-            train.stopTrain();
+            if(train.nextNextSensor.getTrain() != null && train.nextNextSensor.equals(train.nextNextSensor.getTrain().previousSensor)) {
+                train.stopAdd = train.nextNextSensor;
+            } else
+                train.stopTrain();
         } else {
             train.nextNextSensor.addTrain(train);
             this.activateSwitches();
         }
+    }
+
+    public boolean isShorterThan(Railway railway) {
+        if(railway == null)
+            return true;
+        return this.actualIndex < railway.actualIndex;
     }
 
     private class UsedWayIndicator {

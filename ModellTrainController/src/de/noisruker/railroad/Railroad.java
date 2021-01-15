@@ -50,12 +50,13 @@ public class Railroad {
 
                 Ref.LOGGER.info("Sensor " + s.getAddress() + "; State: " + s.getState());
 
-                Util.runNext(() -> this.handleMessage(s));
+                this.handleMessage(s);
             }
         });
     }
 
     private void handleMessage(SensorMessage s) {
+        Ref.LOGGER.info("Get Message");
         if(s.getState())
             trainEnter(s.getAddress());
         else
@@ -87,17 +88,26 @@ public class Railroad {
     }
 
     public Railway findWay(Sensor from, Sensor to, Position lastPosition) {
-        return new Railway(from.getPosition(), to.getPosition(), lastPosition).calculateRailway();
+        Railway priorTrue = new Railway(from.getPosition(), to.getPosition(), lastPosition, true).calculateRailway();
+        Railway priorFalse = new Railway(from.getPosition(), to.getPosition(), lastPosition, false).calculateRailway();
+        if(priorTrue == null)
+            return priorFalse;
+
+        return priorTrue.isShorterThan(priorFalse) ? priorTrue : priorFalse;
     }
 
     public void trainEnter(final int nodeAddress) {
         LocoNet.getInstance().getTrains().forEach(t -> t.trainEnter(nodeAddress));
+        Ref.LOGGER.info("Trains handled enter");
         Sensor.getAllSensors().forEach(s -> s.onTrainEnter(nodeAddress));
+        Ref.LOGGER.info("Sensors handled enter");
     }
 
     public void trainLeft(final int nodeAddress) {
         LocoNet.getInstance().getTrains().forEach(t -> t.trainLeft(nodeAddress));
+        Ref.LOGGER.info("Trains handled left");
         Sensor.getAllSensors().forEach(s -> s.onTrainLeft(nodeAddress));
+        Ref.LOGGER.info("Sensors handled left");
     }
 
     public void update() {

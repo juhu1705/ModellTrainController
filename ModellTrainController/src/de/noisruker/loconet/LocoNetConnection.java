@@ -47,6 +47,10 @@ public class LocoNetConnection {
 		new Thread(() -> {
 			byte[] bytes = new byte[0];
 			while (this.isOpen) {
+				try {
+					Thread.sleep(10);
+				} catch (InterruptedException ignored) { }
+
 				byte[] actual = null;
 				try {
 					actual = this.connectionPort.readBytes(1);
@@ -54,9 +58,6 @@ public class LocoNetConnection {
 					Ref.LOGGER.config("Cannot read byte");
 				}
 				if (actual == null) {
-					try {
-						Thread.sleep(100);
-					} catch (InterruptedException ignored) { }
 					continue;
 				}
 
@@ -83,6 +84,7 @@ public class LocoNetConnection {
 					bytes = newBytes;
 				}
 			}
+			Ref.LOGGER.info("Connection stopped");
 		}).start();
 	}
 

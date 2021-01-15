@@ -153,6 +153,10 @@ public class GuiMain implements Initializable {
                 this.actual = train;
                 trainName.setText(name);
                 Util.runNext(() -> train.setDirection(true));
+                if(Config.mode.equals(Config.MODE_PLAN)) {
+                    this.actualPosition.setValue(train.getActualPosition() != null ? train.getActualPosition().toString() : "");
+                    this.newPosition.setValue(train.getDestination() != null ? train.getDestination().toString() : "");
+                }
             }
     }
 
