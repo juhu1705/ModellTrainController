@@ -293,7 +293,7 @@ public class Train implements Serializable, Comparable<Train> {
 		if(this.destination != null && this.destination.getAddress() == nodeAddress && this.destination.isFree(this) &&
 				(this.destination.equals(this.nextSensor) || this.destination.equals(this.nextNextSensor))) {
 			this.destination.addTrain(this);
-			if(!this.equals(this.previousSensor.getTrain())) {
+			if(this.previousSensor != null && !this.equals(this.previousSensor.getTrain())) {
 				this.stopTrain();
 				this.railway.setPositions(this);
 				this.previousSensor = null;

@@ -3,6 +3,7 @@ package de.noisruker.loconet;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.logging.Level;
 
 import de.noisruker.loconet.LocoNetConnection.PortNotOpenException;
 import de.noisruker.loconet.messages.LocoNetMessage;
@@ -53,17 +54,19 @@ public class LocoNetMessageReceiver {
 				} catch (InterruptedException ignored) {
 
 				}
-
-				byte[] message = null;
+				byte[] message;
 
 				try {
 					message = this.connection.removeNextMessage();
 				} catch (PortNotOpenException e) {
+					Ref.LOGGER.info("Why");
 					continue;
 				}
 
 				if (message == null)
 					continue;
+
+				Ref.LOGGER.info("Get Message");
 
 				if(Arrays.equals(message, checkMessage))
 					checkMessage = null;
@@ -79,9 +82,10 @@ public class LocoNetMessageReceiver {
 
 				for (LocoNetMessageListener listener : this.listeners)
 					try {
+						Ref.LOGGER.info("Start listener " + listener);
 						listener.progressMessage(new LocoNetMessage(type, values).toMessage());
-					} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-						e.printStackTrace();
+					} catch (Exception e) {
+						Ref.LOGGER.log(Level.SEVERE, "Exception due to process message", e);
 					}
 
 			}

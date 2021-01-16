@@ -1,7 +1,11 @@
 package de.noisruker.loconet;
 
 import java.util.LinkedList;
+import java.util.concurrent.atomic.AtomicReference;
 
+import de.noisruker.loconet.messages.MessageType;
+import de.noisruker.loconet.messages.SwitchMessage;
+import de.noisruker.util.Config;
 import de.noisruker.util.Ref;
 import de.noisruker.util.Util;
 import jssc.SerialPort;
@@ -45,6 +49,7 @@ public class LocoNetConnection {
 		this.isOpen = true;
 
 		new Thread(() -> {
+			MessageType lastType = null;
 			byte[] bytes = new byte[0];
 			while (this.isOpen) {
 				try {
@@ -61,8 +66,22 @@ public class LocoNetConnection {
 					continue;
 				}
 
-
 				byte nextByte = actual[0];
+				if(Util.getMessageType(nextByte) != null) {
+					if(lastType == null) {
+						lastType = Util.getMessageType(nextByte);
+					}
+					if (bytes.length > 3) {
+						if(MessageType.OPC_INPUT_REP.equals(lastType) && Config.reportAddress > 0)
+							new SwitchMessage((byte) (Config.reportAddress - 1), true).toLocoNetMessage().send();
+
+						lastType = Util.getMessageType(nextByte);
+						bytes = new byte[]{
+								nextByte
+						};
+						continue;
+					}
+				}
 
 				if (Util.getCheckSum(bytes) == nextByte) {
 					byte[] newBytes = new byte[bytes.length + 1];
@@ -75,6 +94,7 @@ public class LocoNetConnection {
 					this.receivedMessages.add(bytes.clone());
 
 					bytes = new byte[0];
+					lastType = null;
 				} else {
 					byte[] newBytes = new byte[bytes.length + 1];
 

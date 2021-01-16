@@ -162,32 +162,6 @@ public class LocoNet {
 		LocoNetMessage.registerStandart();
 
 		LocoNetMessageReceiver.getInstance().registerListener(l -> {
-			if (record) {
-				if (l instanceof SensorMessage) {
-					SensorMessage s = (SensorMessage) l;
-
-					this.actions.add(new Action(s));
-				} else if (!this.actions.isEmpty()) {
-					this.actions.get(this.actions.size() - 1).addEvent(l);
-				}
-			} else if (drive && !this.actions.isEmpty()) {
-				if (l instanceof SensorMessage) {
-					while (this.actions.get(0).isEmpty())
-						this.actions.remove(0);
-
-					if (this.actions.get(0).isAction((SensorMessage) l))
-						try {
-							Action a;
-							(a = this.actions.remove(0)).fireEvents();
-							this.actions.add(a);
-						} catch (IOException | InterruptedException e) {
-							Ref.LOGGER.severe("Error occurs!");
-						}
-				}
-			}
-		});
-
-		LocoNetMessageReceiver.getInstance().registerListener(l -> {
 			if (l == null)
 				return;
 

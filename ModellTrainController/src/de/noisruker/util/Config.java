@@ -50,6 +50,9 @@ public class Config {
     @ConfigElement(defaultValue = "German", type = "choose", description = "language.description", name = "language.text", location = "config", visible = true)
     public static String language;
 
+    @ConfigElement(defaultValue = "0", type = "count", description = "report_address.description", name = "report_address.text", location = "config.controls", visible = true)
+    public static int reportAddress = 0;
+
     public static void register() {
         try {
             ConfigManager.getInstance().register(Config.class);
