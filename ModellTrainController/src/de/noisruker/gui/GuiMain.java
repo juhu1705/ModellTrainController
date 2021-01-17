@@ -15,10 +15,14 @@ import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -27,7 +31,9 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.controlsfx.control.Notifications;
+import org.controlsfx.control.PopOver;
 import org.controlsfx.control.ToggleSwitch;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.xml.sax.SAXException;
 
 import java.awt.*;
@@ -57,12 +63,17 @@ public class GuiMain implements Initializable {
     public TreeView<String> tree, trains, sensors, switches;
 
     @FXML
-    public VBox railroadSection;
+    public VBox railroadSection, trainStations;
+
+    public VBox allSensors = new VBox();
 
     public ArrayList<HBox> railroadLines = new ArrayList<>();
     public HashMap<HBox, ArrayList<ImageView>> railroadCells = new HashMap<>();
 
     public TreeItem<String> trainsRoot, switchesRoot, sensorsRoot;
+
+    private final ToggleGroup group = new ToggleGroup();
+    private ToggleButton up, down, right, left;
 
     @FXML
     public Menu theme, language;
@@ -70,16 +81,23 @@ public class GuiMain implements Initializable {
     @FXML
     public VBox config, controls, manualControls, automaticControls;
 
+    public ComboBox<String> actualPosition;
+
     @FXML
-    public ComboBox<String> actualPosition, newPosition;
+    public Button actualSensor, addStation;
 
     private Train actual;
+    private Sensor sensor;
 
     @FXML
-    public Label trainName, directionText;
+    public Label trainName, trainName1, sensorLabel;
 
     @FXML
-    public ToggleSwitch direction;
+    public ToggleSwitch sensorListed;
+    public ToggleSwitch temporary = new ToggleSwitch();
+
+    @FXML
+    public TextField sensorName;
 
     public void checkOutRailroad() {
         Platform.runLater(this::updateRailroad);
@@ -117,6 +135,40 @@ public class GuiMain implements Initializable {
                     this.railroadCells.get(box).get(x).setImage(RailroadImages.EMPTY_2);
             }
         }
+        this.updateSensors();
+        this.updateSwitches();
+        this.updateTrains();
+    }
+
+    public void onSensorSelectionChanged(MouseEvent event) {
+        if(this.sensors.getSelectionModel().getSelectedItem() == null)
+            return;
+        String name = this.sensors.getSelectionModel().getSelectedItem().getValue();
+        for(Sensor sensor: Sensor.getAllSensors())
+            if(name.equals("Sensor: " + sensor.getAddress() + " [" + sensor.getPosition().getX() + "] [" + sensor.getPosition().getY() + "]")) {
+                this.sensor = sensor;
+                sensorLabel.setText(name);
+                sensorListed.setSelected(sensor.shouldBeListed());
+                sensorListed.setDisable(false);
+                sensorName.setText(sensor.getName());
+                sensorName.setPromptText("");
+                sensorName.setDisable(false);
+            }
+    }
+
+    public void onSensorNameChanged(ActionEvent event) {
+        if(Util.getSensorByString(this.sensorName.getText(), Sensor.getAllSensors()) == null) {
+            this.sensor.setName(this.sensorName.getText());
+            this.updatePlanMode();
+        } else {
+            this.sensorName.setText("");
+            this.sensorName.setPromptText(Ref.language.getString("error.duplicated_name"));
+        }
+    }
+
+    public void onSensorListedChanged() {
+        this.sensor.setShouldBeListed(this.sensorListed.isSelected());
+        this.updatePlanMode();
     }
 
     public void onNormalSpeed(ActionEvent event) {
@@ -152,10 +204,15 @@ public class GuiMain implements Initializable {
             if(train.equals(name)) {
                 this.actual = train;
                 trainName.setText(name);
+                trainName1.setText(name);
                 Util.runNext(() -> train.setDirection(true));
                 if(Config.mode.equals(Config.MODE_PLAN)) {
                     this.actualPosition.setValue(train.getActualPosition() != null ? train.getActualPosition().toString() : "");
-                    this.newPosition.setValue(train.getDestination() != null ? train.getDestination().toString() : "");
+                    this.actualPosition.setDisable(false);
+                    actualSensor.setDisable(false);
+                    this.actualSensor.setText(train.getActualPosition() != null ?
+                            train.getActualPosition().toString() :
+                            Ref.language.getString("button.unset"));
                 }
             }
     }
@@ -322,65 +379,38 @@ public class GuiMain implements Initializable {
 
     public void onActualPositionEdited(ActionEvent event) {
         if(this.actualPosition.getValue() != null) {
-            this.newPosition.setDisable(false);
-            this.direction.setDisable(false);
             if(this.actual != null) {
+                this.addStation.setDisable(false);
                 Sensor s = Util.getSensorByString(this.actualPosition.getValue(), Sensor.getAllSensors());
                 if(s == null)
                     return;
                 this.actual.setActualPosition(s);
+                this.actualSensor.setText(this.actual.getActualPosition() != null ?
+                        this.actual.getActualPosition().toString() :
+                        Ref.language.getString("button.unset"));
                 switch (s.getRotation()) {
                     case NORTH, SOUTH -> {
-                        this.directionText.setText(Ref.language.getString("button.bottom_driving"));
                         Position p = new Position(s.getPosition().getX(), s.getPosition().getY() - 1);
+                        this.up.setDisable(false);
+                        this.down.setDisable(false);
+                        this.right.setDisable(true);
+                        this.left.setDisable(true);
+                        this.up.setSelected(true);
                         if (this.actual.getPrevPosition() == null)
                             this.actual.setLastPosition(p);
                     }
                     case EAST, WEST -> {
-                        this.directionText.setText(Ref.language.getString("button.right_driving"));
+                        this.up.setDisable(true);
+                        this.down.setDisable(true);
+                        this.right.setDisable(false);
+                        this.left.setDisable(false);
+                        this.left.setSelected(true);
                         Position p1 = new Position(s.getPosition().getX() - 1, s.getPosition().getY());
                         if (this.actual.getPrevPosition() == null)
                             this.actual.setLastPosition(p1);
                     }
                 }
             }
-        }
-    }
-
-    public void onDestinationChanged(ActionEvent event) {
-        if(this.actual == null || this.newPosition.getValue() == null)
-            return;
-        Sensor s = Util.getSensorByString(this.newPosition.getValue(), Sensor.getAllSensors());
-        if(s == null)
-            return;
-        this.actual.setDestination(s);
-    }
-
-    public void onPrevPositionChanged(ActionEvent event) {
-        if(this.actual == null || this.actual.getActualPosition() == null)
-            return;
-        Sensor s = this.actual.getActualPosition();
-        switch(this.actual.getActualPosition().getRotation()) {
-            case NORTH:
-            case SOUTH:
-                this.directionText.setText(Ref.language.getString("button.bottom_driving"));
-                Position p;
-                if(this.direction.isSelected())
-                    p = new Position(s.getPosition().getX(), s.getPosition().getY() + 1);
-                else
-                    p = new Position(s.getPosition().getX(), s.getPosition().getY() - 1);
-                this.actual.setLastPosition(p);
-                break;
-            case EAST:
-            case WEST:
-                this.directionText.setText(Ref.language.getString("button.right_driving"));
-                Position p1;
-                if(this.direction.isSelected())
-                    p1 = new Position(s.getPosition().getX() + 1, s.getPosition().getY());
-                else
-                    p1 = new Position(s.getPosition().getX() - 1, s.getPosition().getY());
-                this.actual.setLastPosition(p1);
-                break;
         }
     }
 
@@ -451,24 +481,130 @@ public class GuiMain implements Initializable {
 
         this.checkOutRailroad();
 
+        actualPosition = new ComboBox();
+
         if(!LocoNet.getInstance().getTrains().isEmpty())
             actual = LocoNet.getInstance().getTrains().get(0);
+        else {
+            actualPosition.setDisable(true);
+            actualSensor.setDisable(true);
+        }
 
         this.setMode();
+
         this.actualPosition.addEventHandler(ActionEvent.ANY, this::onActualPositionEdited);
-        this.newPosition.addEventHandler(ActionEvent.ANY, this::onDestinationChanged);
-        this.direction.selectedProperty().addListener((o, oldValue, newValue) -> {
+
+        this.sensorListed.selectedProperty().addListener((o, oldValue, newValue) -> {
             if(oldValue != newValue) {
-                this.onPrevPositionChanged(null);
+                this.onSensorListedChanged();
             }
         });
+
+        actualPosition.setMinWidth(200);
+
+
+        Label actualPosLabel = new Label(Ref.language.getString("label.actual_position"));
+
+        this.up = new ToggleButton();
+        this.down = new ToggleButton();
+        this.left = new ToggleButton();
+        this.right = new ToggleButton();
+
+        this.up.setToggleGroup(group);
+        this.down.setToggleGroup(group);
+        this.right.setToggleGroup(group);
+        this.left.setToggleGroup(group);
+
+        FontIcon iconUp = new FontIcon("fas-angle-up");
+        FontIcon iconDown = new FontIcon("fas-angle-down");
+        FontIcon iconLeft = new FontIcon("fas-angle-left");
+        FontIcon iconRight = new FontIcon("fas-angle-right");
+
+        this.up.setGraphic(iconUp);
+        this.down.setGraphic(iconDown);
+        this.left.setGraphic(iconLeft);
+        this.right.setGraphic(iconRight);
+
+        this.up.setDisable(true);
+        this.down.setDisable(true);
+        this.left.setDisable(true);
+        this.right.setDisable(true);
+
+        this.up.setOnAction(event -> {
+            if(this.actual != null) {
+                this.up.setSelected(true);
+                this.actual.setLastPosition(new Position(this.actual.getActualPosition().getPosition().getX(),
+                        this.actual.getActualPosition().getPosition().getY() + 1));
+            }
+        });
+
+        this.down.setOnAction(event -> {
+            if(this.actual != null) {
+                this.down.setSelected(true);
+                this.actual.setLastPosition(new Position(this.actual.getActualPosition().getPosition().getX(),
+                        this.actual.getActualPosition().getPosition().getY() - 1));
+            }
+        });
+
+        this.left.setOnAction(event -> {
+            if(this.actual != null) {
+                this.left.setSelected(true);
+                this.actual.setLastPosition(new Position(this.actual.getActualPosition().getPosition().getX() + 1,
+                        this.actual.getActualPosition().getPosition().getY()));
+            }
+        });
+
+        this.right.setOnAction(event -> {
+            if(this.actual != null) {
+                this.right.setSelected(true);
+                this.actual.setLastPosition(new Position(this.actual.getActualPosition().getPosition().getX() - 1,
+                        this.actual.getActualPosition().getPosition().getY()));
+            }
+        });
+
+        HBox rightLeft = new HBox(left, right);
+        rightLeft.setSpacing(30);
+        rightLeft.setAlignment(Pos.CENTER);
+
+        VBox directions = new VBox(up, rightLeft, down);
+
+        directions.setAlignment(Pos.CENTER);
+
+        Label drivingDirection = new Label(Ref.language.getString("label.drive_direction"));
+
+        VBox box = new VBox(actualPosLabel, actualPosition, drivingDirection, directions);
+        box.setMinWidth(200);
+        box.setSpacing(10);
+        box.setPadding(new Insets(10));
+
+        PopOver popOver = new PopOver(box);
+
+        popOver.setArrowLocation(PopOver.ArrowLocation.TOP_CENTER);
+
+        this.actualSensor.setOnAction(event -> {
+            if(this.actual != null)
+                popOver.setTitle(this.actual.getName());
+            popOver.show(this.actualSensor);
+        });
+
+        allSensors.setPadding(new Insets(10));
+        allSensors.setMinWidth(200);
+        allSensors.setSpacing(10);
+
+        PopOver popOver1 = new PopOver(allSensors);
+        popOver1.setArrowLocation(PopOver.ArrowLocation.TOP_CENTER);
+        this.addStation.setOnAction(event -> popOver1.show(addStation));
+
+        this.temporary.setPrefWidth(0);
+        this.temporary.setPrefHeight(0);
+
     }
 
     public void setMode() {
         switch (Config.mode) {
             case Config.MODE_MANUAL:
-                this.manualControls.setMinHeight(250);
-                this.manualControls.setPrefHeight(250);
+                this.manualControls.setMinHeight(350);
+                this.manualControls.setPrefHeight(350);
                 this.manualControls.setVisible(true);
                 this.automaticControls.setVisible(false);
                 this.controls.setVisible(true);
@@ -492,22 +628,40 @@ public class GuiMain implements Initializable {
     public void updatePlanMode() {
         ArrayList<String> sensors = new ArrayList<>();
         for(Sensor s: Sensor.getAllSensors()) {
-            if(!sensors.contains(s.toString()))
-                sensors.add(s.toString());
+            sensors.add(s.toString());
         }
         if(sensors.isEmpty()) {
-            this.actualPosition.setDisable(true);
-            this.newPosition.setDisable(true);
-            this.direction.setDisable(true);
             return;
         }
-        this.actualPosition.setDisable(false);
-        this.actualPosition.setItems(FXCollections.observableArrayList(sensors));
-        this.newPosition.setItems(FXCollections.observableArrayList(sensors));
 
-        if(this.actualPosition.getValue() == null || !this.actualPosition.getValue().isEmpty()) {
-            this.newPosition.setDisable(true);
-            this.direction.setDisable(true);
+        this.actualPosition.setItems(FXCollections.observableArrayList(sensors));
+
+        this.allSensors.getChildren().clear();
+
+
+
+        this.temporary.setPrefWidth(27.0);
+        Label l = new Label(Ref.language.getString("label.temporary"));
+        l.setAlignment(Pos.CENTER);
+        l.setPrefHeight(18);
+
+        HBox box = new HBox(this.temporary, l);
+
+        box.setAlignment(Pos.CENTER_LEFT);
+        box.setSpacing(20);
+
+        this.allSensors.getChildren().addAll(box);
+
+        for(Sensor s: Sensor.getAllSensors()) {
+            if(s.shouldBeListed()) {
+                Button b = new Button(s.toString());
+                b.setOnAction(event -> {
+                    if(this.actual != null) {
+                        this.actual.getTrainStationManager().addStation(s, this.temporary.isSelected());
+                    }
+                });
+                this.allSensors.getChildren().add(b);
+            }
         }
     }
 
@@ -525,7 +679,7 @@ public class GuiMain implements Initializable {
     public void updateSensors() {
         sensorsRoot.getChildren().clear();
         for(Sensor s: Sensor.getAllSensors()) {
-            TreeItem<String> train = new TreeItem<>("Sensor: " + s.getAddress());
+            TreeItem<String> train = new TreeItem<>("Sensor: " + s.getAddress() + " [" + s.getPosition().getX() + "] [" + s.getPosition().getY() + "]");
             sensorsRoot.getChildren().add(train);
         }
         if(Config.mode.equals(Config.MODE_PLAN))
@@ -537,6 +691,9 @@ public class GuiMain implements Initializable {
         for(Switch s: Switch.getAllSwitches()) {
             TreeItem<String> train = new TreeItem<>("Switch: " + s.address());
             switchesRoot.getChildren().add(train);
+
+
+
         }
     }
 
@@ -580,5 +737,13 @@ public class GuiMain implements Initializable {
         bw.newLine();
 
         bw.close();
+    }
+
+    public void updateTrainStationManager() {
+        if(this.actual == null)
+            return;
+
+        trainStations.getChildren().clear();
+        this.actual.updateTrainStationGuis(trainStations);
     }
 }

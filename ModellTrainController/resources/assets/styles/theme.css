@@ -59,7 +59,7 @@
 /* Checkbox */
 
 .check-box .box {
-    -fx-background-radius: 5;
+    -fx-background-radius: 6;
 }
 
 .check-box::before {
@@ -76,24 +76,24 @@
 /* Combo Box */
 
 .combo-box {
-    -fx-background-radius: 10;
+    -fx-background-radius: 6;
 }
 
 .combo-box-base:focused {
-    -fx-background-radius: 10;
+    -fx-background-radius: 6;
 }
 
 .combo-box-base:showing {
-    -fx-background-radius: 10 10 0 0;
+    -fx-background-radius: 6 6 0 0;
 }
 
 .combo-box-popup > .list-view {
-    -fx-background-radius: 0 0 10 10;
-    -fx-border-radius: 0 0 10 10;
+    -fx-background-radius: 0 0 6 6;
+    -fx-border-radius: 0 0 6 6;
 }
 
 .combo-box-popup .list-view .list-cell {
-    -fx-background-radius: 10;
+    -fx-background-radius: 6;
 }
 
 .combo-box-popup .list-view .placeholder {
@@ -110,8 +110,8 @@
 /* Buttons */
 
 .button, .button:selected, .button:focused, .toggle-button, .toggle-button:focused, .toggle-button:selected {
-    -fx-background-radius: 10;
-    -fx-border-radius: 10;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
 }
 
 
@@ -119,7 +119,7 @@
 /* Text Field / Areas */
 
 *.text-area, .text-area:hover, .text-area:focused, .text-area:disabled {
-    -fx-background-radius: 20;
+    -fx-background-radius: 6;
     -fx-background-insets: 0;
     -fx-background-size: 0;
     -fx-padding: 0;
@@ -127,32 +127,63 @@
 }
 
 .text-area .content, .text-area:hover .content, .text-area:focused .content, .text-area:disabled .content {
-    -fx-background-radius: 10;
-    -fx-border-radius: 10;
-    -fx-padding: 10;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-padding: 6;
 }
 
 *.text-field {
-    -fx-background-radius: 10;
-    -fx-border-radius: 10;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+}
+
+.plan-area {
+    -fx-background-radius: 6;
+    -fx-background-color: #121212;
+    -fx-border-color: #242424;
+    -fx-border-radius: 6;
+    -fx-text-fill: lightgrey;
+}
+
+.plan-area .label {
+    -fx-text-fill: lightgrey;
+}
+
+.in-progress {
+    -fx-background-color: #ff0000;
+    -fx-border-color: #ce0000;
+}
+
+.checked {
+    -fx-background-color: #12ff00;
+    -fx-border-color: #11ea00;
+}
+
+.popover > .content {
+    -fx-background-color: darkgrey;
+}
+
+.popover > .content *.label {
+    -fx-text-fill: white;
 }
 
 /* Spinner */
 
 .spinner {
-   -fx-background-radius: 10 10 10 10;
+   -fx-background-radius: 6 6 6 6;
+   -fx-border-radius: 6;
 }
 
 .spinner .text-field {
-    -fx-background-radius: 10 0 0 10;
+    -fx-background-radius: 6 0 0 6;
 }
 
 .spinner .increment-arrow-button {
-    -fx-background-radius: 0 10 0 0;
+    -fx-background-radius: 0 6 0 0;
 }
 
 .spinner .decrement-arrow-button {
-    -fx-background-radius: 0 0 10 0;
+    -fx-background-radius: 0 0 6 0;
 }
 
 /* Tabs */

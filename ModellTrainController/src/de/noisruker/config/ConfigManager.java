@@ -18,6 +18,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.util.StringConverter;
+import org.controlsfx.control.SearchableComboBox;
 import org.controlsfx.control.ToggleSwitch;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -372,6 +373,7 @@ public class ConfigManager {
 						Spinner cb = new Spinner();
 						cb.setTooltip(new Tooltip(Ref.language.getString("config." + e.description())));
 						cb.setEditable(true);
+						cb.setMaxWidth(1.7976931348623157E308);
 						this.listeners.add(new ChangeEntry(e.name(), () -> {
 							try {
 								cb.getValueFactory().setValue(f.getInt(null));
@@ -410,6 +412,8 @@ public class ConfigManager {
 						TextField cb = new TextField();
 						cb.setTooltip(new Tooltip(Ref.language.getString("config." + e.description())));
 
+						cb.setMaxWidth(1.7976931348623157E308);
+
 						try {
 							cb.setText((String) f.get(null));
 						} catch (IllegalArgumentException | IllegalAccessException e2) {
@@ -439,7 +443,7 @@ public class ConfigManager {
 						configurations.getChildren().addAll(l, cb);
 					} else if (e.type().equals("choose") && this.options.containsKey(e.name())) {
 
-						ComboBox<String> cb = new ComboBox<String>();
+						ComboBox<String> cb = new ComboBox<>();
 						cb.setTooltip(new Tooltip(Ref.language.getString("config." + e.description())));
 
 						cb.setItems(FXCollections.observableArrayList(this.options.get(e.name()).options()));

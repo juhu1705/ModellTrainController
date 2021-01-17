@@ -38,7 +38,8 @@ public class Sensor extends AbstractRailroadElement {
 
 	private final int address;
 
-	private boolean state;
+	private boolean state, list;
+	private String name = "";
 
 	private Train train, securitySavedTrain;
 	private int cooldown = -1;
@@ -47,13 +48,17 @@ public class Sensor extends AbstractRailroadElement {
 		super("sensor", position, rotation);
 		this.address = address;
 		this.state = state;
+		list = true;
 		Sensor.addSensor(this);
 	}
 
 	@Override
 	public void saveTo(BufferedWriter writer) throws IOException {
 		super.saveTo(writer);
-		Util.writeParameterToBuffer("address", Integer.toString(address));
+		Util.writeParameterToBuffer("address", Integer.toString(this.address));
+		if(!name.isBlank())
+			Util.writeParameterToBuffer("name", this.name);
+		Util.writeParameterToBuffer("list", Boolean.toString(this.list));
 		Util.closeWriting();
 	}
 
@@ -63,6 +68,22 @@ public class Sensor extends AbstractRailroadElement {
 		if (o == null || getClass() != o.getClass()) return false;
 		Sensor sensor = (Sensor) o;
 		return address == sensor.address;
+	}
+
+	public String getName() {
+		return this.name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public boolean shouldBeListed() {
+		return this.list;
+	}
+
+	public void setShouldBeListed(boolean list) {
+		this.list = list;
 	}
 
 	public boolean addTrain(Train t) {
@@ -167,7 +188,7 @@ public class Sensor extends AbstractRailroadElement {
 
 	@Override
 	public String toString() {
-		return "Sensor: " + address;
+		return this.name.isBlank() ? "Sensor: " + this.address  + " [" + super.position.getX() + "] [" + super.position.getY() + "]" : this.name;
 	}
 
 	public Train getTrain() {

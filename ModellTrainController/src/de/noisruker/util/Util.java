@@ -151,9 +151,13 @@ public class Util {
 	}
 
 	public static Sensor getSensorByString(String s, ArrayList<Sensor> sensors) {
-		for(Sensor sensor: sensors)
-			if(sensor.toString().equals(s))
+		for(Sensor sensor: sensors) {
+			if (!sensor.getName().isBlank()) {
+				if(sensor.getName().equals(s))
+					return sensor;
+			} else if (sensor.toString().equals(s))
 				return sensor;
+		}
 		return null;
 	}
 

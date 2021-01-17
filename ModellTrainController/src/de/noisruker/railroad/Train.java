@@ -18,6 +18,7 @@ import de.noisruker.util.Ref;
 import de.noisruker.util.Util;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
+import javafx.scene.layout.VBox;
 import jssc.SerialPortException;
 
 import javax.management.Notification;
@@ -86,6 +87,7 @@ public class Train implements Serializable, Comparable<Train> {
 	protected Sensor actualSensor = null, nextSensor = null, nextNextSensor = null, previousSensor = null, destination = null, stopAdd = null;
 
 	private Railway railway = null;
+	private final TrainStationManager trainStationManager;
 
 	/**
 	 * Adds a train with the given slot and address. This Method is only called by {@link LocoNet the LocoNet instance}
@@ -128,6 +130,8 @@ public class Train implements Serializable, Comparable<Train> {
 		this.setStandardForward(standardForward);
 		this.setSpeed(speed);
 		this.actualSpeed = this.speed;
+
+		this.trainStationManager = new TrainStationManager(this);
 
 		LocoNet.getRailroad().startTrainControlSystem();
 	}
@@ -373,21 +377,17 @@ public class Train implements Serializable, Comparable<Train> {
 
 	private void checkDriving() {
 		if(this.railway == null && this.destination != null) {
-			Ref.LOGGER.info("Checking!");
 			this.railway = LocoNet.getRailroad().findWay(this.actualSensor, this.destination, this.prev);
 			if(railway == null) {
-				Ref.LOGGER.severe("Could not find a way!");
 				return;
 			}
 			this.railway.init(this);
 			if(this.destination == null) {
 				this.railway = null;
-				Ref.LOGGER.info("Hups!");
 				return;
 			}
 			if(this.nextSensor.isFree(this) && this.nextNextSensor == null || this.nextNextSensor.isFree(this))
 				this.applyNormalSpeed();
-			Ref.LOGGER.info("Go!");
 		} else if(this.railway != null && this.destination != null && this.speed == 0) {
 			if(this.nextSensor != null && this.nextSensor.isFree(this)) {
 				this.nextSensor.addTrain(this);
@@ -403,6 +403,9 @@ public class Train implements Serializable, Comparable<Train> {
 		}
 		if(this.speed < this.normalSpeed && !this.stopNext && this.destination != null && this.speed != 0 && this.railway != null) {
 			this.applyNormalSpeed();
+		}
+		if(destination == null) {
+			this.trainStationManager.update();
 		}
 	}
 
@@ -483,7 +486,19 @@ public class Train implements Serializable, Comparable<Train> {
 		return this.destination;
     }
 
-    public interface TrainSpeedChangeListener {
+	public void updateTrainStationGuis(VBox trainStations) {
+		this.trainStationManager.addStationsToGUI(trainStations);
+	}
+
+	public void resetRailway() {
+		this.railway = null;
+	}
+
+	public TrainStationManager getTrainStationManager() {
+		return this.trainStationManager;
+	}
+
+	public interface TrainSpeedChangeListener {
 		public void onSpeedChanged(byte newSpeed);
 	}
 

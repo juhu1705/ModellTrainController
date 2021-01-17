@@ -138,11 +138,17 @@ public class RailroadReader implements ContentHandler {
                         new Position(Integer.parseInt(params.get("posX")), Integer.parseInt(params.get("posY"))));
         });
         registerReader("sensor", params -> {
-            if(areAllKeysContained(params, "posX", "posY", "rotation", "address"))
-                railroad[Integer.parseInt(params.get("posX"))][Integer.parseInt(params.get("posY"))] = new Sensor(
+            if(areAllKeysContained(params, "posX", "posY", "rotation", "address")) {
+                Sensor s = new Sensor(
                         Byte.parseByte(params.get("address")), false,
                         new Position(Integer.parseInt(params.get("posX")), Integer.parseInt(params.get("posY"))),
                         RailRotation.valueOf(params.get("rotation")));
+                if(params.containsKey("name"))
+                    s.setName(params.get("name"));
+                if(params.containsKey("list"))
+                    s.setShouldBeListed(Boolean.parseBoolean(params.get("list")));
+                railroad[Integer.parseInt(params.get("posX"))][Integer.parseInt(params.get("posY"))] = s;
+            }
         });
         registerReader("signal", params -> {
             if(areAllKeysContained(params, "posX", "posY", "rotation", "address"))

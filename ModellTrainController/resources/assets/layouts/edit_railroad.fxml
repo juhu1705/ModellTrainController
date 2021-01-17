@@ -6,13 +6,13 @@
 <?import javafx.scene.layout.*?>
 <?import org.kordamp.ikonli.javafx.*?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="477.0" prefWidth="590.0" styleClass="background" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.noisruker.gui.GuiCreateRailroad">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="700.0" styleClass="background" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.noisruker.gui.GuiCreateRailroad">
    <children>
       <ToolBar maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT">
          <items>
-            <Button alignment="CENTER" defaultButton="true" mnemonicParsing="false" onAction="#onNext" text="%button.next">
+            <Button defaultButton="true" onAction="#onNext" text="%button.next">
                <graphic>
-                  <FontIcon iconLiteral="fas-chevron-right" wrappingWidth="1.0" id="normal-icon" />
+                  <FontIcon iconLiteral="fas-chevron-right" iconColor="white" />
                </graphic>
             </Button>
             <Separator orientation="VERTICAL" prefHeight="25.0" prefWidth="0.0" />
@@ -124,35 +124,35 @@
                   </ImageView>
                </graphic>
             </ToggleButton>
-            <ToggleButton fx:id="delete" minWidth="32" layoutX="318.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSetModeToDelete">
+            <ToggleButton fx:id="delete" onAction="#onSetModeToDelete">
                <tooltip>
                   <Tooltip text="%tooltip.delete" />
                </tooltip>
                <graphic>
-                  <FontIcon iconLiteral="fas-trash" wrappingWidth="1.0" id="normal-icon" iconColor="#4f4f4f" />
+                  <FontIcon iconLiteral="fas-trash" iconColor="#6b6b6b" />
                </graphic>
             </ToggleButton>
             <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
-            <Button contentDisplay="CENTER" mnemonicParsing="false" onAction="#onNextRotation">
+            <Button onAction="#onNextRotation">
                <graphic>
-                  <FontIcon iconLiteral="fa-rotate-right" wrappingWidth="1.0" id="normal-icon" />
+                  <FontIcon iconLiteral="fa-rotate-right" iconColor="#6b6b6b" />
                </graphic>
                <tooltip>
                   <Tooltip text="%tooltip.rotate_right" />
                </tooltip>
             </Button>
-            <Button contentDisplay="CENTER" mnemonicParsing="false" onAction="#onPreviousRotation">
+            <Button onAction="#onPreviousRotation">
                <graphic>
-                  <FontIcon iconLiteral="fa-rotate-left" wrappingWidth="1.0" id="normal-icon" />
+                  <FontIcon iconLiteral="fa-rotate-left" iconColor="#6b6b6b" />
                </graphic>
                <tooltip>
                   <Tooltip text="%tooltip.rotate_left" />
                </tooltip>
             </Button>
             <Separator orientation="VERTICAL" prefHeight="25.0" prefWidth="0.0" />
-            <ToggleButton fx:id="shouldHide" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" onAction="#onHideChanged" text="ToggleButton">
+            <ToggleButton fx:id="shouldHide" onAction="#onHideChanged">
                <graphic>
-                  <FontIcon iconLiteral="fa-paragraph" wrappingWidth="1.0" id="normal-icon" />
+                  <FontIcon iconLiteral="fa-paragraph" iconColor="#6b6b6b" />
                </graphic>
                <tooltip>
                   <Tooltip text="%tooltip.toggle" />

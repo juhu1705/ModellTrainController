@@ -1,13 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.input.*?>
-<?import javafx.scene.layout.*?>
-<?import org.controlsfx.control.*?>
-<?import org.kordamp.ikonli.javafx.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.ContextMenu?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.control.TreeView?>
+<?import javafx.scene.input.KeyCodeCombination?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import org.controlsfx.control.ToggleSwitch?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="522.0" prefWidth="821.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.noisruker.gui.GuiMain">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.noisruker.gui.GuiMain">
    <top>
       <VBox BorderPane.alignment="CENTER">
          <children>
@@ -63,13 +82,13 @@
       </VBox>
    </top>
    <center>
-      <SplitPane dividerPositions="0.5" prefHeight="507.0" prefWidth="821.0" BorderPane.alignment="CENTER">
+      <SplitPane dividerPositions="0.5775335775335775" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
          <items>
-            <TabPane prefHeight="200.0" prefWidth="200.0" side="LEFT" tabClosingPolicy="UNAVAILABLE">
+            <TabPane side="LEFT" tabClosingPolicy="UNAVAILABLE">
               <tabs>
                 <Tab closable="false" text="%tab.trains">
                      <content>
-                         <SplitPane dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                         <SplitPane dividerPositions="0.3912037037037037" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="460.0" prefWidth="394.0">
                              <items>
                                  <TreeView fx:id="trains" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#onTrainSelectionChanged">
                                      <contextMenu>
@@ -83,47 +102,59 @@
                                          </ContextMenu>
                                      </contextMenu>
                                  </TreeView>
-                              <VBox fx:id="controls" prefHeight="200.0" prefWidth="100.0">
-                                 <children>
-                                         <Label fx:id="trainName" alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308">
-                                       <VBox.margin>
-                                          <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-                                       </VBox.margin>
-                                    </Label>
-                                       <VBox fx:id="manualControls" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="250.0" prefHeight="250.0" spacing="20.0">
-                                           <children>
-                                               <Button contentDisplay="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onMaxSpeed" text="%button.max_speed" />
-                                               <Button contentDisplay="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onNormalSpeed" text="%button.normal_speed" />
-                                               <Button contentDisplay="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onMinSpeed" text="%button.min_speed" />
-                                               <Button contentDisplay="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onStop" text="%button.stop_train" />
-                                               <Button contentDisplay="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onStopImmediately" text="%button.stop_immediately" />
-                                           </children>
-                                           <padding>
-                                               <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-                                           </padding>
-                                       <opaqueInsets>
-                                          <Insets />
-                                       </opaqueInsets>
-                                       </VBox>
-                                    <VBox fx:id="automaticControls" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="20.0">
+                              <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                 <content>
+                                    <VBox fx:id="controls" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                                        <children>
-                                          <Label text="%label.actual_position" />
-                                          <ComboBox fx:id="actualPosition" maxWidth="1.7976931348623157E308" />
-                                          <Label text="%label.drive_to" />
-                                          <ComboBox fx:id="newPosition" maxWidth="1.7976931348623157E308" />
-                                          <HBox maxWidth="1.7976931348623157E308" spacing="20.0">
+                                             <VBox fx:id="manualControls" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="350.0" prefHeight="350.0" spacing="20.0">
+                                                 <children>
+                                                     <Label fx:id="trainName" alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308">
+                                                   <VBox.margin>
+                                                      <Insets />
+                                                   </VBox.margin>
+                                                </Label>
+                                                     <Button contentDisplay="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onMaxSpeed" text="%button.max_speed" />
+                                                     <Button contentDisplay="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onNormalSpeed" text="%button.normal_speed" />
+                                                     <Button contentDisplay="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onMinSpeed" text="%button.min_speed" />
+                                                     <Button contentDisplay="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onStop" text="%button.stop_train" />
+                                                     <Button contentDisplay="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onStopImmediately" text="%button.stop_immediately" />
+                                                 </children>
+                                                 <padding>
+                                                     <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                                                 </padding>
+                                             <opaqueInsets>
+                                                <Insets />
+                                             </opaqueInsets>
+                                             </VBox>
+                                          <VBox fx:id="automaticControls" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="20.0">
                                              <children>
-                                                <ToggleSwitch fx:id="direction" prefHeight="18.0" prefWidth="32.0" />
-                                                <Label fx:id="directionText" maxWidth="1.7976931348623157E308" />
+                                                <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="20.0" styleClass="plan-area">
+                                                   <children>
+                                                      <Label fx:id="trainName1" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                      <Button fx:id="actualSensor" mnemonicParsing="false" text="%button.unset" />
+                                                   </children>
+                                                   <padding>
+                                                      <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+                                                   </padding>
+                                                </HBox>
+                                                <VBox fx:id="trainStations" prefHeight="200.0" prefWidth="100.0" />
+                                                <Button fx:id="addStation" disable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="plan-area" text="%button.add_station">
+                                                   <VBox.margin>
+                                                      <Insets />
+                                                   </VBox.margin>
+                                                   <padding>
+                                                      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                                   </padding>
+                                                </Button>
                                              </children>
-                                          </HBox>
+                                             <padding>
+                                                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                                             </padding>
+                                          </VBox>
                                        </children>
-                                       <padding>
-                                          <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-                                       </padding>
                                     </VBox>
-                                 </children>
-                              </VBox>
+                                 </content>
+                              </ScrollPane>
                              </items>
                          </SplitPane>
                      </content>
@@ -133,7 +164,35 @@
                 </Tab>
                 <Tab closable="false" text="%tab.sections">
                      <content>
-                        <TreeView fx:id="sensors" prefHeight="200.0" prefWidth="200.0" />
+                        <SplitPane dividerPositions="0.6324786324786325" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="460.0" prefWidth="394.0">
+                           <items>
+                              <TreeView fx:id="sensors" onMouseClicked="#onSensorSelectionChanged" prefHeight="460.0" prefWidth="253.0" />
+                              <VBox maxWidth="-Infinity" spacing="20.0">
+                                 <children>
+                                    <Label fx:id="sensorLabel" alignment="CENTER" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
+                                    <Label text="%label.name" />
+                                    <TextField fx:id="sensorName" disable="true" onAction="#onSensorNameChanged" />
+                                    <HBox spacing="10.0">
+                                       <children>
+                                          <ToggleSwitch fx:id="sensorListed" disable="true" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="0.0" prefWidth="0.0">
+                                             <tooltip>
+                                                <Tooltip text="%tooltip.list_sensor" />
+                                             </tooltip>
+                                          </ToggleSwitch>
+                                          <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%label.list_sensor" HBox.hgrow="ALWAYS">
+                                             <tooltip>
+                                                <Tooltip text="%tooltip.list_sensor" />
+                                             </tooltip>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                 </children>
+                                 <padding>
+                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                 </padding>
+                              </VBox>
+                           </items>
+                        </SplitPane>
                      </content>
                      <graphic>
                         <FontIcon />
@@ -149,7 +208,7 @@
                   </Tab>
                   <Tab closable="false" text="%tab.config">
                      <content>
-                        <SplitPane dividerPositions="0.5" prefHeight="160.0" prefWidth="200.0">
+                        <SplitPane dividerPositions="0.44222222222222224" prefHeight="160.0" prefWidth="200.0">
                            <items>
                               <TreeView fx:id="tree" prefHeight="375.0" prefWidth="217.0" />
                               <VBox fx:id="config" prefHeight="200.0" prefWidth="100.0" spacing="20.0">
@@ -166,7 +225,7 @@
                   </Tab>
               </tabs>
             </TabPane>
-            <ScrollPane prefHeight="200.0" prefWidth="200.0">
+            <ScrollPane prefHeight="460.0" prefWidth="397.0">
                <content>
                   <AnchorPane>
                      <children>
