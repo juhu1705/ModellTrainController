@@ -404,7 +404,7 @@ public class Train implements Serializable, Comparable<Train> {
 		if(this.speed < this.normalSpeed && !this.stopNext && this.destination != null && this.speed != 0 && this.railway != null) {
 			this.applyNormalSpeed();
 		}
-		if(destination == null) {
+		if(destination == null && !stopNext) {
 			this.trainStationManager.update();
 		}
 	}

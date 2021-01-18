@@ -68,13 +68,14 @@ public class TrainStationManager {
                 Platform.runLater(() -> GuiMain.getInstance().updateTrainStationManager());
         }
         this.actual = this.stations.indexOf(station);
-        train.setDestination(this.stations.get(actual).sensor);
-        train.resetRailway();
         train.stopTrainImmediately();
+        train.resetRailway();
+        train.setDestination(this.stations.get(actual).sensor);
     }
 
     public void addStation(Sensor sensor, boolean isTemporary) {
-        this.stations.add(new TrainStation(sensor, isTemporary, this));
+        TrainStation station;
+        this.stations.add(station = new TrainStation(sensor, isTemporary, this));
 
         if(GuiMain.getInstance() != null)
             Platform.runLater(() -> GuiMain.getInstance().updateTrainStationManager());
@@ -99,6 +100,7 @@ public class TrainStationManager {
             this.isTemporary = isTemporary;
             this.myManager = myManager;
 
+            this.addCondition(new TimeCondition(10));
             button.setGraphic(new FontIcon("fas-caret-right"));
             button.setOnAction(action -> {
                 button.setSelected(true);
@@ -141,7 +143,10 @@ public class TrainStationManager {
         }
 
         public boolean shouldBeDeleted() {
-            this.conditions.forEach(abstractDrivingConditions -> abstractDrivingConditions.setChecking(false));
+            this.conditions.forEach(abstractDrivingConditions -> {
+                abstractDrivingConditions.setChecking(false);
+                Platform.runLater(abstractDrivingConditions::updateCondition);
+            });
 
             return this.isTemporary;
         }
@@ -209,6 +214,8 @@ public class TrainStationManager {
 
             addConditionPopOver.setArrowLocation(PopOver.ArrowLocation.TOP_CENTER);
 
+            addCondition.setOnAction(event -> addConditionPopOver.show(addCondition));
+
             v2.getChildren().add(addCondition);
 
             HBox hBox = new HBox(v1, v2);
@@ -217,8 +224,9 @@ public class TrainStationManager {
         }
 
         private void addCondition(AbstractDrivingConditions condition) {
+            if(!this.conditions.isEmpty())
+                this.matcher.add(DrivingConditionMatchmaker.AND);
             this.conditions.add(condition);
-            this.matcher.add(DrivingConditionMatchmaker.AND);
 
             if(GuiMain.getInstance() != null)
                 GuiMain.getInstance().updateTrainStationManager();
