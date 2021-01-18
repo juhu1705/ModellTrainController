@@ -122,8 +122,10 @@ public class TrainStationManager {
                 if(this.conditions.size() > 1)
                     for(int i = 1; i < conditions.size(); i++) {
                         AbstractDrivingConditions dc = this.conditions.get(i);
-                        dc.setChecking(true);
-                        dc.updateCondition();
+                        if(matcher.get(i - 1) != DrivingConditionMatchmaker.THEN || toReturn) {
+                            dc.setChecking(true);
+                            dc.updateCondition();
+                        }
                         switch (matcher.get(i - 1)) {
                             case OR -> toReturn = toReturn || dc.isConditionTrue();
                             case AND -> toReturn = toReturn && dc.isConditionTrue();
@@ -167,31 +169,34 @@ public class TrainStationManager {
             VBox v1 = new VBox(), v2 = new VBox();
             v2.setFillWidth(true);
             v2.setSpacing(10);
+            v2.setMaxWidth(1.7976931348623157E308);
             v1.setSpacing(10);
-            v1.setPadding(new Insets(10, 0, 0, 0));
+            v1.setPadding(new Insets(30, 0, 0, 0));
             v1.setMinWidth(100);
 
             for(int i = 0; i < this.matcher.size(); i++) {
                 DrivingConditionMatchmaker conditionMatchmaker = this.matcher.get(i);
                 Button button = new Button(Ref.language.getString("button." + conditionMatchmaker.name()));
+                button.setPadding(new Insets(10));
+                button.setMaxWidth(1.7976931348623157E308);
                 int finalI = i;
                 button.setOnAction(event -> {
-                    if(this.matcher.size() > finalI)
-                    switch (DrivingConditionMatchmaker.valueOf(button.getText())) {
-                        case OR -> {
+                    if(this.matcher.size() > finalI) {
+                        Ref.LOGGER.info(button.getText() + " " + Ref.language.getString("button.OR"));
+                        if (button.getText().equals(Ref.language.getString("button.OR"))) {
                             this.matcher.remove(finalI);
                             this.matcher.add(finalI, DrivingConditionMatchmaker.AND);
-                            button.setText(Ref.language.getString("button." + this.matcher.get(finalI).name()));
+                            Platform.runLater(() -> button.setText(Ref.language.getString("button." + this.matcher.get(finalI).name())));
                         }
-                        case AND -> {
+                        if (button.getText().equals(Ref.language.getString("button.AND"))) {
                             this.matcher.remove(finalI);
                             this.matcher.add(finalI, DrivingConditionMatchmaker.THEN);
-                            button.setText(Ref.language.getString("button." + this.matcher.get(finalI).name()));
+                            Platform.runLater(() -> button.setText(Ref.language.getString("button." + this.matcher.get(finalI).name())));
                         }
-                        case THEN -> {
+                        if (button.getText().equals(Ref.language.getString("button.THEN"))) {
                             this.matcher.remove(finalI);
                             this.matcher.add(finalI, DrivingConditionMatchmaker.OR);
-                            button.setText(Ref.language.getString("button." + this.matcher.get(finalI).name()));
+                            Platform.runLater(() -> button.setText(Ref.language.getString("button." + this.matcher.get(finalI).name())));
                         }
                     }
                 });
@@ -204,6 +209,7 @@ public class TrainStationManager {
             Button addCondition = new Button(Ref.language.getString("button.add_condition"));
 
             addCondition.getStyleClass().add("plan-area");
+            addCondition.setMaxWidth(1.7976931348623157E308);
 
             Button addTimeCondition = new Button(Ref.language.getString("button.time_condition"));
 
@@ -224,6 +230,8 @@ public class TrainStationManager {
             v2.getChildren().add(addCondition);
 
             HBox hBox = new HBox(v1, v2);
+            hBox.setSpacing(10);
+            hBox.setMaxWidth(1.7976931348623157E308);
 
             box.getChildren().addAll(station, hBox);
         }

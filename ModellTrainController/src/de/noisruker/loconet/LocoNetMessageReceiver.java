@@ -66,8 +66,6 @@ public class LocoNetMessageReceiver {
 				if (message == null)
 					continue;
 
-				Ref.LOGGER.info("Get Message");
-
 				if(Arrays.equals(message, checkMessage))
 					checkMessage = null;
 
@@ -82,7 +80,6 @@ public class LocoNetMessageReceiver {
 
 				for (LocoNetMessageListener listener : this.listeners)
 					try {
-						Ref.LOGGER.info("Start listener " + listener);
 						listener.progressMessage(new LocoNetMessage(type, values).toMessage());
 					} catch (Exception e) {
 						Ref.LOGGER.log(Level.SEVERE, "Exception due to process message", e);
