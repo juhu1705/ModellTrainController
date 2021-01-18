@@ -18,6 +18,7 @@ import javafx.scene.layout.VBox;
 import org.controlsfx.control.PopOver;
 import org.kordamp.ikonli.javafx.FontIcon;
 
+import javax.xml.namespace.QName;
 import java.util.ArrayList;
 
 public class TrainStationManager {
@@ -53,8 +54,10 @@ public class TrainStationManager {
         if(this.stations.size() <= actual) {
             if(!this.stations.isEmpty())
                 actual = 0;
-            else
+            else {
                 actual = -1;
+                return;
+            }
         }
 
         train.setDestination(this.stations.get(actual).sensor);
@@ -132,6 +135,7 @@ public class TrainStationManager {
                             }
                         }
                     }
+                Ref.LOGGER.info("To Return: " + toReturn);
                 return toReturn;
             }
             return true;
@@ -165,10 +169,11 @@ public class TrainStationManager {
             v2.setSpacing(10);
             v1.setSpacing(10);
             v1.setPadding(new Insets(10, 0, 0, 0));
+            v1.setMinWidth(100);
 
             for(int i = 0; i < this.matcher.size(); i++) {
                 DrivingConditionMatchmaker conditionMatchmaker = this.matcher.get(i);
-                Button button = new Button(conditionMatchmaker.name());
+                Button button = new Button(Ref.language.getString("button." + conditionMatchmaker.name()));
                 int finalI = i;
                 button.setOnAction(event -> {
                     if(this.matcher.size() > finalI)
@@ -176,17 +181,17 @@ public class TrainStationManager {
                         case OR -> {
                             this.matcher.remove(finalI);
                             this.matcher.add(finalI, DrivingConditionMatchmaker.AND);
-                            button.setText(this.matcher.get(finalI).name());
+                            button.setText(Ref.language.getString("button." + this.matcher.get(finalI).name()));
                         }
                         case AND -> {
                             this.matcher.remove(finalI);
                             this.matcher.add(finalI, DrivingConditionMatchmaker.THEN);
-                            button.setText(this.matcher.get(finalI).name());
+                            button.setText(Ref.language.getString("button." + this.matcher.get(finalI).name()));
                         }
                         case THEN -> {
                             this.matcher.remove(finalI);
                             this.matcher.add(finalI, DrivingConditionMatchmaker.OR);
-                            button.setText(this.matcher.get(finalI).name());
+                            button.setText(Ref.language.getString("button." + this.matcher.get(finalI).name()));
                         }
                     }
                 });

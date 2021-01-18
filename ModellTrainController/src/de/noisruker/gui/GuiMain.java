@@ -655,6 +655,7 @@ public class GuiMain implements Initializable {
         for(Sensor s: Sensor.getAllSensors()) {
             if(s.shouldBeListed()) {
                 Button b = new Button(s.toString());
+                b.setMinWidth(200);
                 b.setOnAction(event -> {
                     if(this.actual != null) {
                         this.actual.getTrainStationManager().addStation(s, this.temporary.isSelected());

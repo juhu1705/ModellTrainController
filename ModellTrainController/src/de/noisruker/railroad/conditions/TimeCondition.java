@@ -18,6 +18,7 @@ public class TimeCondition extends AbstractDrivingConditions {
 
     public TimeCondition(int timeToWait) {
         this.timeToWait = timeToWait;
+        this.time = this.timeToWait;
     }
 
     @Override
@@ -36,6 +37,7 @@ public class TimeCondition extends AbstractDrivingConditions {
 
     private void updateGui() {
         if(super.isInCheck) {
+            Ref.LOGGER.info("Time left " + this.time);
             if(this.time > 0 && !condition.getStyleClass().contains("in-progress"))
                 condition.getStyleClass().add("in-progress");
             else if(this.time == 0 && !condition.getStyleClass().contains("checked"))
@@ -55,6 +57,7 @@ public class TimeCondition extends AbstractDrivingConditions {
     @Override
     public void addToGui(VBox box) {
         this.condition.getChildren().clear();
+        this.condition.setPadding(new Insets(10));
         Button waitingTime = new Button(timeToWait + " s");
 
         Spinner<Integer> spinner = new Spinner<>();
@@ -77,6 +80,10 @@ public class TimeCondition extends AbstractDrivingConditions {
         waitingTime.setOnAction(event -> popOver.show(waitingTime));
 
         Label passed = new Label(Ref.language.getString("label.time_passed"));
+
+        passed.setMaxWidth(1.7976931348623157E308);
+        passed.setMaxHeight(1.7976931348623157E308);
+
         condition.getChildren().addAll(waitingTime, passed);
         condition.getStyleClass().add("plan-area");
 
