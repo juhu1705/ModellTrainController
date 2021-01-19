@@ -133,7 +133,7 @@ public class Railway {
     }
 
     public HashMap<Switch, Integer> getSwitches() {
-        HashMap<Switch, Integer> switches = this.waitForSwitch;
+        HashMap<Switch, Integer> switches = (HashMap<Switch, Integer>) this.waitForSwitch.clone();
         this.waitForSwitch.clear();
         return switches;
     }
