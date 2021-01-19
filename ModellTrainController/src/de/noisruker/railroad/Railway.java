@@ -125,12 +125,17 @@ public class Railway {
         return (Sensor) element;
     }
 
-    public void activateSwitches() {
-        for(Map.Entry<Switch, Integer> r: this.waitForSwitch.entrySet()) {
+    public void activateSwitches(HashMap<Switch, Integer> switches) {
+        for(Map.Entry<Switch, Integer> r: switches.entrySet()) {
             Ref.LOGGER.info("Switch " + r.getKey().setSwitchTo(this.way.get(r.getValue() - 1).getPosition(),
                     this.way.get(r.getValue() + 1).getPosition()));
         }
+    }
+
+    public HashMap<Switch, Integer> getSwitches() {
+        HashMap<Switch, Integer> switches = this.waitForSwitch;
         this.waitForSwitch.clear();
+        return switches;
     }
 
     private AbstractRailroadElement next() {
@@ -288,7 +293,7 @@ public class Railway {
             train.stopTrain();
         } else {
             train.nextSensor.addTrain(train);
-            this.activateSwitches();
+            this.activateSwitches(this.getSwitches());
         }
 
         if(train.nextSensor.equals(train.destination))
@@ -307,7 +312,7 @@ public class Railway {
                 train.stopTrain();
         } else {
             train.nextNextSensor.addTrain(train);
-            this.activateSwitches();
+            train.waitForSwitch.put(train.nextSensor, this.getSwitches());
         }
     }
 

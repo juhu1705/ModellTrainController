@@ -13,6 +13,7 @@ import de.noisruker.loconet.messages.*;
 import de.noisruker.loconet.LocoNet;
 import de.noisruker.railroad.elements.AbstractRailroadElement;
 import de.noisruker.railroad.elements.Sensor;
+import de.noisruker.railroad.elements.Switch;
 import de.noisruker.util.Config;
 import de.noisruker.util.Ref;
 import de.noisruker.util.Util;
@@ -290,10 +291,13 @@ public class Train implements Serializable, Comparable<Train> {
 
 	/* Methods for the automatic driving process */
 
+	HashMap<Sensor, HashMap<Switch, Integer>> waitForSwitch = new HashMap<>();
+
 	public void trainEnter(int nodeAddress) {
 		if(this.stopAdd != null && this.stopAdd.getAddress() == nodeAddress) {
 			this.applyBreakSpeed();
 		}
+
 		if(this.destination != null && this.destination.getAddress() == nodeAddress && this.destination.isFree(this) &&
 				(this.destination.equals(this.nextSensor) || this.destination.equals(this.nextNextSensor))) {
 			this.destination.addTrain(this);
@@ -330,6 +334,8 @@ public class Train implements Serializable, Comparable<Train> {
 				this.nextSensor = this.nextNextSensor;
 				if(GuiMain.getInstance() != null && this.equals(GuiMain.getInstance().actual))
 					Platform.runLater(() -> GuiMain.getInstance().actualPosition.setValue(this.actualSensor.toString()));
+				if(this.actualSensor != null && this.actualSensor.getAddress() == nodeAddress && this.waitForSwitch.containsKey(this.actualSensor))
+					this.railway.activateSwitches(this.waitForSwitch.remove(this.actualSensor));
 				return;
 			}
 
@@ -340,8 +346,8 @@ public class Train implements Serializable, Comparable<Train> {
 					this.stopTrain();
 			} else {
 				s.addTrain(this);
-				this.railway.activateSwitches();
 			}
+			this.waitForSwitch.put(this.nextNextSensor, this.railway.getSwitches());
 			this.previousSensor = this.actualSensor;
 			this.actualSensor = this.nextSensor;
 			this.railway.setLastPosToTrain(this, this.actualSensor);
@@ -351,7 +357,8 @@ public class Train implements Serializable, Comparable<Train> {
 			if(GuiMain.getInstance() != null && this.equals(GuiMain.getInstance().actual))
 				Platform.runLater(() -> GuiMain.getInstance().actualPosition.setValue(this.actualSensor.toString()));
 		}
-
+		if(this.actualSensor != null && this.actualSensor.getAddress() == nodeAddress && this.waitForSwitch.containsKey(this.actualSensor))
+			this.railway.activateSwitches(this.waitForSwitch.remove(this.actualSensor));
 	}
 
 	public void trainLeft(int nodeAddress) {
@@ -404,10 +411,13 @@ public class Train implements Serializable, Comparable<Train> {
 				if(this.nextNextSensor != null && this.nextNextSensor.isFree(this)) {
 					this.applyNormalSpeed();
 					this.nextNextSensor.addTrain(this);
-					this.railway.activateSwitches();
+					if(this.waitForSwitch.containsKey(this.actualSensor))
+						this.railway.activateSwitches(this.waitForSwitch.remove(this.actualSensor));
+					this.waitForSwitch.put(this.nextSensor, this.railway.getSwitches());
 				} else if(this.nextNextSensor == null) {
 					this.applyNormalSpeed();
-					this.railway.activateSwitches();
+					if(this.waitForSwitch.containsKey(this.actualSensor))
+						this.railway.activateSwitches(this.waitForSwitch.remove(this.actualSensor));
 				}
 			}
 		}
