@@ -313,19 +313,22 @@ public class Train implements Serializable, Comparable<Train> {
 				this.applyBreakSpeed();
 				this.previousSensor = this.actualSensor;
 				this.actualSensor = this.destination;
+				if(this.railway != null)
+					this.railway.setPositions(this);
 			}
-			if(GuiMain.getInstance() != null)
+			if(GuiMain.getInstance() != null && this.equals(GuiMain.getInstance().actual))
 				Platform.runLater(() -> GuiMain.getInstance().actualPosition.setValue(this.actualSensor.toString()));
 			return;
 		}
 		if(this.nextSensor != null && this.nextSensor.getAddress() == nodeAddress && this.destination != null && this.railway != null) {
 			Ref.LOGGER.info("Last Position: " + this.previousSensor + "; " + this.actualSensor + "; " + nextSensor);
-			Sensor s = this.railway.getNextSensor();
+			Sensor s = this.railway.getNextSensor(this.nextNextSensor);
 			if(s == null) {
 				this.previousSensor = this.actualSensor;
 				this.actualSensor = this.nextSensor;
+				this.railway.setLastPosToTrain(this, this.actualSensor);
 				this.nextSensor = this.nextNextSensor;
-				if(GuiMain.getInstance() != null)
+				if(GuiMain.getInstance() != null && this.equals(GuiMain.getInstance().actual))
 					Platform.runLater(() -> GuiMain.getInstance().actualPosition.setValue(this.actualSensor.toString()));
 				return;
 			}
@@ -341,10 +344,11 @@ public class Train implements Serializable, Comparable<Train> {
 			}
 			this.previousSensor = this.actualSensor;
 			this.actualSensor = this.nextSensor;
+			this.railway.setLastPosToTrain(this, this.actualSensor);
 			this.nextSensor = this.nextNextSensor;
 			this.nextNextSensor = s;
 
-			if(GuiMain.getInstance() != null)
+			if(GuiMain.getInstance() != null && this.equals(GuiMain.getInstance().actual))
 				Platform.runLater(() -> GuiMain.getInstance().actualPosition.setValue(this.actualSensor.toString()));
 		}
 
@@ -378,17 +382,22 @@ public class Train implements Serializable, Comparable<Train> {
 
 	private void checkDriving() {
 		if(this.railway == null && this.destination != null) {
+			Ref.LOGGER.info("Calculate railway");
 			this.railway = LocoNet.getRailroad().findWay(this.actualSensor, this.destination, this.prev);
 			if(railway == null) {
+				Ref.LOGGER.warning("No railway was found");
 				return;
 			}
+
 			this.railway.init(this);
 			if(this.destination == null) {
+				Ref.LOGGER.warning("Error due to init Railway");
 				this.railway = null;
 				return;
 			}
 			if(this.nextSensor.isFree(this) && this.nextNextSensor == null || this.nextNextSensor.isFree(this))
 				this.applyNormalSpeed();
+			Ref.LOGGER.info("Start driving: " + this.nextSensor.isFree(this) + "; " + (this.nextNextSensor == null || this.nextNextSensor.isFree(this)));
 		} else if(this.railway != null && this.destination != null && this.speed == 0) {
 			if(this.nextSensor != null && this.nextSensor.isFree(this)) {
 				this.nextSensor.addTrain(this);

@@ -20,16 +20,17 @@ public class Railway {
 
     private HashMap<Switch, Integer> waitForSwitch = new HashMap<>();
 
-    private int actualIndex = 0, startIndex = 0, positionIndex = 0;
+    private int actualIndex = 0, startIndex = 0, positionIndex = 0, positionIndex1 = 0;
 
-    private final boolean priorWayTrue;
+    private final boolean priorWayTrue, checkSensors;
 
-    public Railway(Position from, Position to, Position lastPosition, boolean priorWayTrue) {
+    public Railway(Position from, Position to, Position lastPosition, boolean priorWayTrue, boolean checkSensors) {
         this.from = from;
         this.to = to;
         this.lastPos = lastPosition;
         this.actual = lastPosition;
         this.priorWayTrue = priorWayTrue;
+        this.checkSensors = checkSensors;
         appendElement(LocoNet.getRailroad().getElementByPosition(from));
     }
 
@@ -57,6 +58,10 @@ public class Railway {
         }
         if(actual == null)
             return;
+        if(actualIndex < this.startIndex) {
+            this.fail = true;
+            return;
+        }
         Switch aSwitch = (Switch) actual;
         Ref.LOGGER.info("Test " + ((Switch) actual).isSwitchPossible(this.lastPos));
         appendElement(aSwitch);
@@ -90,7 +95,19 @@ public class Railway {
         return this.getLastElement();
     }
 
-    public Sensor getNextSensor() {
+    public void setLastPosToTrain(Train train, Sensor sensor) {
+        AbstractRailroadElement element = this.nextForLastPositionSetting();
+        while (!(element instanceof Sensor) && !sensor.equals(element)) {
+            if(element == null)
+                break;
+
+            element = nextForLastPositionSetting();
+        }
+        if(element != null && this.positionIndex1 - 1 >= 0)
+            train.setLastPosition(this.way.get(this.positionIndex1 - 1).getPosition());
+    }
+
+    public Sensor getNextSensor(Sensor sensor) {
         AbstractRailroadElement element = next();
         while (!(element instanceof Sensor)) {
             if(element == null)
@@ -103,11 +120,12 @@ public class Railway {
 
             element = next();
         }
+        if(element != null && sensor.getAddress() == ((Sensor)element).getAddress())
+            return this.getNextSensor(sensor);
         return (Sensor) element;
     }
 
     public void activateSwitches() {
-        Ref.LOGGER.info("Length: " + this.waitForSwitch.size());
         for(Map.Entry<Switch, Integer> r: this.waitForSwitch.entrySet()) {
             Ref.LOGGER.info("Switch " + r.getKey().setSwitchTo(this.way.get(r.getValue() - 1).getPosition(),
                     this.way.get(r.getValue() + 1).getPosition()));
@@ -121,6 +139,15 @@ public class Railway {
             return this.way.get(positionIndex);
         }
         positionIndex--;
+        return null;
+    }
+
+    private AbstractRailroadElement nextForLastPositionSetting() {
+        positionIndex1++;
+        if(positionIndex1 < this.actualIndex) {
+            return this.way.get(positionIndex1);
+        }
+        positionIndex1--;
         return null;
     }
 
@@ -148,9 +175,10 @@ public class Railway {
             }
             this.checkLastElement();
         }
+        if(fail)
+            return null;
+
         this.handleDuplicatedSwitches();
-
-
 
         return this;
     }
@@ -194,6 +222,14 @@ public class Railway {
         AbstractRailroadElement element = this.getLastElement();
         if(element instanceof Switch)
             this.handleSwitch((Switch) element);
+        else if(checkSensors && element instanceof Sensor) {
+            if(((Sensor) element).getState()) {
+                this.goToLastSwitch();
+                if(this.fail)
+                    return;
+                this.checkLastElement();
+            }
+        }
     }
 
     private void handleSwitch(Switch s) {
@@ -243,7 +279,7 @@ public class Railway {
     }
 
     public void init(Train train) {
-        train.nextSensor = this.getNextSensor();
+        train.nextSensor = this.getNextSensor(train.actualSensor);
         if(train.nextSensor == null) {
             train.destination = null;
             return;
@@ -258,7 +294,7 @@ public class Railway {
         if(train.nextSensor.equals(train.destination))
             return;
 
-        train.nextNextSensor = this.getNextSensor();
+        train.nextNextSensor = this.getNextSensor(train.nextSensor);
 
         if(train.nextNextSensor == null) {
             train.destination = null;

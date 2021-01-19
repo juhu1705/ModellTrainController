@@ -88,12 +88,20 @@ public class Railroad {
     }
 
     public Railway findWay(Sensor from, Sensor to, Position lastPosition) {
-        Railway priorTrue = new Railway(from.getPosition(), to.getPosition(), lastPosition, true).calculateRailway();
-        Railway priorFalse = new Railway(from.getPosition(), to.getPosition(), lastPosition, false).calculateRailway();
-        if(priorTrue == null)
-            return priorFalse;
+        Railway priorTrueAndSensors = new Railway(from.getPosition(), to.getPosition(), lastPosition, true, true).calculateRailway();
+        Railway priorFalseAndSensors = new Railway(from.getPosition(), to.getPosition(), lastPosition, false, true).calculateRailway();
 
-        return priorTrue.isShorterThan(priorFalse) ? priorTrue : priorFalse;
+        if(priorTrueAndSensors == null) {
+            if(priorFalseAndSensors != null)
+                return priorFalseAndSensors;
+            Railway priorTrue = new Railway(from.getPosition(), to.getPosition(), lastPosition, true, false).calculateRailway();
+            Railway priorFalse = new Railway(from.getPosition(), to.getPosition(), lastPosition, false, false).calculateRailway();
+            if(priorTrue == null)
+                return priorFalse;
+
+            return priorTrue.isShorterThan(priorFalse) ? priorTrue : priorFalse;
+        }
+        return priorTrueAndSensors.isShorterThan(priorFalseAndSensors) ? priorTrueAndSensors : priorFalseAndSensors;
     }
 
     public void trainEnter(final int nodeAddress) {

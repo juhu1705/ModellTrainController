@@ -149,6 +149,11 @@
     -fx-text-fill: lightgrey;
 }
 
+.temporary {
+    -fx-background-color: #323232;
+    -fx-border-color: #343434;
+}
+
 .in-progress {
     -fx-background-color: #ff0000;
     -fx-border-color: #ce0000;

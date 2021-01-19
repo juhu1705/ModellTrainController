@@ -190,6 +190,10 @@ public class GuiLoading implements Initializable {
 
             Progress.getInstance().setProgress(0);
 
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException ignored) { }
+
             if(Config.reportAddress > 0)
                 new SwitchMessage((byte) (Config.reportAddress - 1), true).toLocoNetMessage().send();
 

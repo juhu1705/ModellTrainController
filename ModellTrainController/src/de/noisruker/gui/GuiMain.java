@@ -86,7 +86,7 @@ public class GuiMain implements Initializable {
     @FXML
     public Button actualSensor, addStation;
 
-    private Train actual;
+    public Train actual;
     private Sensor sensor;
 
     @FXML
@@ -202,19 +202,24 @@ public class GuiMain implements Initializable {
         String name = this.trains.getSelectionModel().getSelectedItem().getValue();
         for(Train train: LocoNet.getInstance().getTrains())
             if(train.equals(name)) {
-                this.actual = train;
-                trainName.setText(name);
-                trainName1.setText(name);
-                Util.runNext(() -> train.setDirection(true));
-                if(Config.mode.equals(Config.MODE_PLAN)) {
-                    this.actualPosition.setValue(train.getActualPosition() != null ? train.getActualPosition().toString() : "");
-                    this.actualPosition.setDisable(false);
-                    actualSensor.setDisable(false);
-                    this.actualSensor.setText(train.getActualPosition() != null ?
-                            train.getActualPosition().toString() :
-                            Ref.language.getString("button.unset"));
-                }
+                this.setTrain(train);
             }
+    }
+
+    public void setTrain(Train train) {
+        this.actual = train;
+        trainName.setText(this.actual.getName());
+        trainName1.setText(this.actual.getName());
+        Util.runNext(() -> train.setDirection(true));
+        if(Config.mode.equals(Config.MODE_PLAN)) {
+            this.actualPosition.setValue(train.getActualPosition() != null ? train.getActualPosition().toString() : "");
+            this.actualPosition.setDisable(false);
+            actualSensor.setDisable(false);
+            this.actualSensor.setText(train.getActualPosition() != null ?
+                    train.getActualPosition().toString() :
+                    Ref.language.getString("button.unset"));
+        }
+        this.updateTrainStationManager();
     }
 
     public void onCreateRailroad(ActionEvent event) {
@@ -484,7 +489,7 @@ public class GuiMain implements Initializable {
         actualPosition = new ComboBox();
 
         if(!LocoNet.getInstance().getTrains().isEmpty())
-            actual = LocoNet.getInstance().getTrains().get(0);
+            this.setTrain(LocoNet.getInstance().getTrains().get(0));
         else {
             actualPosition.setDisable(true);
             actualSensor.setDisable(true);

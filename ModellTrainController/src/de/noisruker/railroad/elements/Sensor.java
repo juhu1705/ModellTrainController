@@ -88,6 +88,10 @@ public class Sensor extends AbstractRailroadElement {
 
 	public boolean addTrain(Train t) {
 		if(this.train == null) {
+			for(Sensor sensor: Sensor.getAllSensors()) {
+				if(this.getAddress() == sensor.getAddress())
+					sensor.train = t;
+			}
 			this.train = t;
 			return true;
 		}

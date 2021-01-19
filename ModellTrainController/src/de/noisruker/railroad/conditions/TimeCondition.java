@@ -37,7 +37,6 @@ public class TimeCondition extends AbstractDrivingConditions {
 
     private void updateGui() {
         if(super.isInCheck) {
-            Ref.LOGGER.info("Time left " + this.time);
             if(this.time > 0 && !condition.getStyleClass().contains("in-progress"))
                 condition.getStyleClass().add("in-progress");
             else if(this.time == 0 && !condition.getStyleClass().contains("checked"))

@@ -42,13 +42,16 @@ public class TrainStationManager {
         if(this.actual == -1 && !stations.isEmpty()) {
             this.actual = 0;
             train.setDestination(this.stations.get(actual).sensor);
+            Platform.runLater(() -> this.stations.get(actual).button.setSelected(true));
         }
     }
 
     public void setNextStation() {
-        if(this.stations.get(actual).shouldBeDeleted())
+        if(this.stations.get(actual).shouldBeDeleted()) {
             stations.remove(actual);
-        else
+            if(GuiMain.getInstance() != null)
+                Platform.runLater(GuiMain.getInstance()::updateTrainStationManager);
+        } else
             actual++;
 
         if(this.stations.size() <= actual) {
@@ -65,15 +68,21 @@ public class TrainStationManager {
     }
 
     public void activateStation(TrainStation station) {
+        if(this.stations.get(actual).shouldBeDeleted()) {
+            stations.remove(actual);
+            if (GuiMain.getInstance() != null)
+                Platform.runLater(GuiMain.getInstance()::updateTrainStationManager);
+        }
         if(!this.stations.contains(station)) {
             this.stations.add(station);
             if(GuiMain.getInstance() != null)
-                Platform.runLater(() -> GuiMain.getInstance().updateTrainStationManager());
+                Platform.runLater(GuiMain.getInstance()::updateTrainStationManager);
         }
         this.actual = this.stations.indexOf(station);
         train.stopTrainImmediately();
         train.resetRailway();
         train.setDestination(this.stations.get(actual).sensor);
+        this.stations.get(actual).init();
     }
 
     public void addStation(Sensor sensor, boolean isTemporary) {
@@ -81,7 +90,7 @@ public class TrainStationManager {
         this.stations.add(station = new TrainStation(sensor, isTemporary, this));
 
         if(GuiMain.getInstance() != null)
-            Platform.runLater(() -> GuiMain.getInstance().updateTrainStationManager());
+            Platform.runLater(GuiMain.getInstance()::updateTrainStationManager);
     }
 
     public void addStationsToGUI(VBox box) {
@@ -137,7 +146,6 @@ public class TrainStationManager {
                             }
                         }
                     }
-                Ref.LOGGER.info("To Return: " + toReturn);
                 return toReturn;
             }
             return true;
@@ -163,6 +171,8 @@ public class TrainStationManager {
 
             HBox station = new HBox(button, sensorName);
             station.getStyleClass().add("plan-area");
+            if(this.isTemporary)
+                station.getStyleClass().add("temporary");
             station.setPadding(new Insets(5, 10, 5, 10));
             station.setSpacing(20);
 
