@@ -72,9 +72,9 @@ public class LocoNetConnection {
 						lastType = Util.getMessageType(nextByte);
 					}
 					if (bytes.length > 3) {
-						if(MessageType.OPC_INPUT_REP.equals(lastType) && Config.reportAddress > 0)
-							new SwitchMessage((byte) (Config.reportAddress - 1), true).toLocoNetMessage().send();
-
+						if(MessageType.OPC_INPUT_REP.equals(lastType) && Config.reportAddress > 0) {
+							//new SwitchMessage((byte) (Config.reportAddress - 1), true).toLocoNetMessage().send();
+						}
 						lastType = Util.getMessageType(nextByte);
 						bytes = new byte[]{
 								nextByte

@@ -68,7 +68,7 @@ public class TrainStationManager {
     }
 
     public void activateStation(TrainStation station) {
-        if(this.stations.get(actual).shouldBeDeleted()) {
+        if(this.actual != -1 && this.stations.get(actual).shouldBeDeleted()) {
             stations.remove(actual);
             if (GuiMain.getInstance() != null)
                 Platform.runLater(GuiMain.getInstance()::updateTrainStationManager);
@@ -105,9 +105,11 @@ public class TrainStationManager {
             train.stopTrainImmediately();
             train.resetRailway();
             this.setNextStation();
+
             return;
         }
         this.stations.remove(station);
+        actual = -1;
         if(GuiMain.getInstance() != null)
             Platform.runLater(GuiMain.getInstance()::updateTrainStationManager);
     }
