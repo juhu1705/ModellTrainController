@@ -1,9 +1,10 @@
 package de.noisruker.railroad;
 
-import com.sun.javafx.charts.Legend;
 import de.noisruker.gui.GuiMain;
-import de.noisruker.railroad.conditions.AbstractDrivingConditions;
+import de.noisruker.railroad.conditions.AbstractDrivingCondition;
+import de.noisruker.railroad.conditions.SensorCondition;
 import de.noisruker.railroad.conditions.TimeCondition;
+import de.noisruker.railroad.conditions.TrainOnSensorCondition;
 import de.noisruker.railroad.elements.Sensor;
 import de.noisruker.util.Ref;
 import de.noisruker.util.Util;
@@ -18,7 +19,6 @@ import javafx.scene.layout.VBox;
 import org.controlsfx.control.PopOver;
 import org.kordamp.ikonli.javafx.FontIcon;
 
-import javax.xml.namespace.QName;
 import java.util.ArrayList;
 
 public class TrainStationManager {
@@ -99,20 +99,33 @@ public class TrainStationManager {
         this.stations.forEach(s -> s.addStationToGUI(box, group));
     }
 
+    public void deleteStation(TrainStation station) {
+        if(this.stations.get(actual).equals(station)) {
+            station.isTemporary = true;
+            train.stopTrainImmediately();
+            train.resetRailway();
+            this.setNextStation();
+            return;
+        }
+        this.stations.remove(station);
+        if(GuiMain.getInstance() != null)
+            Platform.runLater(GuiMain.getInstance()::updateTrainStationManager);
+    }
+
     public class TrainStation {
 
         ToggleButton button = new ToggleButton();
         TrainStationManager myManager;
 
         private final Sensor sensor;
-        private final boolean isTemporary;
+        private boolean isTemporary;
 
-        public TrainStation(Sensor sensor, boolean isTemporary , TrainStationManager myManager) {
+        public TrainStation(Sensor sensor, boolean isTemporary, TrainStationManager myManager) {
             this.sensor = sensor;
             this.isTemporary = isTemporary;
             this.myManager = myManager;
 
-            this.addCondition(new TimeCondition(10));
+            //this.addCondition(new TimeCondition(10));
             button.setGraphic(new FontIcon("fas-caret-right"));
             button.setOnAction(action -> {
                 button.setSelected(true);
@@ -120,7 +133,7 @@ public class TrainStationManager {
             });
         }
 
-        private ArrayList<AbstractDrivingConditions> conditions = new ArrayList<>();
+        private ArrayList<AbstractDrivingCondition> conditions = new ArrayList<>();
         private ArrayList<DrivingConditionMatchmaker> matcher = new ArrayList<>();
 
         private boolean update() {
@@ -130,7 +143,7 @@ public class TrainStationManager {
                 boolean toReturn = conditions.get(0).isConditionTrue();
                 if(this.conditions.size() > 1)
                     for(int i = 1; i < conditions.size(); i++) {
-                        AbstractDrivingConditions dc = this.conditions.get(i);
+                        AbstractDrivingCondition dc = this.conditions.get(i);
                         if(matcher.get(i - 1) != DrivingConditionMatchmaker.THEN || toReturn) {
                             dc.setChecking(true);
                             dc.updateCondition();
@@ -153,13 +166,13 @@ public class TrainStationManager {
 
         public void init() {
             Platform.runLater(() -> this.button.setSelected(true));
-            this.conditions.forEach(AbstractDrivingConditions::start);
+            this.conditions.forEach(AbstractDrivingCondition::start);
         }
 
         public boolean shouldBeDeleted() {
-            this.conditions.forEach(abstractDrivingConditions -> {
-                abstractDrivingConditions.setChecking(false);
-                Platform.runLater(abstractDrivingConditions::updateCondition);
+            this.conditions.forEach(abstractDrivingCondition -> {
+                abstractDrivingCondition.setChecking(false);
+                Platform.runLater(abstractDrivingCondition::updateCondition);
             });
 
             return this.isTemporary;
@@ -168,8 +181,14 @@ public class TrainStationManager {
         public void addStationToGUI(VBox box, ToggleGroup group) {
             button.setToggleGroup(group);
             Label sensorName = new Label(sensor.toString());
+            sensorName.setMaxWidth(1.7976931348623157E308);
+            Button delete = new Button();
+            delete.setOnAction(event -> {
+                this.myManager.deleteStation(this);
+            });
+            delete.setGraphic(new FontIcon("fas-trash"));
 
-            HBox station = new HBox(button, sensorName);
+            HBox station = new HBox(button, sensorName, delete);
             station.getStyleClass().add("plan-area");
             if(this.isTemporary)
                 station.getStyleClass().add("temporary");
@@ -214,7 +233,7 @@ public class TrainStationManager {
                 v1.getChildren().add(button);
             }
 
-            this.conditions.forEach(abstractDrivingConditions -> abstractDrivingConditions.addToGui(v2));
+            this.conditions.forEach(abstractDrivingCondition -> abstractDrivingCondition.addToGui(v2, this));
 
             Button addCondition = new Button(Ref.language.getString("button.add_condition"));
 
@@ -225,6 +244,24 @@ public class TrainStationManager {
 
             addTimeCondition.setOnAction(event -> {
                 this.addCondition(new TimeCondition(5));
+            });
+
+            Button addSensorFree = new Button(Ref.language.getString("button.sensor_free"));
+
+            addSensorFree.setOnAction(event -> {
+                this.addCondition(new SensorCondition(false));
+            });
+
+            Button addSensorOccupied = new Button(Ref.language.getString("button.sensor_occupied"));
+
+            addSensorOccupied.setOnAction(event -> {
+                this.addCondition(new SensorCondition(true));
+            });
+
+            Button addTrainOnSensor = new Button(Ref.language.getString("button.train_on_sensor"));
+
+            addTrainOnSensor.setOnAction(event -> {
+                this.addCondition(new TrainOnSensorCondition());
             });
 
             VBox popOverBox = new VBox(addTimeCondition);
@@ -246,13 +283,26 @@ public class TrainStationManager {
             box.getChildren().addAll(station, hBox);
         }
 
-        private void addCondition(AbstractDrivingConditions condition) {
+        private void addCondition(AbstractDrivingCondition condition) {
             if(!this.conditions.isEmpty())
                 this.matcher.add(DrivingConditionMatchmaker.AND);
             this.conditions.add(condition);
 
             if(GuiMain.getInstance() != null)
                 GuiMain.getInstance().updateTrainStationManager();
+        }
+
+        public void deleteCondition(AbstractDrivingCondition condition) {
+            if(this.conditions.isEmpty())
+                return;
+            if(this.conditions.size() == 1) {
+                this.conditions.remove(condition);
+                if(this.conditions.isEmpty())
+                    this.matcher.clear();
+            } else if(this.conditions.contains(condition)) {
+                this.conditions.remove(condition);
+                this.matcher.remove(this.matcher.size() - 1);
+            }
         }
     }
 

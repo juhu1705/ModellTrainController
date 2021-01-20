@@ -1,8 +1,9 @@
 package de.noisruker.railroad.conditions;
 
+import de.noisruker.railroad.TrainStationManager;
 import javafx.scene.layout.VBox;
 
-public abstract class AbstractDrivingConditions {
+public abstract class AbstractDrivingCondition {
 
     protected boolean isInCheck = false;
 
@@ -16,6 +17,6 @@ public abstract class AbstractDrivingConditions {
 
     public abstract void start();
 
-    public abstract void addToGui(VBox box);
+    public abstract void addToGui(VBox box, TrainStationManager.TrainStation station);
 
 }

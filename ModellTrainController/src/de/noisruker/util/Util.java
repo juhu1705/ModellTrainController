@@ -161,6 +161,14 @@ public class Util {
 		return null;
 	}
 
+	public static Train getTrainByString(String s, ArrayList<Train> trains) {
+		for(Train train: LocoNet.getInstance().getTrains())
+			if(train.equals(s)) {
+				return train;
+			}
+		return null;
+	}
+
 	private static final ArrayList<Runnable> runnables = new ArrayList<>();
 	private static boolean isRunning = false;
 

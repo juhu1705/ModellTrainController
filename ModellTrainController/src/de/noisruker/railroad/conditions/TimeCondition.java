@@ -1,5 +1,6 @@
 package de.noisruker.railroad.conditions;
 
+import de.noisruker.railroad.TrainStationManager;
 import de.noisruker.util.Ref;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -10,8 +11,9 @@ import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.PopOver;
+import org.kordamp.ikonli.javafx.FontIcon;
 
-public class TimeCondition extends AbstractDrivingConditions {
+public class TimeCondition extends AbstractDrivingCondition {
 
     private int timeToWait, time;
     HBox condition = new HBox();
@@ -54,7 +56,7 @@ public class TimeCondition extends AbstractDrivingConditions {
     }
 
     @Override
-    public void addToGui(VBox box) {
+    public void addToGui(VBox box, TrainStationManager.TrainStation station) {
         this.condition.getChildren().clear();
         this.condition.setPadding(new Insets(10));
         this.condition.setSpacing(20);
@@ -82,12 +84,18 @@ public class TimeCondition extends AbstractDrivingConditions {
 
         Label passed = new Label(Ref.language.getString("label.time_passed"));
 
+        Button delete = new Button();
+        delete.setOnAction(event -> {
+            station.deleteCondition(this);
+        });
+        delete.setGraphic(new FontIcon("fas-trash"));
+
         passed.setMaxWidth(1.7976931348623157E308);
         passed.setMaxHeight(1.7976931348623157E308);
         condition.setMaxHeight(1.7976931348623157E308);
         condition.setMaxWidth(1.7976931348623157E308);
 
-        condition.getChildren().addAll(waitingTime, passed);
+        condition.getChildren().addAll(waitingTime, passed, delete);
         condition.getStyleClass().add("plan-area");
 
         box.getChildren().add(condition);
