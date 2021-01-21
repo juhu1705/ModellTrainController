@@ -22,6 +22,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -596,7 +597,12 @@ public class GuiMain implements Initializable {
         allSensors.setMinWidth(200);
         allSensors.setSpacing(10);
 
-        PopOver popOver1 = new PopOver(allSensors);
+        ScrollPane pane = new ScrollPane(allSensors);
+        pane.setFitToWidth(true);
+        pane.setFitToHeight(true);
+        pane.setVmax(500);
+
+        PopOver popOver1 = new PopOver(pane);
         popOver1.setArrowLocation(PopOver.ArrowLocation.TOP_CENTER);
         this.addStation.setOnAction(event -> popOver1.show(addStation));
 

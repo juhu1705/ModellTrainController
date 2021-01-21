@@ -295,7 +295,8 @@ public class Train implements Serializable, Comparable<Train> {
 
 	public void trainEnter(int nodeAddress) {
 		if(this.stopAdd != null && this.stopAdd.getAddress() == nodeAddress) {
-			this.applyBreakSpeed();
+			this.stopTrain();
+			this.stopAdd = null;
 		}
 
 		if(this.destination != null && this.destination.getAddress() == nodeAddress && this.destination.isFree(this) &&
@@ -372,10 +373,6 @@ public class Train implements Serializable, Comparable<Train> {
 			this.nextSensor = null;
 			this.nextNextSensor = null;
 			this.stopNext = false;
-		}
-		if(this.stopAdd != null && this.stopAdd.getAddress() == address) {
-			this.stopTrain();
-			this.stopAdd = null;
 		}
 	}
 

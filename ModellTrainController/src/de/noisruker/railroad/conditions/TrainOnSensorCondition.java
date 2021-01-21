@@ -9,6 +9,7 @@ import de.noisruker.util.Util;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -119,8 +120,10 @@ public class TrainOnSensorCondition extends AbstractDrivingCondition {
 
         passed.setMaxWidth(1.7976931348623157E308);
         passed.setMaxHeight(1.7976931348623157E308);
+        passed.setAlignment(Pos.CENTER);
         condition.setMaxHeight(1.7976931348623157E308);
         condition.setMaxWidth(1.7976931348623157E308);
+        condition.setFillHeight(true);
 
         condition.getChildren().addAll(train, passed, sensor, delete);
         condition.getStyleClass().add("plan-area");

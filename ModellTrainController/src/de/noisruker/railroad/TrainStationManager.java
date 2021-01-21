@@ -266,7 +266,7 @@ public class TrainStationManager {
                 this.addCondition(new TrainOnSensorCondition());
             });
 
-            VBox popOverBox = new VBox(addTimeCondition);
+            VBox popOverBox = new VBox(addTimeCondition, addSensorOccupied, addSensorFree, addTrainOnSensor);
             popOverBox.setSpacing(20);
             popOverBox.setPadding(new Insets(10));
 
@@ -281,6 +281,7 @@ public class TrainStationManager {
             HBox hBox = new HBox(v1, v2);
             hBox.setSpacing(10);
             hBox.setMaxWidth(1.7976931348623157E308);
+            hBox.setFillHeight(true);
 
             box.getChildren().addAll(station, hBox);
         }
@@ -291,7 +292,7 @@ public class TrainStationManager {
             this.conditions.add(condition);
 
             if(GuiMain.getInstance() != null)
-                GuiMain.getInstance().updateTrainStationManager();
+                Platform.runLater(GuiMain.getInstance()::updateTrainStationManager);
         }
 
         public void deleteCondition(AbstractDrivingCondition condition) {
@@ -305,6 +306,9 @@ public class TrainStationManager {
                 this.conditions.remove(condition);
                 this.matcher.remove(this.matcher.size() - 1);
             }
+
+            if(GuiMain.getInstance() != null)
+                Platform.runLater(GuiMain.getInstance()::updateTrainStationManager);
         }
     }
 
