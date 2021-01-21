@@ -9,6 +9,7 @@ import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.PopOver;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -38,6 +39,8 @@ public class SensorCondition extends AbstractDrivingCondition {
                     condition.getStyleClass().add("in-progress");
                 else if (this.isConditionTrue() && !condition.getStyleClass().contains("checked"))
                     condition.getStyleClass().add("checked");
+                if(!this.isConditionTrue())
+                    condition.getStyleClass().remove("checked");
             } else {
                 condition.getStyleClass().remove("in-progress");
                 condition.getStyleClass().remove("checked");
@@ -55,7 +58,7 @@ public class SensorCondition extends AbstractDrivingCondition {
         this.condition.getChildren().clear();
         this.condition.setPadding(new Insets(10));
         this.condition.setSpacing(20);
-        Button sensor = new Button("");
+        Button sensor = new Button(this.sensor == null ? "" : this.sensor.toString());
 
         ComboBox<String> comboBox = new ComboBox<>();
 
@@ -69,6 +72,8 @@ public class SensorCondition extends AbstractDrivingCondition {
         comboBox.setOnAction(event -> {
             if(comboBox.getValue() != null) {
                 this.sensor = Util.getSensorByString(comboBox.getValue(), Sensor.getAllSensors());
+                if(this.sensor != null)
+                    sensor.setText(this.sensor.toString());
             }
         });
 
@@ -83,6 +88,8 @@ public class SensorCondition extends AbstractDrivingCondition {
         sensor.setMinWidth(100);
 
         Label passed = new Label(Ref.language.getString(this.sensorState ? "label.occupied" : "label.free"));
+
+        HBox.setHgrow(passed, Priority.ALWAYS);
 
         Button delete = new Button();
         delete.setOnAction(event -> {

@@ -22,7 +22,7 @@ public class RequestSlotMessage implements Serializable, AbstractMessage {
 	}
 
 	@Override
-	public void send() throws IOException {
+	public void send() {
 		this.toLocoNetMessage().send();
 	}
 

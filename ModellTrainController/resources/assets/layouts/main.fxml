@@ -54,9 +54,13 @@
             </MenuBar>
             <ToolBar maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT">
                <items>
-                  <ComboBox nodeOrientation="LEFT_TO_RIGHT" prefWidth="150.0" />
-                  <Separator orientation="VERTICAL" prefHeight="25.0" prefWidth="0.0" />
+                  <ComboBox fx:id="mode" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" />
+                  <Separator orientation="VERTICAL" />
                    <Button contentDisplay="CENTER" mnemonicParsing="false" onAction="#onCreateRailroad" text="%button.create_railroad" />
+                  <Separator orientation="VERTICAL" />
+                  <Button mnemonicParsing="false" onAction="#onStopAllTrains" text="%button.stop_all_trains" />
+                  <Button mnemonicParsing="false" onAction="#onStopRailroad" text="%button.turn_off" />
+                  <Button mnemonicParsing="false" onAction="#onStartRailroad" text="%button.turn_on" />
                </items>
             </ToolBar>
          </children>

@@ -14,6 +14,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.PopOver;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -39,6 +40,8 @@ public class TrainOnSensorCondition extends AbstractDrivingCondition {
                     condition.getStyleClass().add("in-progress");
                 else if(this.isConditionTrue() && !condition.getStyleClass().contains("checked"))
                     condition.getStyleClass().add("checked");
+                if(!this.isConditionTrue())
+                    condition.getStyleClass().remove("checked");
             } else {
                 condition.getStyleClass().remove("in-progress");
                 condition.getStyleClass().remove("checked");
@@ -56,7 +59,7 @@ public class TrainOnSensorCondition extends AbstractDrivingCondition {
         this.condition.getChildren().clear();
         this.condition.setPadding(new Insets(10));
         this.condition.setSpacing(20);
-        Button sensor = new Button("");
+        Button sensor = new Button(this.sensor == null ? "" : this.sensor.toString());
 
         ComboBox<String> comboBox = new ComboBox<>();
 
@@ -70,6 +73,7 @@ public class TrainOnSensorCondition extends AbstractDrivingCondition {
         comboBox.setOnAction(event -> {
             if(comboBox.getValue() != null) {
                 this.sensor = Util.getSensorByString(comboBox.getValue(), Sensor.getAllSensors());
+                sensor.setText(this.sensor == null ? "" : this.sensor.toString());
             }
         });
 
@@ -83,7 +87,7 @@ public class TrainOnSensorCondition extends AbstractDrivingCondition {
         sensor.setOnAction(event -> popOver.show(sensor));
         sensor.setMinWidth(100);
 
-        Button train = new Button("");
+        Button train = new Button(this.train == null ? "" : this.train.getName());
 
         ComboBox<String> comboBoxTrains = new ComboBox<>();
 
@@ -97,13 +101,14 @@ public class TrainOnSensorCondition extends AbstractDrivingCondition {
         comboBoxTrains.setOnAction(event -> {
             if(comboBoxTrains.getValue() != null) {
                 this.train = Util.getTrainByString(comboBoxTrains.getValue(), LocoNet.getInstance().getTrains());
+                train.setText(this.train == null ? "" : this.train.getName());
             }
         });
 
-        VBox popOverBox2 = new VBox(comboBox);
+        VBox popOverBox2 = new VBox(comboBoxTrains);
         popOverBox2.setSpacing(20);
         popOverBox2.setPadding(new Insets(10));
-        PopOver popOver2 = new PopOver(popOverBox);
+        PopOver popOver2 = new PopOver(popOverBox2);
 
         popOver2.setArrowLocation(PopOver.ArrowLocation.TOP_CENTER);
 
@@ -111,6 +116,8 @@ public class TrainOnSensorCondition extends AbstractDrivingCondition {
         train.setMinWidth(100);
 
         Label passed = new Label(Ref.language.getString("label.on"));
+
+        HBox.setHgrow(passed, Priority.ALWAYS);
 
         Button delete = new Button();
         delete.setOnAction(event -> {

@@ -311,6 +311,9 @@ public class ConfigManager {
 						continue;
 					ConfigElement e = f.getAnnotation(ConfigElement.class);
 
+					if(!e.visible())
+						continue;
+
 					String fieldlocation = "";
 
 					for (String s : e.location().split("\\."))
@@ -511,6 +514,12 @@ public class ConfigManager {
 
 	public void registerIntegerMax(String s, int max) {
 		this.maxCounting.put(s, max);
+	}
+
+	public ArrayList<String> getRegisteredOptions(String s) {
+		if(this.options.containsKey(s + ".text"))
+			return this.options.get(s + ".text").options();
+		return null;
 	}
 
 	public void registerOptionParameters(String s, GetOptions options) {

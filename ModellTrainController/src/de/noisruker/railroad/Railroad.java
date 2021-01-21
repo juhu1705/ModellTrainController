@@ -56,7 +56,6 @@ public class Railroad {
     }
 
     private void handleMessage(SensorMessage s) {
-        Ref.LOGGER.info("Get Message");
         if(s.getState())
             trainEnter(s.getAddress());
         else
@@ -106,16 +105,12 @@ public class Railroad {
 
     public void trainEnter(final int nodeAddress) {
         LocoNet.getInstance().getTrains().forEach(t -> t.trainEnter(nodeAddress));
-        Ref.LOGGER.info("Trains handled enter");
         Sensor.getAllSensors().forEach(s -> s.onTrainEnter(nodeAddress));
-        Ref.LOGGER.info("Sensors handled enter");
     }
 
     public void trainLeft(final int nodeAddress) {
         LocoNet.getInstance().getTrains().forEach(t -> t.trainLeft(nodeAddress));
-        Ref.LOGGER.info("Trains handled left");
         Sensor.getAllSensors().forEach(s -> s.onTrainLeft(nodeAddress));
-        Ref.LOGGER.info("Sensors handled left");
     }
 
     public void update() {

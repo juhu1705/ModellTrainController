@@ -59,7 +59,6 @@ public class LocoNetMessageReceiver {
 				try {
 					message = this.connection.removeNextMessage();
 				} catch (PortNotOpenException e) {
-					Ref.LOGGER.info("Why");
 					continue;
 				}
 

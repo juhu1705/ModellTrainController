@@ -10,6 +10,7 @@ import de.noisruker.util.Ref;
 import de.noisruker.util.Util;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
@@ -17,6 +18,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Paint;
 import org.controlsfx.control.PopOver;
 import org.kordamp.ikonli.javafx.FontIcon;
 
@@ -40,11 +42,11 @@ public class TrainStationManager {
                 this.setNextStation();
             }
         }
-        if(this.actual == -1 && !stations.isEmpty()) {
-            this.actual = 0;
-            train.setDestination(this.stations.get(actual).sensor);
-            Platform.runLater(() -> this.stations.get(actual).button.setSelected(true));
-        }
+        //if(this.actual == -1 && !stations.isEmpty()) {
+        //     this.actual = 0;
+        //     train.setDestination(this.stations.get(actual).sensor);
+        //     Platform.runLater(() -> this.stations.get(actual).button.setSelected(true));
+        // }
     }
 
     public void setNextStation() {
@@ -101,7 +103,8 @@ public class TrainStationManager {
     }
 
     public void deleteStation(TrainStation station) {
-        if(this.stations.get(actual).equals(station)) {
+
+        if(actual != -1 && this.stations.get(actual).equals(station)) {
             station.isTemporary = true;
             train.stopTrainImmediately();
             train.resetRailway();
@@ -184,7 +187,10 @@ public class TrainStationManager {
         public void addStationToGUI(VBox box, ToggleGroup group) {
             button.setToggleGroup(group);
             Label sensorName = new Label(sensor.toString());
+            sensorName.setAlignment(Pos.CENTER_LEFT);
+            HBox.setHgrow(sensorName, Priority.ALWAYS);
             sensorName.setMaxWidth(1.7976931348623157E308);
+            sensorName.setMaxHeight(1.7976931348623157E308);
             Button delete = new Button();
             delete.setOnAction(event -> {
                 this.myManager.deleteStation(this);
@@ -199,10 +205,12 @@ public class TrainStationManager {
             station.setSpacing(20);
 
             VBox v1 = new VBox(), v2 = new VBox();
-            v2.setFillWidth(true);
             v2.setSpacing(10);
             v2.setMaxWidth(1.7976931348623157E308);
-            v1.setSpacing(10);
+            v2.setFillWidth(true);
+
+
+            v1.setSpacing(20);
             v1.setPadding(new Insets(30, 0, 0, 0));
             v1.setMinWidth(100);
 
@@ -240,8 +248,14 @@ public class TrainStationManager {
 
             Button addCondition = new Button(Ref.language.getString("button.add_condition"));
 
+            FontIcon icon = new FontIcon("fas-plus");
+            icon.setIconColor(Paint.valueOf("white"));
+            addCondition.setGraphic(icon);
+            addCondition.setGraphicTextGap(10);
+
             addCondition.getStyleClass().add("plan-area");
             addCondition.setMaxWidth(1.7976931348623157E308);
+            addCondition.setMaxHeight(1.7976931348623157E308);
 
             Button addTimeCondition = new Button(Ref.language.getString("button.time_condition"));
 
@@ -266,6 +280,11 @@ public class TrainStationManager {
             addTrainOnSensor.setOnAction(event -> {
                 this.addCondition(new TrainOnSensorCondition());
             });
+
+            addTimeCondition.setMaxWidth(1.7976931348623157E308);
+            addSensorFree.setMaxWidth(1.7976931348623157E308);
+            addSensorOccupied.setMaxWidth(1.7976931348623157E308);
+            addTrainOnSensor.setMaxWidth(1.7976931348623157E308);
 
             VBox popOverBox = new VBox(addTimeCondition, addSensorOccupied, addSensorFree, addTrainOnSensor);
             popOverBox.setSpacing(20);

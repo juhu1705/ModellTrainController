@@ -81,11 +81,9 @@ public class LocoNet {
 			Railroad r = LocoNet.getRailroad();
 			r.init();
 
-			try {
-				new SwitchMessage((byte)8, true).send();
-			} catch (IOException ignored) {
 
-			}
+			new SwitchMessage((byte)8, true).send();
+
 
 			try {
 				Thread.sleep(1000);
@@ -93,11 +91,9 @@ public class LocoNet {
 
 			}
 
-			try {
-				new SwitchMessage((byte)8, false).send();
-			} catch (IOException ignored) {
 
-			}
+			new SwitchMessage((byte)8, false).send();
+
 
 			try {
 				Thread.sleep(1000);
@@ -105,11 +101,9 @@ public class LocoNet {
 
 			}
 
-			try {
-				new SwitchMessage((byte)8, true).send();
-			} catch (IOException ignored) {
 
-			}
+			new SwitchMessage((byte)8, true).send();
+
 
 			try {
 				Thread.sleep(1000);
@@ -117,11 +111,9 @@ public class LocoNet {
 
 			}
 
-			try {
-				new SwitchMessage((byte)8, false).send();
-			} catch (IOException ignored) {
 
-			}
+			new SwitchMessage((byte)8, false).send();
+
 
 			try {
 				Thread.sleep(1000);

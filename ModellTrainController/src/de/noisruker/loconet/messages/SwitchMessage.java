@@ -30,7 +30,7 @@ public class SwitchMessage implements AbstractMessage, Serializable {
 	}
 
 	@Override
-	public void send() throws IOException {
+	public void send() {
 		this.toLocoNetMessage().send();
 	}
 

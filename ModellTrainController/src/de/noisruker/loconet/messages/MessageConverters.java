@@ -1,11 +1,6 @@
 package de.noisruker.loconet.messages;
 
-import static de.noisruker.loconet.messages.MessageType.OPC_INPUT_REP;
-import static de.noisruker.loconet.messages.MessageType.OPC_LOCO_ADR;
-import static de.noisruker.loconet.messages.MessageType.OPC_LOCO_DIRF;
-import static de.noisruker.loconet.messages.MessageType.OPC_LOCO_SPD;
-import static de.noisruker.loconet.messages.MessageType.OPC_SL_RD_DATA;
-import static de.noisruker.loconet.messages.MessageType.OPC_SW_REQ;
+import static de.noisruker.loconet.messages.MessageType.*;
 
 public class MessageConverters {
 
@@ -27,6 +22,16 @@ public class MessageConverters {
 			return null;
 
 		return new DirectionMessage(values[0], values[1]);
+	}
+
+	@MessageConverter(messageType = OPC_GPON)
+	public static RailroadOnMessage locoNetMessageToRailroadOnMessage(LocoNetMessage message) {
+		return new RailroadOnMessage();
+	}
+
+	@MessageConverter(messageType = OPC_GPOFF)
+	public static RailroadOffMessage locoNetMessageToRailroadOffMessage(LocoNetMessage message) {
+		return new RailroadOffMessage();
 	}
 
 	@MessageConverter(messageType = OPC_LOCO_ADR)

@@ -36,7 +36,7 @@ public class DirectionMessage implements AbstractMessage, Serializable {
 	}
 
 	@Override
-	public void send() throws IOException {
+	public void send() {
 		this.toLocoNetMessage().send();
 	}
 

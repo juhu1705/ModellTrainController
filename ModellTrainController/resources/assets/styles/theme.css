@@ -150,8 +150,12 @@
 }
 
 .temporary {
-    -fx-background-color: #323232;
-    -fx-border-color: #343434;
+    -fx-background-color: lightgrey;
+    -fx-border-color: lightgrey;
+}
+
+.temporary .label {
+    -fx-text-fill: black;
 }
 
 .in-progress {

@@ -2,6 +2,8 @@ package de.noisruker.gui;
 
 import de.noisruker.config.ConfigManager;
 import de.noisruker.loconet.LocoNet;
+import de.noisruker.loconet.messages.RailroadOffMessage;
+import de.noisruker.loconet.messages.RailroadOnMessage;
 import de.noisruker.main.GUILoader;
 import de.noisruker.railroad.Position;
 import de.noisruker.railroad.elements.AbstractRailroadElement;
@@ -29,8 +31,10 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Paint;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 import org.controlsfx.control.Notifications;
 import org.controlsfx.control.PopOver;
 import org.controlsfx.control.ToggleSwitch;
@@ -81,6 +85,9 @@ public class GuiMain implements Initializable {
 
     @FXML
     public VBox config, controls, manualControls, automaticControls;
+
+    @FXML
+    public ComboBox<String> mode;
 
     public ComboBox<String> actualPosition;
 
@@ -139,6 +146,18 @@ public class GuiMain implements Initializable {
         this.updateSensors();
         this.updateSwitches();
         this.updateTrains();
+    }
+
+    public void onStopAllTrains(ActionEvent event) {
+        LocoNet.getInstance().getTrains().forEach(train -> train.stopTrainImmediately());
+    }
+
+    public void onStopRailroad(ActionEvent event) {
+        Util.runNext(new RailroadOffMessage()::send);
+    }
+
+    public void onStartRailroad(ActionEvent event) {
+        Util.runNext(new RailroadOnMessage()::send);
     }
 
     public void onSensorSelectionChanged(MouseEvent event) {
@@ -214,6 +233,13 @@ public class GuiMain implements Initializable {
         Util.runNext(() -> train.setDirection(true));
         if(Config.mode.equals(Config.MODE_PLAN)) {
             this.actualPosition.setValue(train.getActualPosition() != null ? train.getActualPosition().toString() : "");
+            if(this.actualPosition.getValue().isBlank()) {
+                this.addStation.setDisable(true);
+                this.up.setDisable(true);
+                this.down.setDisable(true);
+                this.left.setDisable(true);
+                this.right.setDisable(true);
+            }
             this.actualPosition.setDisable(false);
             actualSensor.setDisable(false);
             this.actualSensor.setText(train.getActualPosition() != null ?
@@ -430,6 +456,31 @@ public class GuiMain implements Initializable {
 
         ConfigManager.getInstance().createMenuTree(tree, config);
 
+        this.mode.setItems(FXCollections.observableArrayList(ConfigManager.getInstance().getRegisteredOptions("mode")));
+
+        this.mode.setOnAction(event -> {
+            Config.mode = this.mode.getValue();
+            ConfigManager.getInstance().onConfigChanged("mode.text");
+        });
+
+        this.mode.setConverter(new StringConverter<String>() {
+            @Override
+            public String toString(String s) {
+                if(Ref.language.containsKey("mode.text." + s))
+                    return Ref.language.getString("mode.text." + s);
+                return s;
+            }
+
+            @Override
+            public String fromString(String s) {
+                for(String string: Ref.language.keySet()) {
+                    if(s.equals(Ref.language.getString("mode.text." + string)))
+                        return string;
+                }
+                return s;
+            }
+        });
+
         for(int y = 0; y < 100; y++) {
             HBox box = new HBox();
             railroadCells.put(box, new ArrayList<>());
@@ -488,13 +539,6 @@ public class GuiMain implements Initializable {
         this.checkOutRailroad();
 
         actualPosition = new ComboBox();
-
-        if(!LocoNet.getInstance().getTrains().isEmpty())
-            this.setTrain(LocoNet.getInstance().getTrains().get(0));
-        else {
-            actualPosition.setDisable(true);
-            actualSensor.setDisable(true);
-        }
 
         this.setMode();
 
@@ -600,18 +644,31 @@ public class GuiMain implements Initializable {
         ScrollPane pane = new ScrollPane(allSensors);
         pane.setFitToWidth(true);
         pane.setFitToHeight(true);
-        pane.setVmax(500);
+        pane.setVmax(200);
 
         PopOver popOver1 = new PopOver(pane);
         popOver1.setArrowLocation(PopOver.ArrowLocation.TOP_CENTER);
         this.addStation.setOnAction(event -> popOver1.show(addStation));
 
+        FontIcon icon = new FontIcon("fas-plus");
+        icon.setIconColor(Paint.valueOf("white"));
+        this.addStation.setGraphic(icon);
+        this.addStation.setGraphicTextGap(10);
+
         this.temporary.setPrefWidth(0);
         this.temporary.setPrefHeight(0);
 
+
+        if(!LocoNet.getInstance().getTrains().isEmpty())
+            this.setTrain(LocoNet.getInstance().getTrains().get(0));
+        else {
+            actualPosition.setDisable(true);
+            actualSensor.setDisable(true);
+        }
     }
 
     public void setMode() {
+        this.mode.setValue(Config.mode);
         switch (Config.mode) {
             case Config.MODE_MANUAL:
                 this.manualControls.setMinHeight(350);

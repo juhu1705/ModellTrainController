@@ -194,11 +194,9 @@ public class Train implements Serializable, Comparable<Train> {
 	public void setDirection(boolean direction) {
 		this.forward = this.standardForward() == direction;
 		DirectionMessage message = new DirectionMessage(slot, this.forward);
-		try {
-			message.send();
-		} catch (IOException e) {
-			Ref.LOGGER.log(Level.WARNING, "Lost connection to LocoNet!", e);
-		}
+
+		message.send();
+
 	}
 
 	public void setPicturePath(String path) {
@@ -294,7 +292,7 @@ public class Train implements Serializable, Comparable<Train> {
 	HashMap<Sensor, HashMap<Switch, Integer>> waitForSwitch = new HashMap<>();
 
 	public void trainEnter(int nodeAddress) {
-		if(this.stopAdd != null && this.stopAdd.getAddress() == nodeAddress) {
+		if(this.stopAdd != null && this.stopAdd.getAddress() == nodeAddress && (this.actualSensor == null || !this.actualSensor.getState())) {
 			this.stopTrain();
 			this.stopAdd = null;
 		}
@@ -302,7 +300,8 @@ public class Train implements Serializable, Comparable<Train> {
 		if(this.destination != null && this.destination.getAddress() == nodeAddress && this.destination.isFree(this) &&
 				(this.destination.equals(this.nextSensor) || this.destination.equals(this.nextNextSensor))) {
 			this.destination.addTrain(this);
-			if(this.previousSensor != null && !this.equals(this.previousSensor.getTrain())) {
+
+			if(this.actualSensor == null || !this.equals(this.actualSensor.getTrain())) {
 				this.stopTrain();
 				if(this.railway != null)
 					this.railway.setPositions(this);
@@ -341,10 +340,7 @@ public class Train implements Serializable, Comparable<Train> {
 			}
 
 			if(!s.isFree(this)) {
-				if(s.getTrain() != null && this.nextNextSensor.equals(s.getTrain().previousSensor)) {
-					this.stopAdd = this.nextNextSensor;
-				} else
-					this.stopTrain();
+				this.stopAdd = this.nextSensor;
 			} else {
 				s.addTrain(this);
 			}
@@ -363,6 +359,11 @@ public class Train implements Serializable, Comparable<Train> {
 	}
 
 	public void trainLeft(int nodeAddress) {
+		if(this.stopAdd != null && this.stopAdd.getAddress() == actualSensor.getAddress() && this.previousSensor != null && this.previousSensor.getAddress() == nodeAddress) {
+			this.stopTrain();
+			this.stopAdd = null;
+		}
+
 		if(this.previousSensor != null && this.previousSensor.getAddress() == nodeAddress && this.stopNext) {
 			this.stopTrain();
 			this.railway.setPositions(this);

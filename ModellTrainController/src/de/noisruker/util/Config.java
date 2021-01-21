@@ -32,6 +32,9 @@ public class Config {
     @ConfigElement(defaultValue = "false", type = "check", description = "startImmediately.description", name = "startImmediately.text", location = "config.loconet", visible = true)
     public static boolean startImmediately;
 
+    @ConfigElement(defaultValue = "false", type = "check", description = "fastStarting.description", name = "fastStarting.text", location = "config.controls", visible = false)
+    public static boolean fastStarting;
+
     @ConfigElement(defaultValue = "false", type = "check", description = "fullScreen.description", name = "fullScreen.text", location = "config", visible = true)
     public static boolean fullScreen;
 
@@ -50,7 +53,7 @@ public class Config {
     @ConfigElement(defaultValue = "German", type = "choose", description = "language.description", name = "language.text", location = "config", visible = true)
     public static String language;
 
-    @ConfigElement(defaultValue = "0", type = "count", description = "report_address.description", name = "report_address.text", location = "config.controls", visible = true)
+    @ConfigElement(defaultValue = "0", type = "count", description = "report_address.description", name = "report_address.text", location = "config.loconet", visible = true)
     public static int reportAddress = 0;
 
     public static void register() {

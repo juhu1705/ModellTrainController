@@ -223,12 +223,17 @@ public class Railway {
         return this.actualIndex >= this.startIndex;
     }
 
+    private HashMap<Sensor, Integer> sensorCheckHashMap = new HashMap<>();
+
     private void checkLastElement() {
         AbstractRailroadElement element = this.getLastElement();
         if(element instanceof Switch)
             this.handleSwitch((Switch) element);
         else if(checkSensors && element instanceof Sensor) {
             if(((Sensor) element).getState()) {
+                if(this.sensorCheckHashMap.containsKey(element) && this.sensorCheckHashMap.get(element) == this.actualIndex)
+                    this.fail = true;
+                this.sensorCheckHashMap.put((Sensor) element, this.actualIndex);
                 this.goToLastSwitch();
                 if(this.fail)
                     return;

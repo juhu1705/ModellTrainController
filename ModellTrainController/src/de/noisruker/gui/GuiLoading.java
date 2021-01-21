@@ -194,8 +194,10 @@ public class GuiLoading implements Initializable {
                 Thread.sleep(500);
             } catch (InterruptedException ignored) { }
 
+            Ref.LOGGER.info(Config.reportAddress + "");
+
             if(Config.reportAddress > 0)
-                new SwitchMessage((byte) (Config.reportAddress - 1), true).toLocoNetMessage().send();
+                new SwitchMessage((byte) (Config.reportAddress - 1), false).toLocoNetMessage().send();
 
             Progress.getInstance().setProgress(-1);
             Progress.getInstance().setProgressDescription(Ref.language.getString("info.start_window"));

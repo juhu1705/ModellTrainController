@@ -7,6 +7,6 @@ public interface AbstractMessage extends Serializable {
 
 	LocoNetMessage toLocoNetMessage();
 
-	void send() throws IOException;
+	void send();
 
 }

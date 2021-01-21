@@ -102,10 +102,10 @@ public class Sensor extends AbstractRailroadElement {
 		if(address == this.getAddress()) {
 			this.securitySavedTrain = this.trainLeft();
 		}
-		/**if(this.getAddress() == 2 && address == 2) {
+		if(this.getAddress() == 2 && address == 2) {
 			for(Signal s: Signal.getAllSignals())
 				s.getMessage(false).toLocoNetMessage().send();
-		}*/
+		}
 	}
 
 	public void onTrainEnter(int address) {

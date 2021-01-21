@@ -9,6 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.PopOver;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -83,6 +84,8 @@ public class TimeCondition extends AbstractDrivingCondition {
         waitingTime.setMinWidth(100);
 
         Label passed = new Label(Ref.language.getString("label.time_passed"));
+
+        HBox.setHgrow(passed, Priority.ALWAYS);
 
         Button delete = new Button();
         delete.setOnAction(event -> {

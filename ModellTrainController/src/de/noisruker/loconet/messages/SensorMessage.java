@@ -53,7 +53,7 @@ public class SensorMessage implements Serializable, AbstractMessage {
 	}
 
 	@Override
-	public void send() throws IOException {
+	public void send() {
 
 	}
 

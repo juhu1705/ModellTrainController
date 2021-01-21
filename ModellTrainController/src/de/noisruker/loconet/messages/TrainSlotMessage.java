@@ -53,8 +53,7 @@ public class TrainSlotMessage implements AbstractMessage, Serializable {
 	}
 
 	@Override
-	public void send() throws IOException {
-
+	public void send() {
 	}
 
 }
