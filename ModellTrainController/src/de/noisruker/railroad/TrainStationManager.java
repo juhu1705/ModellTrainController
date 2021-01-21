@@ -15,6 +15,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.PopOver;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -279,6 +280,7 @@ public class TrainStationManager {
             v2.getChildren().add(addCondition);
 
             HBox hBox = new HBox(v1, v2);
+            HBox.setHgrow(v2, Priority.ALWAYS);
             hBox.setSpacing(10);
             hBox.setMaxWidth(1.7976931348623157E308);
             hBox.setFillHeight(true);
