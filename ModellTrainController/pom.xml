@@ -186,7 +186,16 @@
                                     <moduleInfo>
                                         <name>maven.model</name>
                                     </moduleInfo>
-                                </module> !-->
+                                </module>
+                                <module>
+                                    <artifact>
+                                        <groupId>org.apache.commons</groupId>
+                                        <artifactId>commons-lang3</artifactId>
+                                    </artifact>
+                                    <moduleInfo>
+                                        <name>commons.lang3</name>
+                                    </moduleInfo>
+                                </module>!-->
                             </modules>
 
                         </configuration>

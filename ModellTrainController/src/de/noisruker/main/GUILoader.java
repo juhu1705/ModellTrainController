@@ -59,10 +59,11 @@ public class GUILoader extends Application {
 
         Image i;
 
-        if (new File("./resources/assets/textures/logo/logo.png").exists())
+        if (new File("./resources/assets/textures/logo/logo.png").exists()) {
             i = new Image(new File("./resources/assets/textures/logo/logo.png").toURI().toString());
-        else
+        } else
             i = new Image("/assets/textures/logo/logo.png");
+
         stage.getIcons().add(i);
 
         stage.show();
