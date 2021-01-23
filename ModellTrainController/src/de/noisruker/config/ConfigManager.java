@@ -133,6 +133,8 @@ public class ConfigManager {
                         r.set(this, dv);
                     else
                         r.set(this, dv);
+
+                    this.onConfigChanged(e.name());
                 }
             } catch (IllegalArgumentException e) {
                 e.printStackTrace();
