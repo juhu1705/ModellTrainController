@@ -49,7 +49,7 @@ public class Config {
     @ConfigElement(defaultValue = "DARK", type = "choose", description = "theme.description", name = "theme.text", location = "config", visible = true)
     public static String theme;
 
-    @ConfigElement(defaultValue = "German", type = "choose", description = "language.description", name = "language.text", location = "config", visible = true)
+    @ConfigElement(defaultValue = "GERMAN", type = "choose", description = "language.description", name = "language.text", location = "config", visible = true)
     public static String language;
 
     @ConfigElement(defaultValue = "0", type = "count", description = "report_address.description", name = "report_address.text", location = "config.loconet", visible = true)
@@ -112,7 +112,7 @@ public class Config {
                     e.printStackTrace();
                 }
 
-                if (GUILoader.getPrimaryStage() != null) {
+                if (GUILoader.getPrimaryStage() != null && GuiMain.getInstance() != null) {
                     Util.updateWindow(GUILoader.getPrimaryStage(), "/assets/layouts/main.fxml");
                     GUILoader.getPrimaryStage().setTitle(Ref.language.getString("window." + Ref.PROJECT_NAME));
                 }

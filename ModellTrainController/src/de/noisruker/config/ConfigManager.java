@@ -19,6 +19,9 @@ import org.xml.sax.helpers.XMLReaderFactory;
 
 import java.io.*;
 import java.lang.reflect.Field;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -138,6 +141,11 @@ public class ConfigManager {
             }
             r.setAccessible(a);
         });
+
+        if (!Files.exists(FileSystems.getDefault().getPath(Ref.HOME_FOLDER), LinkOption.NOFOLLOW_LINKS))
+            new File(Ref.HOME_FOLDER).mkdir();
+
+
     }
 
     /**
