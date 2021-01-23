@@ -1,14 +1,12 @@
 package de.noisruker.railroad;
 
 import de.noisruker.gui.GuiMain;
-import de.noisruker.loconet.messages.SensorMessage;
 import de.noisruker.loconet.LocoNet;
 import de.noisruker.loconet.LocoNetMessageReceiver;
+import de.noisruker.loconet.messages.SensorMessage;
 import de.noisruker.railroad.elements.AbstractRailroadElement;
 import de.noisruker.railroad.elements.Sensor;
 import de.noisruker.util.Ref;
-import de.noisruker.util.Util;
-import javafx.scene.shape.TriangleMesh;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -19,21 +17,21 @@ import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
-import java.util.ArrayList;
 
 public class Railroad {
 
     private AbstractRailroadElement[][] railroadElements = null;
 
     public void applyRailroad(final AbstractRailroadElement[][] railroad) {
-        if(railroad.length < 100)
+        if (railroad.length < 100)
             return;
         this.railroadElements = railroad;
-        if(GuiMain.getInstance() != null)
+        if (GuiMain.getInstance() != null)
             GuiMain.getInstance().checkOutRailroad();
     }
 
-    public Railroad() { }
+    public Railroad() {
+    }
 
     public AbstractRailroadElement[][] getRailroad() {
         return railroadElements;
@@ -56,7 +54,7 @@ public class Railroad {
     }
 
     private void handleMessage(SensorMessage s) {
-        if(s.getState())
+        if (s.getState())
             trainEnter(s.getAddress());
         else
             trainLeft(s.getAddress());
@@ -79,8 +77,8 @@ public class Railroad {
 
     public int trainsWithDestination() {
         int counter = 0;
-        for(Train t: LocoNet.getInstance().getTrains()) {
-            if(t.destination != null)
+        for (Train t : LocoNet.getInstance().getTrains()) {
+            if (t.destination != null)
                 counter++;
         }
         return counter;
@@ -90,12 +88,12 @@ public class Railroad {
         Railway priorTrueAndSensors = new Railway(from.getPosition(), to.getPosition(), lastPosition, true, true).calculateRailway();
         Railway priorFalseAndSensors = new Railway(from.getPosition(), to.getPosition(), lastPosition, false, true).calculateRailway();
 
-        if(priorTrueAndSensors == null) {
-            if(priorFalseAndSensors != null)
+        if (priorTrueAndSensors == null) {
+            if (priorFalseAndSensors != null)
                 return priorFalseAndSensors;
             Railway priorTrue = new Railway(from.getPosition(), to.getPosition(), lastPosition, true, false).calculateRailway();
             Railway priorFalse = new Railway(from.getPosition(), to.getPosition(), lastPosition, false, false).calculateRailway();
-            if(priorTrue == null)
+            if (priorTrue == null)
                 return priorFalse;
 
             return priorTrue.isShorterThan(priorFalse) ? priorTrue : priorFalse;
@@ -121,7 +119,7 @@ public class Railroad {
     private boolean stopTrainControlSystem = true;
 
     public void startTrainControlSystem() {
-        if(stopTrainControlSystem)
+        if (stopTrainControlSystem)
             new Thread(this::trainControl).start();
     }
 

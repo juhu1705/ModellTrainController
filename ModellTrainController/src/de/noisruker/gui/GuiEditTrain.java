@@ -8,7 +8,10 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import org.controlsfx.control.ToggleSwitch;
 import org.controlsfx.validation.ValidationResult;
@@ -16,7 +19,6 @@ import org.controlsfx.validation.ValidationSupport;
 import org.controlsfx.validation.Validator;
 
 import java.net.URL;
-import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class GuiEditTrain implements Initializable {
@@ -42,18 +44,18 @@ public class GuiEditTrain implements Initializable {
     public void onSet(ActionEvent e) {
         error.setText("");
 
-        if(this.minSpeed.getValue() > this.maxSpeed.getValue())
+        if (this.minSpeed.getValue() > this.maxSpeed.getValue())
             error.setText(Ref.language.getString("label.error.min_speed"));
 
-        if(this.normalSpeed.getValue() < this.minSpeed.getValue())
+        if (this.normalSpeed.getValue() < this.minSpeed.getValue())
             error.setText(Ref.language.getString("label.error.normal_speed"));
 
-        if(this.maxSpeed.getValue() < this.normalSpeed.getValue())
+        if (this.maxSpeed.getValue() < this.normalSpeed.getValue())
             error.setText(Ref.language.getString("label.error.max_speed"));
 
-        if(error.getText().isBlank())
-            if(this.t != null)
-                for(Train t: LocoNet.getInstance().getTrains()) {
+        if (error.getText().isBlank())
+            if (this.t != null)
+                for (Train t : LocoNet.getInstance().getTrains()) {
                     Ref.LOGGER.info(t.toString());
                     if (t.getAddress() == this.t.getAddress())
                         t.setParameters(name.getText(), (byte) this.maxSpeed.getValue(), (byte) this.normalSpeed.getValue(), (byte) this.minSpeed.getValue(), this.standardDirection.isSelected());
@@ -62,12 +64,12 @@ public class GuiEditTrain implements Initializable {
 
         GuiMain.getInstance().updateTrains();
 
-        ((Stage)((Button) e.getSource()).getScene().getWindow()).close();
+        ((Stage) ((Button) e.getSource()).getScene().getWindow()).close();
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        if(GuiEditTrain.train == null) {
+        if (GuiEditTrain.train == null) {
             this.header.setText(Ref.language.getString("label.no_train_found"));
             return;
         }

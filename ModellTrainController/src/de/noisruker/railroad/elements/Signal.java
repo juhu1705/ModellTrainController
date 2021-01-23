@@ -26,7 +26,7 @@ public class Signal extends AbstractRailroadElement {
     }
 
     private static void addSignal(Signal s) {
-        for(int i = 0; i < allSignals.size(); i++) {
+        for (int i = 0; i < allSignals.size(); i++) {
             if (allSignals.get(i).address > s.address) {
                 allSignals.add(i, s);
                 return;
@@ -69,13 +69,13 @@ public class Signal extends AbstractRailroadElement {
         switch (rotation) {
             case NORTH:
             case SOUTH:
-                if(state)
+                if (state)
                     return RailroadImages.SIGNAL_VERTICAL_ON;
                 else
                     return RailroadImages.SIGNAL_VERTICAL_OFF;
             case EAST:
             case WEST:
-                if(state)
+                if (state)
                     return RailroadImages.SIGNAL_HORIZONTAL_ON;
                 else
                     return RailroadImages.SIGNAL_HORIZONTAL_OFF;
@@ -85,20 +85,20 @@ public class Signal extends AbstractRailroadElement {
 
     @Override
     public void onLocoNetMessage(AbstractMessage message) {
-        if(message instanceof SwitchMessage) {
+        if (message instanceof SwitchMessage) {
             SwitchMessage switchMessage = (SwitchMessage) message;
-            if(switchMessage.getAddress() == this.address) {
+            if (switchMessage.getAddress() == this.address) {
                 this.state = switchMessage.getState();
-                if(GuiMain.getInstance() != null)
+                if (GuiMain.getInstance() != null)
                     Platform.runLater(() -> {
                         GuiMain gui = GuiMain.getInstance();
                         HBox box = gui.railroadLines.get(this.position.getY());
                         gui.railroadCells.get(box).get(this.position.getX()).setImage(this.getImage());
                     });
             }
-        } else if(listen && message instanceof SensorMessage) {
+        } else if (listen && message instanceof SensorMessage) {
             SensorMessage sensorMessage = (SensorMessage) message;
-            if(!sensorMessage.getState()) {
+            if (!sensorMessage.getState()) {
                 listen = false;
                 this.setAndUpdateState(false);
             }
@@ -110,16 +110,16 @@ public class Signal extends AbstractRailroadElement {
         switch (rotation) {
             case NORTH:
             case SOUTH:
-                if(from.equals(new Position(position.getX(), position.getY() + 1)))
+                if (from.equals(new Position(position.getX(), position.getY() + 1)))
                     return new Position(position.getX(), position.getY() - 1);
-                else if(from.equals(new Position(position.getX(), position.getY() - 1)))
+                else if (from.equals(new Position(position.getX(), position.getY() - 1)))
                     return new Position(position.getX(), position.getY() + 1);
                 break;
             case WEST:
             case EAST:
-                if(from.equals(new Position(position.getX() - 1, position.getY())))
+                if (from.equals(new Position(position.getX() - 1, position.getY())))
                     return new Position(position.getX() + 1, position.getY());
-                else if(from.equals(new Position(position.getX() + 1, position.getY())))
+                else if (from.equals(new Position(position.getX() + 1, position.getY())))
                     return new Position(position.getX() - 1, position.getY());
                 break;
         }

@@ -20,7 +20,7 @@ public class RailroadReader implements ContentHandler {
     }
 
     protected static void readParams(String forType, HashMap<String, String> params) {
-        if(readers.containsKey(forType))
+        if (readers.containsKey(forType))
             readers.get(forType).read(params);
     }
 
@@ -40,13 +40,13 @@ public class RailroadReader implements ContentHandler {
 
     @Override
     public void endDocument() throws SAXException {
-        if(type != null) {
+        if (type != null) {
             RailroadReader.readParams(type, params);
             params.clear();
             type = null;
         }
         LocoNet.getRailroad().applyRailroad(railroad);
-        if(GuiMain.getInstance() != null)
+        if (GuiMain.getInstance() != null)
             GuiMain.getInstance().checkOutRailroad();
     }
 
@@ -67,13 +67,13 @@ public class RailroadReader implements ContentHandler {
 
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
-        if(localName.equals("element")) {
-            if(type != null) {
+        if (localName.equals("element")) {
+            if (type != null) {
                 RailroadReader.readParams(type, params);
                 params.clear();
                 type = null;
             }
-        } else if(localName.equals("type"))
+        } else if (localName.equals("type"))
             type = current;
         else {
             this.params.put(localName, current);
@@ -106,7 +106,7 @@ public class RailroadReader implements ContentHandler {
 
     static {
         registerReader("switch", params -> {
-            if(areAllKeysContained(params, "posX", "posY", "address", "rotation", "normal_state", "switch_type")){
+            if (areAllKeysContained(params, "posX", "posY", "address", "rotation", "normal_state", "switch_type")) {
                 railroad[Integer.parseInt(params.get("posX"))][Integer.parseInt(params.get("posY"))] = new Switch(
                         Byte.parseByte(params.get("address")), Switch.SwitchType.valueOf(params.get("switch_type")),
                         RailRotation.valueOf(params.get("rotation")), Boolean.parseBoolean(params.get("normal_state")),
@@ -114,51 +114,51 @@ public class RailroadReader implements ContentHandler {
             }
         });
         registerReader("track", params -> {
-            if(areAllKeysContained(params, "posX", "posY", "rotation"))
+            if (areAllKeysContained(params, "posX", "posY", "rotation"))
                 railroad[Integer.parseInt(params.get("posX"))][Integer.parseInt(params.get("posY"))] = new RailroadLine(
                         RailRotation.valueOf(params.get("rotation")),
                         new Position(Integer.parseInt(params.get("posX")), Integer.parseInt(params.get("posY"))));
         });
         registerReader("curve", params -> {
-            if(areAllKeysContained(params, "posX", "posY", "rotation"))
+            if (areAllKeysContained(params, "posX", "posY", "rotation"))
                 railroad[Integer.parseInt(params.get("posX"))][Integer.parseInt(params.get("posY"))] = new RailroadCurve(
                         RailRotation.valueOf(params.get("rotation")),
                         new Position(Integer.parseInt(params.get("posX")), Integer.parseInt(params.get("posY"))));
         });
         registerReader("directional", params -> {
-            if(areAllKeysContained(params, "posX", "posY", "rotation"))
+            if (areAllKeysContained(params, "posX", "posY", "rotation"))
                 railroad[Integer.parseInt(params.get("posX"))][Integer.parseInt(params.get("posY"))] = new RailroadDirectionalLine(
                         RailRotation.valueOf(params.get("rotation")),
                         new Position(Integer.parseInt(params.get("posX")), Integer.parseInt(params.get("posY"))));
         });
         registerReader("ending", params -> {
-            if(areAllKeysContained(params, "posX", "posY", "rotation"))
+            if (areAllKeysContained(params, "posX", "posY", "rotation"))
                 railroad[Integer.parseInt(params.get("posX"))][Integer.parseInt(params.get("posY"))] = new RailroadEnd(
                         RailRotation.valueOf(params.get("rotation")),
                         new Position(Integer.parseInt(params.get("posX")), Integer.parseInt(params.get("posY"))));
         });
         registerReader("sensor", params -> {
-            if(areAllKeysContained(params, "posX", "posY", "rotation", "address")) {
+            if (areAllKeysContained(params, "posX", "posY", "rotation", "address")) {
                 Sensor s = new Sensor(
                         Byte.parseByte(params.get("address")), false,
                         new Position(Integer.parseInt(params.get("posX")), Integer.parseInt(params.get("posY"))),
                         RailRotation.valueOf(params.get("rotation")));
-                if(params.containsKey("name"))
+                if (params.containsKey("name"))
                     s.setName(params.get("name"));
-                if(params.containsKey("list"))
+                if (params.containsKey("list"))
                     s.setShouldBeListed(Boolean.parseBoolean(params.get("list")));
                 railroad[Integer.parseInt(params.get("posX"))][Integer.parseInt(params.get("posY"))] = s;
             }
         });
         registerReader("signal", params -> {
-            if(areAllKeysContained(params, "posX", "posY", "rotation", "address"))
+            if (areAllKeysContained(params, "posX", "posY", "rotation", "address"))
                 railroad[Integer.parseInt(params.get("posX"))][Integer.parseInt(params.get("posY"))] = new Signal(
                         Byte.parseByte(params.get("address")),
                         RailRotation.valueOf(params.get("rotation")),
                         new Position(Integer.parseInt(params.get("posX")), Integer.parseInt(params.get("posY"))));
         });
         registerReader("train", params -> {
-            if(areAllKeysContained(params, "address", "name", "picture", "max", "normal", "min", "direction"))
+            if (areAllKeysContained(params, "address", "name", "picture", "max", "normal", "min", "direction"))
                 LocoNet.getInstance().addSavedTrain(Byte.parseByte(params.get("address")),
                         params.get("name"),
                         params.get("picture").equals("") ? null : params.get("picture"),
@@ -170,8 +170,8 @@ public class RailroadReader implements ContentHandler {
     }
 
     public static boolean areAllKeysContained(HashMap<String, String> params, String... keys) {
-        for(String key: keys) {
-            if(!params.containsKey(key))
+        for (String key : keys) {
+            if (!params.containsKey(key))
                 return false;
         }
         return true;

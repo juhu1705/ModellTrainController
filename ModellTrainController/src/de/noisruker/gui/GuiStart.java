@@ -9,16 +9,11 @@ import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
-import javafx.scene.control.*;
-import javafx.scene.paint.Color;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.stage.Stage;
 import jssc.SerialPortList;
 import org.controlsfx.control.ToggleSwitch;
-import org.controlsfx.glyphfont.FontAwesome;
-import org.controlsfx.glyphfont.Glyph;
-import org.controlsfx.glyphfont.GlyphFont;
-import org.controlsfx.glyphfont.GlyphFontRegistry;
 import org.controlsfx.validation.ValidationResult;
 import org.controlsfx.validation.ValidationSupport;
 import org.controlsfx.validation.Validator;
@@ -47,7 +42,7 @@ public class GuiStart implements Initializable {
         ConfigManager.getInstance().onConfigChanged("port.text");
         ConfigManager.getInstance().onConfigChanged("startImmediately.text");
 
-        if(stage == null)
+        if (stage == null)
             Util.openWindow("/assets/layouts/loading.fxml", "Loading", GUILoader.getPrimaryStage());
         else
             Util.updateWindow(stage, "/assets/layouts/loading.fxml");
@@ -58,7 +53,7 @@ public class GuiStart implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         ArrayList<String> ports = new ArrayList<>(Arrays.asList(SerialPortList.getPortNames()));
 
-        if(!ports.isEmpty()) {
+        if (!ports.isEmpty()) {
             port.setItems(FXCollections.observableArrayList(ports));
 
             if (Config.port.isBlank() || !ports.contains(Config.port))
@@ -68,7 +63,7 @@ public class GuiStart implements Initializable {
             port.setValue("");
         }
 
-        if(Config.startImmediately)
+        if (Config.startImmediately)
             startImmediately.setSelected(true);
 
         ValidationSupport support = new ValidationSupport();

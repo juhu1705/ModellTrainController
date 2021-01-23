@@ -16,7 +16,8 @@ public class BasicTrains {
         return instance == null ? (instance = new BasicTrains()) : instance;
     }
 
-    protected BasicTrains() {}
+    protected BasicTrains() {
+    }
 
     private ArrayList<TableView<Train>> trains = new ArrayList<>();
     private ArrayList<TableInputHandler> handlers = new ArrayList<>();
@@ -33,7 +34,7 @@ public class BasicTrains {
         Platform.runLater(() -> {
             Ref.LOGGER.info(allTrains.toString());
 
-            for(TableView<Train> t: this.trains) {
+            for (TableView<Train> t : this.trains) {
                 t.getItems().clear();
                 t.refresh();
                 t.setItems(FXCollections.observableArrayList(allTrains));

@@ -1,12 +1,10 @@
 package de.noisruker.gui;
 
-import de.noisruker.config.ConfigManager;
 import de.noisruker.gui.progress.Progress;
-import de.noisruker.loconet.LocoNetConnection;
+import de.noisruker.loconet.LocoNet;
 import de.noisruker.loconet.LocoNetMessageSender;
 import de.noisruker.loconet.messages.SwitchMessage;
 import de.noisruker.main.GUILoader;
-import de.noisruker.loconet.LocoNet;
 import de.noisruker.railroad.Train;
 import de.noisruker.railroad.elements.Signal;
 import de.noisruker.railroad.elements.Switch;
@@ -20,14 +18,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.AnchorPane;
-import javafx.stage.Stage;
 import jssc.SerialPortException;
 import jssc.SerialPortList;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -73,7 +69,6 @@ public class GuiLoading implements Initializable {
                 Progress.getInstance().setProgress(0.75);
 
 
-
                 Progress.getInstance().setProgressDescription(Ref.language.getString("info.finished"));
                 Progress.getInstance().setProgress(1);
 
@@ -83,11 +78,11 @@ public class GuiLoading implements Initializable {
             }
 
             Platform.runLater(() -> {
-                if(Config.startImmediately && Arrays.asList(SerialPortList.getPortNames()).contains(Config.port)) {
+                if (Config.startImmediately && Arrays.asList(SerialPortList.getPortNames()).contains(Config.port)) {
                     GuiLoading.startLocoNet();
                 } else {
                     Util.updateWindow(GUILoader.getPrimaryStage(), "/assets/layouts/init_settings.fxml");
-                    Platform.runLater(() -> Util.updateWindow(GUILoader.getPrimaryStage(), "/assets/layouts/main.fxml").setResizable(true));
+                    //Platform.runLater(() -> Util.updateWindow(GUILoader.getPrimaryStage(), "/assets/layouts/main.fxml").setResizable(true));
                 }
             });
         }).start();
@@ -107,7 +102,8 @@ public class GuiLoading implements Initializable {
             }
             try {
                 Thread.sleep(100);
-            } catch (InterruptedException ignored) { }
+            } catch (InterruptedException ignored) {
+            }
 
             Progress.getInstance().setProgressDescription(Ref.language.getString("info.check_connection"));
 
@@ -120,8 +116,8 @@ public class GuiLoading implements Initializable {
 
                     int timeLeft = 10;
 
-                    while(!LocoNet.connectionChecked) {
-                        if(timeLeft == 0){
+                    while (!LocoNet.connectionChecked) {
+                        if (timeLeft == 0) {
                             Progress.getInstance().setProgressDescription(Ref.language.getString("info.connection_failed"));
                             addBackButton();
                             return;
@@ -146,7 +142,8 @@ public class GuiLoading implements Initializable {
 
             try {
                 Thread.sleep(500);
-            } catch (InterruptedException ignored) { }
+            } catch (InterruptedException ignored) {
+            }
 
             Progress.getInstance().setProgressDescription(Ref.language.getString("info.load_railroad"));
 
@@ -159,44 +156,49 @@ public class GuiLoading implements Initializable {
             Progress.getInstance().setProgressDescription(Ref.language.getString("info.init_switches"));
             Progress.getInstance().setProgress(0);
 
-            for(int i = 0; i < Switch.getAllSwitches().size(); i++) {
+            for (int i = 0; i < Switch.getAllSwitches().size(); i++) {
                 Switch.getAllSwitches().get(i).setAndUpdateState(true);
-                Progress.getInstance().setProgress(((double)i) / ((double)Switch.getAllSwitches().size()));
+                Progress.getInstance().setProgress(((double) i) / ((double) Switch.getAllSwitches().size()));
                 try {
                     Thread.sleep(200);
-                } catch (InterruptedException ignored) { }
+                } catch (InterruptedException ignored) {
+                }
             }
 
             try {
                 Thread.sleep(500);
-            } catch (InterruptedException ignored) { }
+            } catch (InterruptedException ignored) {
+            }
 
             Progress.getInstance().setProgressDescription(Ref.language.getString("info.init_signals"));
             Progress.getInstance().setProgress(0);
 
-            for(int i = 0; i < Signal.getAllSignals().size(); i++) {
+            for (int i = 0; i < Signal.getAllSignals().size(); i++) {
                 Signal.getAllSignals().get(i).setAndUpdateState(false);
-                Progress.getInstance().setProgress(((double)i) / ((double)Signal.getAllSignals().size()));
+                Progress.getInstance().setProgress(((double) i) / ((double) Signal.getAllSignals().size()));
                 try {
                     Thread.sleep(200);
-                } catch (InterruptedException ignored) { }
+                } catch (InterruptedException ignored) {
+                }
             }
 
             LocoNet.getRailroad().init();
 
             try {
                 Thread.sleep(500);
-            } catch (InterruptedException ignored) { }
+            } catch (InterruptedException ignored) {
+            }
 
             Progress.getInstance().setProgress(0);
 
             try {
                 Thread.sleep(500);
-            } catch (InterruptedException ignored) { }
+            } catch (InterruptedException ignored) {
+            }
 
             Ref.LOGGER.info(Config.reportAddress + "");
 
-            if(Config.reportAddress > 0)
+            if (Config.reportAddress > 0)
                 new SwitchMessage((byte) (Config.reportAddress - 1), false).toLocoNetMessage().send();
 
             Progress.getInstance().setProgress(-1);
@@ -205,13 +207,14 @@ public class GuiLoading implements Initializable {
             while (!LocoNetMessageSender.getInstance().areAllMessagesSend()) {
                 try {
                     Thread.sleep(500);
-                } catch (InterruptedException ignored) { }
+                } catch (InterruptedException ignored) {
+                }
             }
 
             Platform.runLater(() -> {
                 Util.updateWindow(GUILoader.getPrimaryStage(), "/assets/layouts/main.fxml").setResizable(true);
                 GUILoader.getPrimaryStage().setMaximized(true);
-                if(Config.fullScreen)
+                if (Config.fullScreen)
                     GUILoader.getPrimaryStage().setFullScreen(true);
             });
         }).start();

@@ -7,5 +7,4 @@ public class Railroad {
     public static AbstractRailroadElement[][] elements = new AbstractRailroadElement[100][100];
 
 
-
 }

@@ -35,12 +35,12 @@ public class TrainOnSensorCondition extends AbstractDrivingCondition {
     @Override
     public void updateCondition() {
         Platform.runLater(() -> {
-            if(super.isInCheck) {
-                if(!this.isConditionTrue() && !condition.getStyleClass().contains("in-progress"))
+            if (super.isInCheck) {
+                if (!this.isConditionTrue() && !condition.getStyleClass().contains("in-progress"))
                     condition.getStyleClass().add("in-progress");
-                else if(this.isConditionTrue() && !condition.getStyleClass().contains("checked"))
+                else if (this.isConditionTrue() && !condition.getStyleClass().contains("checked"))
                     condition.getStyleClass().add("checked");
-                if(!this.isConditionTrue())
+                if (!this.isConditionTrue())
                     condition.getStyleClass().remove("checked");
             } else {
                 condition.getStyleClass().remove("in-progress");
@@ -64,14 +64,14 @@ public class TrainOnSensorCondition extends AbstractDrivingCondition {
         ComboBox<String> comboBox = new ComboBox<>();
 
         ArrayList<String> sensors = new ArrayList<>();
-        for(Sensor s: Sensor.getAllSensors()) {
+        for (Sensor s : Sensor.getAllSensors()) {
             sensors.add(s.toString());
         }
-        if(!sensors.isEmpty()) {
+        if (!sensors.isEmpty()) {
             comboBox.setItems(FXCollections.observableArrayList(sensors));
         }
         comboBox.setOnAction(event -> {
-            if(comboBox.getValue() != null) {
+            if (comboBox.getValue() != null) {
                 this.sensor = Util.getSensorByString(comboBox.getValue(), Sensor.getAllSensors());
                 sensor.setText(this.sensor == null ? "" : this.sensor.toString());
             }
@@ -92,14 +92,14 @@ public class TrainOnSensorCondition extends AbstractDrivingCondition {
         ComboBox<String> comboBoxTrains = new ComboBox<>();
 
         ArrayList<String> trains = new ArrayList<>();
-        for(Train s: LocoNet.getInstance().getTrains()) {
+        for (Train s : LocoNet.getInstance().getTrains()) {
             trains.add(s.getName());
         }
-        if(!trains.isEmpty()) {
+        if (!trains.isEmpty()) {
             comboBoxTrains.setItems(FXCollections.observableArrayList(trains));
         }
         comboBoxTrains.setOnAction(event -> {
-            if(comboBoxTrains.getValue() != null) {
+            if (comboBoxTrains.getValue() != null) {
                 this.train = Util.getTrainByString(comboBoxTrains.getValue(), LocoNet.getInstance().getTrains());
                 train.setText(this.train == null ? "" : this.train.getName());
             }

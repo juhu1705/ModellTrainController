@@ -6,8 +6,8 @@ import de.noisruker.loconet.messages.RailroadOffMessage;
 import de.noisruker.loconet.messages.RailroadOnMessage;
 import de.noisruker.main.GUILoader;
 import de.noisruker.railroad.Position;
-import de.noisruker.railroad.elements.AbstractRailroadElement;
 import de.noisruker.railroad.Train;
+import de.noisruker.railroad.elements.AbstractRailroadElement;
 import de.noisruker.railroad.elements.Sensor;
 import de.noisruker.railroad.elements.Signal;
 import de.noisruker.railroad.elements.Switch;
@@ -19,13 +19,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -42,7 +42,10 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.xml.sax.SAXException;
 
 import java.awt.*;
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -112,17 +115,17 @@ public class GuiMain implements Initializable {
     }
 
     private void updateRailroad() {
-        if(LocoNet.getRailroad().getRailroad() == null)
+        if (LocoNet.getRailroad().getRailroad() == null)
             return;
 
         final AbstractRailroadElement[][] railroadElements = LocoNet.getRailroad().getRailroad();
 
-        for(int y = 0; y < 100; y++) {
+        for (int y = 0; y < 100; y++) {
             HBox box = this.railroadLines.get(y);
-            for(int x = 0; x < 100; x++) {
-                if(railroadElements[x][y] != null && railroadElements[x][y].getImage() != null) {
+            for (int x = 0; x < 100; x++) {
+                if (railroadElements[x][y] != null && railroadElements[x][y].getImage() != null) {
                     this.railroadCells.get(box).get(x).setImage(railroadElements[x][y].getImage());
-                    if(railroadElements[x][y] instanceof Switch) {
+                    if (railroadElements[x][y] instanceof Switch) {
                         int finalX = x;
                         int finalY = y;
                         this.railroadCells.get(box).get(x).setOnMouseClicked(event -> {
@@ -130,7 +133,7 @@ public class GuiMain implements Initializable {
                             s.changeDirection();
                             this.railroadCells.get(box).get(finalX).setImage(railroadElements[finalX][finalY].getImage());
                         });
-                    } else if(railroadElements[x][y] instanceof Signal) {
+                    } else if (railroadElements[x][y] instanceof Signal) {
                         int finalX = x;
                         int finalY = y;
                         this.railroadCells.get(box).get(x).setOnMouseClicked(event -> {
@@ -161,11 +164,11 @@ public class GuiMain implements Initializable {
     }
 
     public void onSensorSelectionChanged(MouseEvent event) {
-        if(this.sensors.getSelectionModel().getSelectedItem() == null)
+        if (this.sensors.getSelectionModel().getSelectedItem() == null)
             return;
         String name = this.sensors.getSelectionModel().getSelectedItem().getValue();
-        for(Sensor sensor: Sensor.getAllSensors())
-            if(name.equals("Sensor: " + sensor.getAddress() + " [" + sensor.getPosition().getX() + "] [" + sensor.getPosition().getY() + "]")) {
+        for (Sensor sensor : Sensor.getAllSensors())
+            if (name.equals("Sensor: " + sensor.getAddress() + " [" + sensor.getPosition().getX() + "] [" + sensor.getPosition().getY() + "]")) {
                 this.sensor = sensor;
                 sensorLabel.setText(name);
                 sensorListed.setSelected(sensor.shouldBeListed());
@@ -177,7 +180,7 @@ public class GuiMain implements Initializable {
     }
 
     public void onSensorNameChanged(ActionEvent event) {
-        if(Util.getSensorByString(this.sensorName.getText(), Sensor.getAllSensors()) == null) {
+        if (Util.getSensorByString(this.sensorName.getText(), Sensor.getAllSensors()) == null) {
             this.sensor.setName(this.sensorName.getText());
             this.updatePlanMode();
         } else {
@@ -192,36 +195,36 @@ public class GuiMain implements Initializable {
     }
 
     public void onNormalSpeed(ActionEvent event) {
-        if(Config.mode.equals(Config.MODE_MANUAL) && actual != null)
+        if (Config.mode.equals(Config.MODE_MANUAL) && actual != null)
             actual.applyNormalSpeed();
     }
 
     public void onMinSpeed(ActionEvent event) {
-        if(Config.mode.equals(Config.MODE_MANUAL) && actual != null)
+        if (Config.mode.equals(Config.MODE_MANUAL) && actual != null)
             actual.applyBreakSpeed();
     }
 
     public void onMaxSpeed(ActionEvent event) {
-        if(Config.mode.equals(Config.MODE_MANUAL) && actual != null)
+        if (Config.mode.equals(Config.MODE_MANUAL) && actual != null)
             actual.applyMaxSpeed();
     }
 
     public void onStop(ActionEvent event) {
-        if(Config.mode.equals(Config.MODE_MANUAL) && actual != null)
+        if (Config.mode.equals(Config.MODE_MANUAL) && actual != null)
             actual.setSpeed((byte) 0);
     }
 
     public void onStopImmediately(ActionEvent event) {
-        if(actual != null)
+        if (actual != null)
             Util.runNext(actual::stopTrainImmediately);
     }
 
     public void onTrainSelectionChanged(MouseEvent event) {
-        if(this.trains.getSelectionModel().getSelectedItem() == null)
+        if (this.trains.getSelectionModel().getSelectedItem() == null)
             return;
         String name = this.trains.getSelectionModel().getSelectedItem().getValue();
-        for(Train train: LocoNet.getInstance().getTrains())
-            if(train.equals(name)) {
+        for (Train train : LocoNet.getInstance().getTrains())
+            if (train.equals(name)) {
                 this.setTrain(train);
             }
     }
@@ -231,9 +234,9 @@ public class GuiMain implements Initializable {
         trainName.setText(this.actual.getName());
         trainName1.setText(this.actual.getName());
         Util.runNext(() -> train.setDirection(true));
-        if(Config.mode.equals(Config.MODE_PLAN)) {
+        if (Config.mode.equals(Config.MODE_PLAN)) {
             this.actualPosition.setValue(train.getActualPosition() != null ? train.getActualPosition().toString() : "");
-            if(this.actualPosition.getValue().isBlank()) {
+            if (this.actualPosition.getValue().isBlank()) {
                 this.addStation.setDisable(true);
                 this.up.setDisable(true);
                 this.down.setDisable(true);
@@ -251,37 +254,38 @@ public class GuiMain implements Initializable {
 
     public void onCreateRailroad(ActionEvent event) {
         Stage s = Util.openWindow("/assets/layouts/edit_railroad.fxml", Ref.language.getString("window.railroad"), GUILoader.getPrimaryStage());
-        if(s != null) {
+        if (s != null) {
             s.setResizable(true);
         }
     }
 
     public void onAddTrains(ActionEvent event) {
         Stage s = Util.openWindow("/assets/layouts/add_train.fxml", Ref.language.getString("window.add_train"), GUILoader.getPrimaryStage());
-        if(s != null)
+        if (s != null)
             s.setResizable(true);
     }
 
     public void onStartTrainControl(ActionEvent event) {
-        if(this.trains.getSelectionModel() == null || this.trains.getSelectionModel().getSelectedItem() == null) {
+        if (this.trains.getSelectionModel() == null || this.trains.getSelectionModel().getSelectedItem() == null) {
             Notifications.create().darkStyle().title(Ref.language.getString("window.error")).text(Ref.language.getString("error.no_train_selected")).showError();
             return;
         }
 
         String s = this.trains.getSelectionModel().getSelectedItem().getValue();
         Train t = null;
-        for(Train train: LocoNet.getInstance().getTrains())
-            if(train.equals(s))
+        for (Train train : LocoNet.getInstance().getTrains())
+            if (train.equals(s))
                 t = train;
-        if(t == null)
+        if (t == null)
             Notifications.create().darkStyle().title(Ref.language.getString("window.error")).text(Ref.language.getString("error.no_train_selected")).showError();
         else {
             final Train finalT = t;
             Util.runNext(() -> {
-                while(GuiControlTrain.toAdd != null) {
+                while (GuiControlTrain.toAdd != null) {
                     try {
                         Thread.sleep(500);
-                    } catch (InterruptedException ignored) { }
+                    } catch (InterruptedException ignored) {
+                    }
                 }
                 GuiControlTrain.toAdd = finalT;
                 Platform.runLater(() -> Util.openWindow("/assets/layouts/control_train.fxml", finalT.getName(), null));
@@ -290,17 +294,17 @@ public class GuiMain implements Initializable {
     }
 
     public void onDeleteTrain(ActionEvent event) {
-        if(this.trains.getSelectionModel() == null || this.trains.getSelectionModel().getSelectedItem() == null) {
+        if (this.trains.getSelectionModel() == null || this.trains.getSelectionModel().getSelectedItem() == null) {
             Notifications.create().darkStyle().title(Ref.language.getString("window.error")).text(Ref.language.getString("error.no_train_selected")).showError();
             return;
         }
 
         String s = this.trains.getSelectionModel().getSelectedItem().getValue();
         Train t = null;
-        for(Train train: LocoNet.getInstance().getTrains())
-            if(train.equals(s))
+        for (Train train : LocoNet.getInstance().getTrains())
+            if (train.equals(s))
                 t = train;
-        if(t == null)
+        if (t == null)
             Notifications.create().darkStyle().title(Ref.language.getString("window.error")).text(Ref.language.getString("error.no_train_selected")).showError();
         else {
             LocoNet.getInstance().getTrains().remove(t);
@@ -309,17 +313,17 @@ public class GuiMain implements Initializable {
     }
 
     public void onEditTrain(ActionEvent event) {
-        if(this.trains.getSelectionModel() == null || this.trains.getSelectionModel().getSelectedItem() == null) {
+        if (this.trains.getSelectionModel() == null || this.trains.getSelectionModel().getSelectedItem() == null) {
             Notifications.create().darkStyle().title(Ref.language.getString("window.error")).text(Ref.language.getString("error.no_train_selected")).showError();
             return;
         }
 
         String s = this.trains.getSelectionModel().getSelectedItem().getValue();
         Train t = null;
-        for(Train train: LocoNet.getInstance().getTrains())
-            if(train.equals(s))
+        for (Train train : LocoNet.getInstance().getTrains())
+            if (train.equals(s))
                 t = train;
-        if(t == null)
+        if (t == null)
             Notifications.create().darkStyle().title(Ref.language.getString("window.error")).text(Ref.language.getString("error.no_train_selected")).showError();
         else {
             Train finalT = t;
@@ -327,7 +331,8 @@ public class GuiMain implements Initializable {
                 while (GuiEditTrain.train != null) {
                     try {
                         Thread.sleep(100);
-                    } catch (InterruptedException ignored) { }
+                    } catch (InterruptedException ignored) {
+                    }
                 }
                 GuiEditTrain.train = finalT;
                 Platform.runLater(() -> Util.openWindow("/assets/layouts/edit_train.fxml",
@@ -355,10 +360,10 @@ public class GuiMain implements Initializable {
 
         File selected = fileChooser.showSaveDialog(GUILoader.getPrimaryStage());
 
-        if(selected == null)
+        if (selected == null)
             return;
 
-        if(!Util.fileEndsWith(selected.getPath(), ".mtc"))
+        if (!Util.fileEndsWith(selected.getPath(), ".mtc"))
             return;
 
         try {
@@ -383,10 +388,10 @@ public class GuiMain implements Initializable {
 
         File selected = fileChooser.showOpenDialog(GUILoader.getPrimaryStage());
 
-        if(selected == null)
+        if (selected == null)
             return;
 
-        if(!selected.exists() || !Util.fileEndsWith(selected.getPath(), ".mtc"))
+        if (!selected.exists() || !Util.fileEndsWith(selected.getPath(), ".mtc"))
             return;
 
         try {
@@ -410,11 +415,11 @@ public class GuiMain implements Initializable {
     }
 
     public void onActualPositionEdited(ActionEvent event) {
-        if(this.actualPosition.getValue() != null) {
-            if(this.actual != null) {
+        if (this.actualPosition.getValue() != null) {
+            if (this.actual != null) {
                 this.addStation.setDisable(false);
                 Sensor s = Util.getSensorByString(this.actualPosition.getValue(), Sensor.getAllSensors());
-                if(s == null)
+                if (s == null)
                     return;
                 this.actual.setActualPosition(s);
                 this.actualSensor.setText(this.actual.getActualPosition() != null ?
@@ -466,25 +471,25 @@ public class GuiMain implements Initializable {
         this.mode.setConverter(new StringConverter<String>() {
             @Override
             public String toString(String s) {
-                if(Ref.language.containsKey("mode.text." + s))
+                if (Ref.language.containsKey("mode.text." + s))
                     return Ref.language.getString("mode.text." + s);
                 return s;
             }
 
             @Override
             public String fromString(String s) {
-                for(String string: Ref.language.keySet()) {
-                    if(s.equals(Ref.language.getString("mode.text." + string)))
+                for (String string : Ref.language.keySet()) {
+                    if (s.equals(Ref.language.getString("mode.text." + string)))
                         return string;
                 }
                 return s;
             }
         });
 
-        for(int y = 0; y < 100; y++) {
+        for (int y = 0; y < 100; y++) {
             HBox box = new HBox();
             railroadCells.put(box, new ArrayList<>());
-            for(int x = 0; x < 100; x++) {
+            for (int x = 0; x < 100; x++) {
                 ImageView view = new ImageView(RailroadImages.EMPTY_2);
                 view.setFitHeight(32);
                 view.setFitWidth(32);
@@ -502,7 +507,7 @@ public class GuiMain implements Initializable {
 
         }
 
-        for(Theme t: Theme.values()) {
+        for (Theme t : Theme.values()) {
             MenuItem theme = new MenuItem(Ref.language.getString("theme.text." + t.name()));
             theme.setOnAction(action -> {
                 Config.theme = t.name();
@@ -511,7 +516,7 @@ public class GuiMain implements Initializable {
             this.theme.getItems().add(theme);
         }
 
-        for(Language l: Language.values()) {
+        for (Language l : Language.values()) {
             MenuItem language = new MenuItem(Ref.language.getString("language.text." + l.name()));
             language.setOnAction(action -> {
                 Config.language = l.name();
@@ -545,7 +550,7 @@ public class GuiMain implements Initializable {
         this.actualPosition.addEventHandler(ActionEvent.ANY, this::onActualPositionEdited);
 
         this.sensorListed.selectedProperty().addListener((o, oldValue, newValue) -> {
-            if(oldValue != newValue) {
+            if (oldValue != newValue) {
                 this.onSensorListedChanged();
             }
         });
@@ -581,7 +586,7 @@ public class GuiMain implements Initializable {
         this.right.setDisable(true);
 
         this.up.setOnAction(event -> {
-            if(this.actual != null) {
+            if (this.actual != null) {
                 this.up.setSelected(true);
                 this.actual.setLastPosition(new Position(this.actual.getActualPosition().getPosition().getX(),
                         this.actual.getActualPosition().getPosition().getY() + 1));
@@ -589,7 +594,7 @@ public class GuiMain implements Initializable {
         });
 
         this.down.setOnAction(event -> {
-            if(this.actual != null) {
+            if (this.actual != null) {
                 this.down.setSelected(true);
                 this.actual.setLastPosition(new Position(this.actual.getActualPosition().getPosition().getX(),
                         this.actual.getActualPosition().getPosition().getY() - 1));
@@ -597,7 +602,7 @@ public class GuiMain implements Initializable {
         });
 
         this.left.setOnAction(event -> {
-            if(this.actual != null) {
+            if (this.actual != null) {
                 this.left.setSelected(true);
                 this.actual.setLastPosition(new Position(this.actual.getActualPosition().getPosition().getX() + 1,
                         this.actual.getActualPosition().getPosition().getY()));
@@ -605,7 +610,7 @@ public class GuiMain implements Initializable {
         });
 
         this.right.setOnAction(event -> {
-            if(this.actual != null) {
+            if (this.actual != null) {
                 this.right.setSelected(true);
                 this.actual.setLastPosition(new Position(this.actual.getActualPosition().getPosition().getX() - 1,
                         this.actual.getActualPosition().getPosition().getY()));
@@ -632,7 +637,7 @@ public class GuiMain implements Initializable {
         popOver.setArrowLocation(PopOver.ArrowLocation.TOP_CENTER);
 
         this.actualSensor.setOnAction(event -> {
-            if(this.actual != null)
+            if (this.actual != null)
                 popOver.setTitle(this.actual.getName());
             popOver.show(this.actualSensor);
         });
@@ -659,7 +664,7 @@ public class GuiMain implements Initializable {
         this.temporary.setPrefHeight(0);
 
 
-        if(!LocoNet.getInstance().getTrains().isEmpty())
+        if (!LocoNet.getInstance().getTrains().isEmpty())
             this.setTrain(LocoNet.getInstance().getTrains().get(0));
         else {
             actualPosition.setDisable(true);
@@ -695,17 +700,16 @@ public class GuiMain implements Initializable {
 
     public void updatePlanMode() {
         ArrayList<String> sensors = new ArrayList<>();
-        for(Sensor s: Sensor.getAllSensors()) {
+        for (Sensor s : Sensor.getAllSensors()) {
             sensors.add(s.toString());
         }
-        if(sensors.isEmpty()) {
+        if (sensors.isEmpty()) {
             return;
         }
 
         this.actualPosition.setItems(FXCollections.observableArrayList(sensors));
 
         this.allSensors.getChildren().clear();
-
 
 
         this.temporary.setPrefWidth(27.0);
@@ -720,12 +724,12 @@ public class GuiMain implements Initializable {
 
         this.allSensors.getChildren().addAll(box);
 
-        for(Sensor s: Sensor.getAllSensors()) {
-            if(s.shouldBeListed()) {
+        for (Sensor s : Sensor.getAllSensors()) {
+            if (s.shouldBeListed()) {
                 Button b = new Button(s.toString());
                 b.setMinWidth(200);
                 b.setOnAction(event -> {
-                    if(this.actual != null) {
+                    if (this.actual != null) {
                         this.actual.getTrainStationManager().addStation(s, this.temporary.isSelected());
                     }
                 });
@@ -735,11 +739,11 @@ public class GuiMain implements Initializable {
     }
 
     public void updateTrains() {
-        if(trainsRoot == null || trainsRoot.getChildren() == null)
+        if (trainsRoot == null || trainsRoot.getChildren() == null)
             return;
-        if(!trainsRoot.getChildren().isEmpty())
+        if (!trainsRoot.getChildren().isEmpty())
             trainsRoot.getChildren().clear();
-        for(Train t: LocoNet.getInstance().getTrains()) {
+        for (Train t : LocoNet.getInstance().getTrains()) {
             TreeItem<String> train = new TreeItem<>(t.getName());
             trainsRoot.getChildren().add(train);
         }
@@ -747,20 +751,19 @@ public class GuiMain implements Initializable {
 
     public void updateSensors() {
         sensorsRoot.getChildren().clear();
-        for(Sensor s: Sensor.getAllSensors()) {
+        for (Sensor s : Sensor.getAllSensors()) {
             TreeItem<String> train = new TreeItem<>("Sensor: " + s.getAddress() + " [" + s.getPosition().getX() + "] [" + s.getPosition().getY() + "]");
             sensorsRoot.getChildren().add(train);
         }
-        if(Config.mode.equals(Config.MODE_PLAN))
+        if (Config.mode.equals(Config.MODE_PLAN))
             Platform.runLater(this::updatePlanMode);
     }
 
     public void updateSwitches() {
         switchesRoot.getChildren().clear();
-        for(Switch s: Switch.getAllSwitches()) {
+        for (Switch s : Switch.getAllSwitches()) {
             TreeItem<String> train = new TreeItem<>("Switch: " + s.address());
             switchesRoot.getChildren().add(train);
-
 
 
         }
@@ -777,7 +780,7 @@ public class GuiMain implements Initializable {
         if (output == null)
             throw new IOException("No file to write to!");
 
-        if(LocoNet.getRailroad().getRailroad() == null)
+        if (LocoNet.getRailroad().getRailroad() == null)
             return;
 
         final AbstractRailroadElement[][] railroadElements = LocoNet.getRailroad().getRailroad();
@@ -791,15 +794,15 @@ public class GuiMain implements Initializable {
         bw.append("<railroad>");
         bw.newLine();
 
-        for(int y = 0; y < 100; y++) {
-            for(int x = 0; x < 100; x++) {
-                if(railroadElements[x][y] != null && railroadElements[x][y].getImage() != null) {
+        for (int y = 0; y < 100; y++) {
+            for (int x = 0; x < 100; x++) {
+                if (railroadElements[x][y] != null && railroadElements[x][y].getImage() != null) {
                     railroadElements[x][y].saveTo(bw);
                 }
             }
         }
 
-        for(Train t: LocoNet.getInstance().getTrains())
+        for (Train t : LocoNet.getInstance().getTrains())
             t.saveTo(bw);
 
         bw.append("</railroad>");
@@ -809,7 +812,7 @@ public class GuiMain implements Initializable {
     }
 
     public void updateTrainStationManager() {
-        if(this.actual == null)
+        if (this.actual == null)
             return;
 
         trainStations.getChildren().clear();

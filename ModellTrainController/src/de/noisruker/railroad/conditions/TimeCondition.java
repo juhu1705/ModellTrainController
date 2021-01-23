@@ -31,7 +31,7 @@ public class TimeCondition extends AbstractDrivingCondition {
 
     @Override
     public void updateCondition() {
-        if(time > 0)
+        if (time > 0)
             time--;
         else
             time = 0;
@@ -39,10 +39,10 @@ public class TimeCondition extends AbstractDrivingCondition {
     }
 
     private void updateGui() {
-        if(super.isInCheck) {
-            if(this.time > 0 && !condition.getStyleClass().contains("in-progress"))
+        if (super.isInCheck) {
+            if (this.time > 0 && !condition.getStyleClass().contains("in-progress"))
                 condition.getStyleClass().add("in-progress");
-            else if(this.time == 0 && !condition.getStyleClass().contains("checked"))
+            else if (this.time == 0 && !condition.getStyleClass().contains("checked"))
                 condition.getStyleClass().add("checked");
         } else {
             condition.getStyleClass().remove("in-progress");
@@ -69,7 +69,7 @@ public class TimeCondition extends AbstractDrivingCondition {
         spinner.getValueFactory().valueProperty().addListener((o, oldValue, newValue) -> {
             waitingTime.setText(newValue.toString() + " s");
             timeToWait = newValue;
-            if(time != 0)
+            if (time != 0)
                 time = timeToWait * 2;
         });
 

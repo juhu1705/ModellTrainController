@@ -27,7 +27,8 @@ public class RailroadEnd extends AbstractRailroadElement {
     }
 
     @Override
-    public void onLocoNetMessage(AbstractMessage message) { }
+    public void onLocoNetMessage(AbstractMessage message) {
+    }
 
     @Override
     public Position getToPos(Position from) {

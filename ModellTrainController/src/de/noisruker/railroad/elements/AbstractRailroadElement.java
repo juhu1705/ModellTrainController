@@ -3,7 +3,6 @@ package de.noisruker.railroad.elements;
 import de.noisruker.loconet.messages.AbstractMessage;
 import de.noisruker.railroad.Position;
 import de.noisruker.railroad.RailRotation;
-import de.noisruker.railroad.Train;
 import de.noisruker.util.SaveAble;
 import de.noisruker.util.Util;
 import javafx.scene.image.Image;

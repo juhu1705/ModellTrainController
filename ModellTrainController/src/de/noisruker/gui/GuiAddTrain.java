@@ -1,37 +1,24 @@
 package de.noisruker.gui;
 
 import de.noisruker.gui.tables.BasicTrains;
-import de.noisruker.loconet.LocoNet;
-import de.noisruker.loconet.LocoNetConnection;
-import de.noisruker.loconet.messages.LocoNetMessage;
-import de.noisruker.loconet.messages.MessageType;
-import de.noisruker.main.GUILoader;
-import de.noisruker.railroad.Train;
 import de.noisruker.util.Ref;
 import de.noisruker.util.Util;
-import javafx.application.Platform;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import jssc.SerialPortException;
 import org.controlsfx.control.ToggleSwitch;
-import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.validation.ValidationResult;
 import org.controlsfx.validation.ValidationSupport;
 import org.controlsfx.validation.Validator;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Objects;
 import java.util.ResourceBundle;
 
-import static de.noisruker.loconet.LocoNet.*;
+import static de.noisruker.loconet.LocoNet.getInstance;
 
 public class GuiAddTrain implements Initializable {
 
@@ -61,20 +48,20 @@ public class GuiAddTrain implements Initializable {
     public void onSet(ActionEvent e) {
         error.setText("");
 
-        if(this.minSpeed.getValue() > this.maxSpeed.getValue())
+        if (this.minSpeed.getValue() > this.maxSpeed.getValue())
             error.setText(Ref.language.getString("label.error.min_speed"));
 
-        if(this.normalSpeed.getValue() < this.minSpeed.getValue())
+        if (this.normalSpeed.getValue() < this.minSpeed.getValue())
             error.setText(Ref.language.getString("label.error.normal_speed"));
 
-        if(this.maxSpeed.getValue() < this.normalSpeed.getValue())
+        if (this.maxSpeed.getValue() < this.normalSpeed.getValue())
             error.setText(Ref.language.getString("label.error.max_speed"));
 
-        if(error.getText().isBlank()) {
+        if (error.getText().isBlank()) {
             getInstance().addSavedTrain(address.getValue().byteValue(), name.getText(), null, (byte) maxSpeed.getValue(), (byte) normalSpeed.getValue(), (byte) minSpeed.getValue(), standardDirection.isSelected());
 
             GuiMain.getInstance().updateTrains();
-            ((Stage)((Button) e.getSource()).getScene().getWindow()).close();
+            ((Stage) ((Button) e.getSource()).getScene().getWindow()).close();
         }
     }
 

@@ -7,7 +7,9 @@ import de.noisruker.util.Util;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -39,7 +41,7 @@ public class SensorCondition extends AbstractDrivingCondition {
                     condition.getStyleClass().add("in-progress");
                 else if (this.isConditionTrue() && !condition.getStyleClass().contains("checked"))
                     condition.getStyleClass().add("checked");
-                if(!this.isConditionTrue())
+                if (!this.isConditionTrue())
                     condition.getStyleClass().remove("checked");
             } else {
                 condition.getStyleClass().remove("in-progress");
@@ -63,16 +65,16 @@ public class SensorCondition extends AbstractDrivingCondition {
         ComboBox<String> comboBox = new ComboBox<>();
 
         ArrayList<String> sensors = new ArrayList<>();
-        for(Sensor s: Sensor.getAllSensors()) {
+        for (Sensor s : Sensor.getAllSensors()) {
             sensors.add(s.toString());
         }
-        if(!sensors.isEmpty()) {
+        if (!sensors.isEmpty()) {
             comboBox.setItems(FXCollections.observableArrayList(sensors));
         }
         comboBox.setOnAction(event -> {
-            if(comboBox.getValue() != null) {
+            if (comboBox.getValue() != null) {
                 this.sensor = Util.getSensorByString(comboBox.getValue(), Sensor.getAllSensors());
-                if(this.sensor != null)
+                if (this.sensor != null)
                     sensor.setText(this.sensor.toString());
             }
         });

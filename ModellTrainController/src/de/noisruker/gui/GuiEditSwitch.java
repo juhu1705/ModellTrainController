@@ -3,7 +3,6 @@ package de.noisruker.gui;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Spinner;
@@ -70,17 +69,20 @@ public class GuiEditSwitch implements Initializable {
         direction = directionOn.isSelected();
         switchAddress = (byte) (address.getValue().byteValue() - (byte) 1);
 
-        ((Stage) (((Button)event.getSource()).getScene().getWindow())).close();
+        ((Stage) (((Button) event.getSource()).getScene().getWindow())).close();
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        for(HBox box: railroadLines) {
+        for (HBox box : railroadLines) {
             railroadSection.getChildren().add(box);
-            for(ImageView i: railroadCells.get(box)) {
-                i.setOnMouseEntered(mouseEvent -> {});
-                i.setOnMouseClicked(mouseEvent -> {});
-                i.setOnMouseExited(mouseEvent -> {});
+            for (ImageView i : railroadCells.get(box)) {
+                i.setOnMouseEntered(mouseEvent -> {
+                });
+                i.setOnMouseClicked(mouseEvent -> {
+                });
+                i.setOnMouseExited(mouseEvent -> {
+                });
                 i.setImage(getNormalForm(i.getImage()));
             }
         }
@@ -98,22 +100,22 @@ public class GuiEditSwitch implements Initializable {
     }
 
     private Image getPictureOn(Image i) {
-        if(i.equals(RailroadImages.SWITCH_EAST_1) || i.equals(RailroadImages.SWITCH_NORTH_1) ||
+        if (i.equals(RailroadImages.SWITCH_EAST_1) || i.equals(RailroadImages.SWITCH_NORTH_1) ||
                 i.equals(RailroadImages.SWITCH_WEST_1) || i.equals(RailroadImages.SWITCH_SOUTH_1) ||
                 i.equals(RailroadImages.SWITCH_EAST_2) || i.equals(RailroadImages.SWITCH_NORTH_2) ||
                 i.equals(RailroadImages.SWITCH_WEST_2) || i.equals(RailroadImages.SWITCH_SOUTH_2))
             return RailroadImages.STRAIGHT_VERTICAL;
-        else if(i.equals(RailroadImages.SWITCH_EAST_3) || i.equals(RailroadImages.SWITCH_NORTH_3) ||
+        else if (i.equals(RailroadImages.SWITCH_EAST_3) || i.equals(RailroadImages.SWITCH_NORTH_3) ||
                 i.equals(RailroadImages.SWITCH_WEST_3) || i.equals(RailroadImages.SWITCH_SOUTH_3))
             return RailroadImages.CURVE_SOUTH_WEST;
         return RailroadImages.EMPTY;
     }
 
     private Image getPictureOff(Image i) {
-        if(i.equals(RailroadImages.SWITCH_EAST_1) || i.equals(RailroadImages.SWITCH_NORTH_1) ||
+        if (i.equals(RailroadImages.SWITCH_EAST_1) || i.equals(RailroadImages.SWITCH_NORTH_1) ||
                 i.equals(RailroadImages.SWITCH_WEST_1) || i.equals(RailroadImages.SWITCH_SOUTH_1))
             return RailroadImages.CURVE_SOUTH_WEST;
-        else if(i.equals(RailroadImages.SWITCH_EAST_3) || i.equals(RailroadImages.SWITCH_NORTH_3) ||
+        else if (i.equals(RailroadImages.SWITCH_EAST_3) || i.equals(RailroadImages.SWITCH_NORTH_3) ||
                 i.equals(RailroadImages.SWITCH_WEST_3) || i.equals(RailroadImages.SWITCH_SOUTH_3) ||
                 i.equals(RailroadImages.SWITCH_EAST_2) || i.equals(RailroadImages.SWITCH_NORTH_2) ||
                 i.equals(RailroadImages.SWITCH_WEST_2) || i.equals(RailroadImages.SWITCH_SOUTH_2))
@@ -122,70 +124,70 @@ public class GuiEditSwitch implements Initializable {
     }
 
     private Image getNormalForm(Image image) {
-        if(image.equals(RailroadImages.SWITCH_EAST_1_HOVER))
+        if (image.equals(RailroadImages.SWITCH_EAST_1_HOVER))
             return RailroadImages.SWITCH_EAST_1;
-        else if(image.equals(RailroadImages.SWITCH_EAST_2_HOVER))
+        else if (image.equals(RailroadImages.SWITCH_EAST_2_HOVER))
             return RailroadImages.SWITCH_EAST_2;
-        else if(image.equals(RailroadImages.SWITCH_EAST_3_HOVER))
+        else if (image.equals(RailroadImages.SWITCH_EAST_3_HOVER))
             return RailroadImages.SWITCH_EAST_3;
-        else if(image.equals(RailroadImages.SWITCH_NORTH_1_HOVER))
+        else if (image.equals(RailroadImages.SWITCH_NORTH_1_HOVER))
             return RailroadImages.SWITCH_NORTH_1;
-        else if(image.equals(RailroadImages.SWITCH_NORTH_2_HOVER))
+        else if (image.equals(RailroadImages.SWITCH_NORTH_2_HOVER))
             return RailroadImages.SWITCH_NORTH_2;
-        else if(image.equals(RailroadImages.SWITCH_NORTH_3_HOVER))
+        else if (image.equals(RailroadImages.SWITCH_NORTH_3_HOVER))
             return RailroadImages.SWITCH_NORTH_3;
-        else if(image.equals(RailroadImages.SWITCH_SOUTH_1_HOVER))
+        else if (image.equals(RailroadImages.SWITCH_SOUTH_1_HOVER))
             return RailroadImages.SWITCH_SOUTH_1;
-        else if(image.equals(RailroadImages.SWITCH_SOUTH_2_HOVER))
+        else if (image.equals(RailroadImages.SWITCH_SOUTH_2_HOVER))
             return RailroadImages.SWITCH_SOUTH_2;
-        else if(image.equals(RailroadImages.SWITCH_SOUTH_3_HOVER))
+        else if (image.equals(RailroadImages.SWITCH_SOUTH_3_HOVER))
             return RailroadImages.SWITCH_SOUTH_3;
-        else if(image.equals(RailroadImages.SWITCH_WEST_1_HOVER))
+        else if (image.equals(RailroadImages.SWITCH_WEST_1_HOVER))
             return RailroadImages.SWITCH_WEST_1;
-        else if(image.equals(RailroadImages.SWITCH_WEST_2_HOVER))
+        else if (image.equals(RailroadImages.SWITCH_WEST_2_HOVER))
             return RailroadImages.SWITCH_WEST_2;
-        else if(image.equals(RailroadImages.SWITCH_WEST_3_HOVER))
+        else if (image.equals(RailroadImages.SWITCH_WEST_3_HOVER))
             return RailroadImages.SWITCH_WEST_3;
-        else if(image.equals(RailroadImages.STRAIGHT_SENSOR_HORIZONTAL_HOVER))
+        else if (image.equals(RailroadImages.STRAIGHT_SENSOR_HORIZONTAL_HOVER))
             return RailroadImages.STRAIGHT_SENSOR_HORIZONTAL;
-        else if(image.equals(RailroadImages.STRAIGHT_SENSOR_VERTICAL_HOVER))
+        else if (image.equals(RailroadImages.STRAIGHT_SENSOR_VERTICAL_HOVER))
             return RailroadImages.STRAIGHT_SENSOR_VERTICAL;
-        else if(image.equals(RailroadImages.SIGNAL_VERTICAL_HOVER))
+        else if (image.equals(RailroadImages.SIGNAL_VERTICAL_HOVER))
             return RailroadImages.SIGNAL_VERTICAL;
-        else if(image.equals(RailroadImages.SIGNAL_HORIZONTAL_HOVER))
+        else if (image.equals(RailroadImages.SIGNAL_HORIZONTAL_HOVER))
             return RailroadImages.SIGNAL_HORIZONTAL;
-        else if(RailroadImages.HOVER_IMAGES.contains(image))
+        else if (RailroadImages.HOVER_IMAGES.contains(image))
             return RailroadImages.EMPTY_2;
-        else if(image.equals(RailroadImages.EMPTY))
+        else if (image.equals(RailroadImages.EMPTY))
             return RailroadImages.EMPTY_2;
 
         return image;
     }
 
     private Image getHoverForm(Image image) {
-        if(image.equals(RailroadImages.SWITCH_EAST_1))
+        if (image.equals(RailroadImages.SWITCH_EAST_1))
             return RailroadImages.SWITCH_EAST_1_HOVER;
-        else if(image.equals(RailroadImages.SWITCH_EAST_2))
+        else if (image.equals(RailroadImages.SWITCH_EAST_2))
             return RailroadImages.SWITCH_EAST_2_HOVER;
-        else if(image.equals(RailroadImages.SWITCH_EAST_3))
+        else if (image.equals(RailroadImages.SWITCH_EAST_3))
             return RailroadImages.SWITCH_EAST_3_HOVER;
-        else if(image.equals(RailroadImages.SWITCH_NORTH_1))
+        else if (image.equals(RailroadImages.SWITCH_NORTH_1))
             return RailroadImages.SWITCH_NORTH_1_HOVER;
-        else if(image.equals(RailroadImages.SWITCH_NORTH_2))
+        else if (image.equals(RailroadImages.SWITCH_NORTH_2))
             return RailroadImages.SWITCH_NORTH_2_HOVER;
-        else if(image.equals(RailroadImages.SWITCH_NORTH_3))
+        else if (image.equals(RailroadImages.SWITCH_NORTH_3))
             return RailroadImages.SWITCH_NORTH_3_HOVER;
-        else if(image.equals(RailroadImages.SWITCH_SOUTH_1))
+        else if (image.equals(RailroadImages.SWITCH_SOUTH_1))
             return RailroadImages.SWITCH_SOUTH_1_HOVER;
-        else if(image.equals(RailroadImages.SWITCH_SOUTH_2))
+        else if (image.equals(RailroadImages.SWITCH_SOUTH_2))
             return RailroadImages.SWITCH_SOUTH_2_HOVER;
-        else if(image.equals(RailroadImages.SWITCH_SOUTH_3))
+        else if (image.equals(RailroadImages.SWITCH_SOUTH_3))
             return RailroadImages.SWITCH_SOUTH_3_HOVER;
-        else if(image.equals(RailroadImages.SWITCH_WEST_1))
+        else if (image.equals(RailroadImages.SWITCH_WEST_1))
             return RailroadImages.SWITCH_WEST_1_HOVER;
-        else if(image.equals(RailroadImages.SWITCH_WEST_2))
+        else if (image.equals(RailroadImages.SWITCH_WEST_2))
             return RailroadImages.SWITCH_WEST_2_HOVER;
-        else if(image.equals(RailroadImages.SWITCH_WEST_3))
+        else if (image.equals(RailroadImages.SWITCH_WEST_3))
             return RailroadImages.SWITCH_WEST_3_HOVER;
         return image;
     }

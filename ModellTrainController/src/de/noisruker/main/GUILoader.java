@@ -12,19 +12,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
-import org.controlsfx.glyphfont.FontAwesome;
-import org.controlsfx.glyphfont.Glyph;
-import org.controlsfx.glyphfont.GlyphFontRegistry;
 
 import java.io.File;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.PropertyResourceBundle;
 
 public class GUILoader extends Application {
 
@@ -45,13 +37,16 @@ public class GUILoader extends Application {
         Scene s = new Scene(root);
 
         if (!Ref.theme.getLocation().equalsIgnoreCase("remove")) {
-            if(Ref.theme.equals(Theme.LIGHT) || Ref.theme.equals(Theme.DARK)) {
+            if (Ref.theme.equals(Theme.LIGHT) || Ref.theme.equals(Theme.DARK)) {
                 Ref.J_METRO.setStyle(Ref.theme == Theme.DARK ? Style.DARK : Style.LIGHT);
                 Ref.J_METRO.setScene(s);
             } else
                 s.getStylesheets().add(Ref.theme.getLocation());
         }
-        if(Ref.theme.equals(Theme.DARK))
+
+
+
+        if (Ref.theme.equals(Theme.DARK))
             s.getStylesheets().add(Ref.DARK_THEME_FIXES);
 
         s.getStylesheets().add(Ref.THEME_IMPROVEMENTS);

@@ -37,8 +37,8 @@ public class TrainStationManager {
     }
 
     protected void update() {
-        if(this.actual != -1) {
-            if(this.stations.get(actual).update()) {
+        if (this.actual != -1) {
+            if (this.stations.get(actual).update()) {
                 this.setNextStation();
             }
         }
@@ -50,15 +50,15 @@ public class TrainStationManager {
     }
 
     public void setNextStation() {
-        if(this.stations.get(actual).shouldBeDeleted()) {
+        if (this.stations.get(actual).shouldBeDeleted()) {
             stations.remove(actual);
-            if(GuiMain.getInstance() != null)
+            if (GuiMain.getInstance() != null)
                 Platform.runLater(GuiMain.getInstance()::updateTrainStationManager);
         } else
             actual++;
 
-        if(this.stations.size() <= actual) {
-            if(!this.stations.isEmpty())
+        if (this.stations.size() <= actual) {
+            if (!this.stations.isEmpty())
                 actual = 0;
             else {
                 actual = -1;
@@ -71,14 +71,14 @@ public class TrainStationManager {
     }
 
     public void activateStation(TrainStation station) {
-        if(this.actual != -1 && this.stations.get(actual).shouldBeDeleted()) {
+        if (this.actual != -1 && this.stations.get(actual).shouldBeDeleted()) {
             stations.remove(actual);
             if (GuiMain.getInstance() != null)
                 Platform.runLater(GuiMain.getInstance()::updateTrainStationManager);
         }
-        if(!this.stations.contains(station)) {
+        if (!this.stations.contains(station)) {
             this.stations.add(station);
-            if(GuiMain.getInstance() != null)
+            if (GuiMain.getInstance() != null)
                 Platform.runLater(GuiMain.getInstance()::updateTrainStationManager);
         }
         this.actual = this.stations.indexOf(station);
@@ -92,7 +92,7 @@ public class TrainStationManager {
         TrainStation station;
         this.stations.add(station = new TrainStation(sensor, isTemporary, this));
 
-        if(GuiMain.getInstance() != null)
+        if (GuiMain.getInstance() != null)
             Platform.runLater(GuiMain.getInstance()::updateTrainStationManager);
     }
 
@@ -104,7 +104,7 @@ public class TrainStationManager {
 
     public void deleteStation(TrainStation station) {
 
-        if(actual != -1 && this.stations.get(actual).equals(station)) {
+        if (actual != -1 && this.stations.get(actual).equals(station)) {
             station.isTemporary = true;
             train.stopTrainImmediately();
             train.resetRailway();
@@ -114,7 +114,7 @@ public class TrainStationManager {
         }
         this.stations.remove(station);
         actual = -1;
-        if(GuiMain.getInstance() != null)
+        if (GuiMain.getInstance() != null)
             Platform.runLater(GuiMain.getInstance()::updateTrainStationManager);
     }
 
@@ -143,14 +143,14 @@ public class TrainStationManager {
         private ArrayList<DrivingConditionMatchmaker> matcher = new ArrayList<>();
 
         private boolean update() {
-            if(!this.conditions.isEmpty()) {
+            if (!this.conditions.isEmpty()) {
                 conditions.get(0).setChecking(true);
                 conditions.get(0).updateCondition();
                 boolean toReturn = conditions.get(0).isConditionTrue();
-                if(this.conditions.size() > 1)
-                    for(int i = 1; i < conditions.size(); i++) {
+                if (this.conditions.size() > 1)
+                    for (int i = 1; i < conditions.size(); i++) {
                         AbstractDrivingCondition dc = this.conditions.get(i);
-                        if(matcher.get(i - 1) != DrivingConditionMatchmaker.THEN || toReturn) {
+                        if (matcher.get(i - 1) != DrivingConditionMatchmaker.THEN || toReturn) {
                             dc.setChecking(true);
                             dc.updateCondition();
                         }
@@ -158,7 +158,7 @@ public class TrainStationManager {
                             case OR -> toReturn = toReturn || dc.isConditionTrue();
                             case AND -> toReturn = toReturn && dc.isConditionTrue();
                             case THEN -> {
-                                if(!toReturn) {
+                                if (!toReturn) {
                                     return false;
                                 }
                                 toReturn = dc.isConditionTrue();
@@ -199,7 +199,7 @@ public class TrainStationManager {
 
             HBox station = new HBox(button, sensorName, delete);
             station.getStyleClass().add("plan-area");
-            if(this.isTemporary)
+            if (this.isTemporary)
                 station.getStyleClass().add("temporary");
             station.setPadding(new Insets(5, 10, 5, 10));
             station.setSpacing(20);
@@ -214,14 +214,14 @@ public class TrainStationManager {
             v1.setPadding(new Insets(30, 0, 0, 0));
             v1.setMinWidth(100);
 
-            for(int i = 0; i < this.matcher.size(); i++) {
+            for (int i = 0; i < this.matcher.size(); i++) {
                 DrivingConditionMatchmaker conditionMatchmaker = this.matcher.get(i);
                 Button button = new Button(Ref.language.getString("button." + conditionMatchmaker.name()));
                 button.setPadding(new Insets(10));
                 button.setMaxWidth(1.7976931348623157E308);
                 int finalI = i;
                 button.setOnAction(event -> {
-                    if(this.matcher.size() > finalI) {
+                    if (this.matcher.size() > finalI) {
                         Ref.LOGGER.info(button.getText() + " " + Ref.language.getString("button.OR"));
                         if (button.getText().equals(Ref.language.getString("button.OR"))) {
                             this.matcher.remove(finalI);
@@ -308,27 +308,27 @@ public class TrainStationManager {
         }
 
         private void addCondition(AbstractDrivingCondition condition) {
-            if(!this.conditions.isEmpty())
+            if (!this.conditions.isEmpty())
                 this.matcher.add(DrivingConditionMatchmaker.AND);
             this.conditions.add(condition);
 
-            if(GuiMain.getInstance() != null)
+            if (GuiMain.getInstance() != null)
                 Platform.runLater(GuiMain.getInstance()::updateTrainStationManager);
         }
 
         public void deleteCondition(AbstractDrivingCondition condition) {
-            if(this.conditions.isEmpty())
+            if (this.conditions.isEmpty())
                 return;
-            if(this.conditions.size() == 1) {
+            if (this.conditions.size() == 1) {
                 this.conditions.remove(condition);
-                if(this.conditions.isEmpty())
+                if (this.conditions.isEmpty())
                     this.matcher.clear();
-            } else if(this.conditions.contains(condition)) {
+            } else if (this.conditions.contains(condition)) {
                 this.conditions.remove(condition);
                 this.matcher.remove(this.matcher.size() - 1);
             }
 
-            if(GuiMain.getInstance() != null)
+            if (GuiMain.getInstance() != null)
                 Platform.runLater(GuiMain.getInstance()::updateTrainStationManager);
         }
     }

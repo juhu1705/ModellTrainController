@@ -2,7 +2,7 @@ package de.noisruker.util;
 
 public enum Theme {
 
-    LIGHT("light"), DARK("/assets/styles/theme.css");
+    LIGHT("light"), DARK("/de/noisruker/util/theme.css");
 
     protected String location;
 

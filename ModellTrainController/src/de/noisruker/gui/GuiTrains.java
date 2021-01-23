@@ -1,8 +1,8 @@
 package de.noisruker.gui;
 
 import de.noisruker.gui.tables.BasicTrains;
-import de.noisruker.railroad.Train;
 import de.noisruker.loconet.LocoNet;
+import de.noisruker.railroad.Train;
 import de.noisruker.util.Ref;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -27,7 +27,7 @@ public class GuiTrains implements Initializable {
         BasicTrains.getInstance().addTable(this.trains);
 
         address.setCellValueFactory(train ->
-            new SimpleStringProperty(String.valueOf(train.getValue().getAddress())));
+                new SimpleStringProperty(String.valueOf(train.getValue().getAddress())));
 
         slot.setCellValueFactory(train ->
                 new SimpleStringProperty(String.valueOf(train.getValue().getSlot())));

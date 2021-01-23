@@ -6,7 +6,6 @@ import de.noisruker.gui.GuiMain;
 import de.noisruker.loconet.LocoNet;
 import de.noisruker.main.GUILoader;
 import de.noisruker.railroad.Train;
-import javafx.collections.FXCollections;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
 import jssc.SerialPortList;
@@ -76,29 +75,29 @@ public class Config {
 
             ConfigManager.getInstance().registerOptionParameters("theme", () -> {
                 ArrayList<String> themes = new ArrayList<>();
-                for(Theme t: Theme.values())
+                for (Theme t : Theme.values())
                     themes.add(t.name());
                 return themes;
             });
 
             ConfigManager.getInstance().registerOptionParameters("language", () -> {
                 ArrayList<String> languages = new ArrayList<>();
-                for(Language t: Language.values())
+                for (Language t : Language.values())
                     languages.add(t.name());
                 return languages;
             });
 
             ConfigManager.getInstance().registerActionListener("fullScreen", () -> {
-                if(GUILoader.getPrimaryStage() != null && GUILoader.getPrimaryStage().isResizable()) {
+                if (GUILoader.getPrimaryStage() != null && GUILoader.getPrimaryStage().isResizable()) {
                     GUILoader.getPrimaryStage().setFullScreen(Config.fullScreen);
                 }
             });
 
             ConfigManager.getInstance().registerActionListener("theme", () -> {
                 Ref.theme = Theme.valueOf(Config.theme);
-                if(Ref.theme == Theme.DARK || Ref.theme == Theme.LIGHT) {
+                if (Ref.theme == Theme.DARK || Ref.theme == Theme.LIGHT) {
                     Ref.J_METRO.setStyle(Ref.theme == Theme.DARK ? Style.DARK : Style.LIGHT);
-                    for(JMetro metro: Ref.other_page_themes) {
+                    for (JMetro metro : Ref.other_page_themes) {
                         metro.setStyle(Ref.theme == Theme.DARK ? Style.DARK : Style.LIGHT);
                     }
                 }
@@ -113,17 +112,17 @@ public class Config {
                     e.printStackTrace();
                 }
 
-                if(GUILoader.getPrimaryStage() != null) {
+                if (GUILoader.getPrimaryStage() != null) {
                     Util.updateWindow(GUILoader.getPrimaryStage(), "/assets/layouts/main.fxml");
                     GUILoader.getPrimaryStage().setTitle(Ref.language.getString("window." + Ref.PROJECT_NAME));
                 }
             });
 
             ConfigManager.getInstance().registerActionListener("mode", () -> {
-                if(GuiMain.getInstance() != null) {
+                if (GuiMain.getInstance() != null) {
                     GuiMain.getInstance().setMode();
                 }
-                for(Train t: LocoNet.getInstance().getTrains()) {
+                for (Train t : LocoNet.getInstance().getTrains()) {
                     t.stopTrain();
                 }
             });

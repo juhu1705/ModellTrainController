@@ -2,7 +2,8 @@ package de.noisruker.gui;
 
 import de.noisruker.loconet.LocoNet;
 import de.noisruker.main.GUILoader;
-import de.noisruker.railroad.*;
+import de.noisruker.railroad.Position;
+import de.noisruker.railroad.RailRotation;
 import de.noisruker.railroad.elements.*;
 import de.noisruker.util.Ref;
 import de.noisruker.util.Util;
@@ -10,7 +11,8 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -209,7 +211,7 @@ public class GuiCreateRailroad implements Initializable {
     public void onHideChanged(ActionEvent event) {
         this.railroadCells.forEach((key, list) -> {
             list.forEach(image -> {
-                if(image.getImage().equals(RailroadImages.EMPTY) || image.getImage().equals(RailroadImages.EMPTY_2))
+                if (image.getImage().equals(RailroadImages.EMPTY) || image.getImage().equals(RailroadImages.EMPTY_2))
                     image.setImage(shouldHide.isSelected() ? RailroadImages.EMPTY : RailroadImages.EMPTY_2);
             });
         });
@@ -367,7 +369,7 @@ public class GuiCreateRailroad implements Initializable {
     }
 
     public void onNext(ActionEvent event) {
-        if(!isRailroadValid()) {
+        if (!isRailroadValid()) {
             Notifications.create().darkStyle().title(Ref.language.getString("window.error")).text(Ref.language.getString("error.invalid_railroad")).showError();
             return;
         }
@@ -381,79 +383,80 @@ public class GuiCreateRailroad implements Initializable {
             while (openWindows != 0) {
                 try {
                     Thread.sleep(100);
-                } catch (InterruptedException ignored) { }
+                } catch (InterruptedException ignored) {
+                }
             }
             LocoNet.getRailroad().applyRailroad(railroadElements);
         }).start();
-        ((Stage) (((Button)event.getSource()).getScene().getWindow())).close();
+        ((Stage) (((Button) event.getSource()).getScene().getWindow())).close();
     }
 
     public AbstractRailroadElement[][] getRailroad() {
         AbstractRailroadElement[][] railroadElements = new AbstractRailroadElement[100][100];
         Util.prepareNewRailroad();
-        for(int y = 0; y < 100; y++) {
+        for (int y = 0; y < 100; y++) {
             HBox box1 = this.railroadLines.get(y);
             ArrayList<ImageView> cells = this.railroadCells.get(box1);
             for (int x = 0; x < 100; x++) {
-                if(cells.get(x).getImage().equals(RailroadImages.STRAIGHT_HORIZONTAL)) {
+                if (cells.get(x).getImage().equals(RailroadImages.STRAIGHT_HORIZONTAL)) {
                     railroadElements[x][y] = new RailroadLine(RailRotation.WEST, new Position(x, y));
-                } else if(cells.get(x).getImage().equals(RailroadImages.STRAIGHT_VERTICAL)) {
+                } else if (cells.get(x).getImage().equals(RailroadImages.STRAIGHT_VERTICAL)) {
                     railroadElements[x][y] = new RailroadLine(RailRotation.NORTH, new Position(x, y));
-                } else if(cells.get(x).getImage().equals(RailroadImages.STRAIGHT_SENSOR_HORIZONTAL)) {
+                } else if (cells.get(x).getImage().equals(RailroadImages.STRAIGHT_SENSOR_HORIZONTAL)) {
                     this.handleSensor(railroadElements, RailRotation.WEST, x, y);
-                } else if(cells.get(x).getImage().equals(RailroadImages.STRAIGHT_SENSOR_VERTICAL)) {
+                } else if (cells.get(x).getImage().equals(RailroadImages.STRAIGHT_SENSOR_VERTICAL)) {
                     this.handleSensor(railroadElements, RailRotation.NORTH, x, y);
-                } else if(cells.get(x).getImage().equals(RailroadImages.CURVE_NORTH_EAST)) {
+                } else if (cells.get(x).getImage().equals(RailroadImages.CURVE_NORTH_EAST)) {
                     railroadElements[x][y] = new RailroadCurve(RailRotation.NORTH, new Position(x, y));
-                } else if(cells.get(x).getImage().equals(RailroadImages.CURVE_NORTH_WEST)) {
+                } else if (cells.get(x).getImage().equals(RailroadImages.CURVE_NORTH_WEST)) {
                     railroadElements[x][y] = new RailroadCurve(RailRotation.WEST, new Position(x, y));
-                } else if(cells.get(x).getImage().equals(RailroadImages.CURVE_SOUTH_WEST)) {
+                } else if (cells.get(x).getImage().equals(RailroadImages.CURVE_SOUTH_WEST)) {
                     railroadElements[x][y] = new RailroadCurve(RailRotation.SOUTH, new Position(x, y));
-                } else if(cells.get(x).getImage().equals(RailroadImages.CURVE_SOUTH_EAST)) {
+                } else if (cells.get(x).getImage().equals(RailroadImages.CURVE_SOUTH_EAST)) {
                     railroadElements[x][y] = new RailroadCurve(RailRotation.EAST, new Position(x, y));
-                } else if(cells.get(x).getImage().equals(RailroadImages.SWITCH_EAST_1)) {
+                } else if (cells.get(x).getImage().equals(RailroadImages.SWITCH_EAST_1)) {
                     this.handleSwitch(railroadElements, Switch.SwitchType.LEFT, RailRotation.EAST, x, y);
-                } else if(cells.get(x).getImage().equals(RailroadImages.SWITCH_EAST_2)) {
+                } else if (cells.get(x).getImage().equals(RailroadImages.SWITCH_EAST_2)) {
                     this.handleSwitch(railroadElements, Switch.SwitchType.RIGHT, RailRotation.EAST, x, y);
-                } else if(cells.get(x).getImage().equals(RailroadImages.SWITCH_EAST_3)) {
+                } else if (cells.get(x).getImage().equals(RailroadImages.SWITCH_EAST_3)) {
                     this.handleSwitch(railroadElements, Switch.SwitchType.LEFT_RIGHT, RailRotation.EAST, x, y);
-                } else if(cells.get(x).getImage().equals(RailroadImages.SWITCH_WEST_1)) {
+                } else if (cells.get(x).getImage().equals(RailroadImages.SWITCH_WEST_1)) {
                     this.handleSwitch(railroadElements, Switch.SwitchType.LEFT, RailRotation.WEST, x, y);
-                } else if(cells.get(x).getImage().equals(RailroadImages.SWITCH_WEST_2)) {
+                } else if (cells.get(x).getImage().equals(RailroadImages.SWITCH_WEST_2)) {
                     this.handleSwitch(railroadElements, Switch.SwitchType.RIGHT, RailRotation.WEST, x, y);
-                } else if(cells.get(x).getImage().equals(RailroadImages.SWITCH_WEST_3)) {
+                } else if (cells.get(x).getImage().equals(RailroadImages.SWITCH_WEST_3)) {
                     this.handleSwitch(railroadElements, Switch.SwitchType.LEFT_RIGHT, RailRotation.WEST, x, y);
-                } else if(cells.get(x).getImage().equals(RailroadImages.SWITCH_NORTH_1)) {
+                } else if (cells.get(x).getImage().equals(RailroadImages.SWITCH_NORTH_1)) {
                     this.handleSwitch(railroadElements, Switch.SwitchType.LEFT, RailRotation.NORTH, x, y);
-                } else if(cells.get(x).getImage().equals(RailroadImages.SWITCH_NORTH_2)) {
+                } else if (cells.get(x).getImage().equals(RailroadImages.SWITCH_NORTH_2)) {
                     this.handleSwitch(railroadElements, Switch.SwitchType.RIGHT, RailRotation.NORTH, x, y);
-                } else if(cells.get(x).getImage().equals(RailroadImages.SWITCH_NORTH_3)) {
+                } else if (cells.get(x).getImage().equals(RailroadImages.SWITCH_NORTH_3)) {
                     this.handleSwitch(railroadElements, Switch.SwitchType.LEFT_RIGHT, RailRotation.NORTH, x, y);
-                } else if(cells.get(x).getImage().equals(RailroadImages.SWITCH_SOUTH_1)) {
+                } else if (cells.get(x).getImage().equals(RailroadImages.SWITCH_SOUTH_1)) {
                     this.handleSwitch(railroadElements, Switch.SwitchType.LEFT, RailRotation.SOUTH, x, y);
-                } else if(cells.get(x).getImage().equals(RailroadImages.SWITCH_SOUTH_2)) {
+                } else if (cells.get(x).getImage().equals(RailroadImages.SWITCH_SOUTH_2)) {
                     this.handleSwitch(railroadElements, Switch.SwitchType.RIGHT, RailRotation.SOUTH, x, y);
-                } else if(cells.get(x).getImage().equals(RailroadImages.SWITCH_SOUTH_3)) {
+                } else if (cells.get(x).getImage().equals(RailroadImages.SWITCH_SOUTH_3)) {
                     this.handleSwitch(railroadElements, Switch.SwitchType.LEFT_RIGHT, RailRotation.SOUTH, x, y);
-                } else if(cells.get(x).getImage().equals(RailroadImages.END_NORTH)) {
+                } else if (cells.get(x).getImage().equals(RailroadImages.END_NORTH)) {
                     railroadElements[x][y] = new RailroadEnd(RailRotation.NORTH, new Position(x, y));
-                } else if(cells.get(x).getImage().equals(RailroadImages.END_SOUTH)) {
+                } else if (cells.get(x).getImage().equals(RailroadImages.END_SOUTH)) {
                     railroadElements[x][y] = new RailroadEnd(RailRotation.SOUTH, new Position(x, y));
-                } else if(cells.get(x).getImage().equals(RailroadImages.END_EAST)) {
+                } else if (cells.get(x).getImage().equals(RailroadImages.END_EAST)) {
                     railroadElements[x][y] = new RailroadEnd(RailRotation.EAST, new Position(x, y));
-                } else if(cells.get(x).getImage().equals(RailroadImages.END_WEST)) {
+                } else if (cells.get(x).getImage().equals(RailroadImages.END_WEST)) {
                     railroadElements[x][y] = new RailroadEnd(RailRotation.WEST, new Position(x, y));
-                } else if(cells.get(x).getImage().equals(RailroadImages.STRAIGHT_NORTH)) {
+                } else if (cells.get(x).getImage().equals(RailroadImages.STRAIGHT_NORTH)) {
                     railroadElements[x][y] = new RailroadDirectionalLine(RailRotation.NORTH, new Position(x, y));
-                } else if(cells.get(x).getImage().equals(RailroadImages.STRAIGHT_SOUTH)) {
+                } else if (cells.get(x).getImage().equals(RailroadImages.STRAIGHT_SOUTH)) {
                     railroadElements[x][y] = new RailroadDirectionalLine(RailRotation.SOUTH, new Position(x, y));
-                } else if(cells.get(x).getImage().equals(RailroadImages.STRAIGHT_EAST)) {
+                } else if (cells.get(x).getImage().equals(RailroadImages.STRAIGHT_EAST)) {
                     railroadElements[x][y] = new RailroadDirectionalLine(RailRotation.EAST, new Position(x, y));
-                } else if(cells.get(x).getImage().equals(RailroadImages.STRAIGHT_WEST)) {
+                } else if (cells.get(x).getImage().equals(RailroadImages.STRAIGHT_WEST)) {
                     railroadElements[x][y] = new RailroadDirectionalLine(RailRotation.WEST, new Position(x, y));
-                } else if(cells.get(x).getImage().equals(RailroadImages.SIGNAL_HORIZONTAL)) {
+                } else if (cells.get(x).getImage().equals(RailroadImages.SIGNAL_HORIZONTAL)) {
                     this.handleSignal(railroadElements, RailRotation.WEST, x, y);
-                } else if(cells.get(x).getImage().equals(RailroadImages.SIGNAL_VERTICAL)) {
+                } else if (cells.get(x).getImage().equals(RailroadImages.SIGNAL_VERTICAL)) {
                     this.handleSignal(railroadElements, RailRotation.NORTH, x, y);
                 }
             }
@@ -477,7 +480,8 @@ public class GuiCreateRailroad implements Initializable {
         while (GuiEditSwitch.isInUse() || GuiEditSensor.isInUse() || GuiEditSignal.isInUse()) {
             try {
                 Thread.sleep(500);
-            } catch (InterruptedException ignored) { }
+            } catch (InterruptedException ignored) {
+            }
         }
 
         GuiEditSwitch.setSwitchToEdit(x, y, railroadLines, railroadCells);
@@ -486,7 +490,8 @@ public class GuiCreateRailroad implements Initializable {
         while (GuiEditSwitch.getSwitchAddress() == -1) {
             try {
                 Thread.sleep(500);
-            } catch (InterruptedException ignored) { }
+            } catch (InterruptedException ignored) {
+            }
         }
     }
 
@@ -504,7 +509,8 @@ public class GuiCreateRailroad implements Initializable {
         while (GuiEditSwitch.isInUse() || GuiEditSensor.isInUse() || GuiEditSignal.isInUse()) {
             try {
                 Thread.sleep(500);
-            } catch (InterruptedException ignored) { }
+            } catch (InterruptedException ignored) {
+            }
         }
 
         GuiEditSignal.setSignalToEdit(x, y, railroadLines, railroadCells);
@@ -513,14 +519,15 @@ public class GuiCreateRailroad implements Initializable {
         while (GuiEditSignal.getSignalAddress() == -1) {
             try {
                 Thread.sleep(500);
-            } catch (InterruptedException ignored) { }
+            } catch (InterruptedException ignored) {
+            }
         }
     }
 
     private void openInLoopSignal() {
         Platform.runLater(() -> {
             Stage s = Util.openWindow("/assets/layouts/create_signal.fxml", Ref.language.getString("window.railroad"), GUILoader.getPrimaryStage());
-            if(s == null)
+            if (s == null)
                 return;
 
             s.setAlwaysOnTop(true);
@@ -542,7 +549,8 @@ public class GuiCreateRailroad implements Initializable {
         while (GuiEditSensor.isInUse() || GuiEditSwitch.isInUse() || GuiEditSignal.isInUse()) {
             try {
                 Thread.sleep(500);
-            } catch (InterruptedException ignored) { }
+            } catch (InterruptedException ignored) {
+            }
         }
 
         GuiEditSensor.setSensorToEdit(x, y, railroadLines, railroadCells);
@@ -551,14 +559,15 @@ public class GuiCreateRailroad implements Initializable {
         while (GuiEditSensor.getSensorAddress() == -1) {
             try {
                 Thread.sleep(500);
-            } catch (InterruptedException ignored) { }
+            } catch (InterruptedException ignored) {
+            }
         }
     }
 
     private void openInLoopSensor() {
         Platform.runLater(() -> {
             Stage s = Util.openWindow("/assets/layouts/create_sensor.fxml", Ref.language.getString("window.railroad"), GUILoader.getPrimaryStage());
-            if(s == null)
+            if (s == null)
                 return;
 
             s.setAlwaysOnTop(true);
@@ -569,7 +578,7 @@ public class GuiCreateRailroad implements Initializable {
     private void openInLoopSwitch() {
         Platform.runLater(() -> {
             Stage s = Util.openWindow("/assets/layouts/create_switch.fxml", Ref.language.getString("window.railroad"), GUILoader.getPrimaryStage());
-            if(s == null)
+            if (s == null)
                 return;
 
             s.setAlwaysOnTop(true);
@@ -578,11 +587,11 @@ public class GuiCreateRailroad implements Initializable {
     }
 
     public boolean isRailroadValid() {
-        for(int y = 0; y < 100; y++) {
+        for (int y = 0; y < 100; y++) {
             HBox box1 = this.railroadLines.get(y);
             ArrayList<ImageView> cells = this.railroadCells.get(box1);
             for (int x = 0; x < 100; x++) {
-                if(!checkIsValid(cells.get(x).getImage(), x, y))
+                if (!checkIsValid(cells.get(x).getImage(), x, y))
                     return false;
             }
         }
@@ -590,20 +599,20 @@ public class GuiCreateRailroad implements Initializable {
     }
 
     public boolean checkIsValid(Image i, int x, int y) {
-        if(RailroadImages.NORTH_IMAGES.contains(i)) {
-            if(!isConnectedToSouth(x, y - 1))
+        if (RailroadImages.NORTH_IMAGES.contains(i)) {
+            if (!isConnectedToSouth(x, y - 1))
                 return false;
         }
-        if(RailroadImages.EAST_IMAGES.contains(i)) {
-            if(!isConnectedToWest(x + 1, y))
+        if (RailroadImages.EAST_IMAGES.contains(i)) {
+            if (!isConnectedToWest(x + 1, y))
                 return false;
         }
-        if(RailroadImages.SOUTH_IMAGES.contains(i)) {
-            if(!isConnectedToNorth(x, y + 1))
+        if (RailroadImages.SOUTH_IMAGES.contains(i)) {
+            if (!isConnectedToNorth(x, y + 1))
                 return false;
         }
-        if(RailroadImages.WEST_IMAGES.contains(i)) {
-            if(!isConnectedToEast(x - 1, y))
+        if (RailroadImages.WEST_IMAGES.contains(i)) {
+            if (!isConnectedToEast(x - 1, y))
                 return false;
         }
 
@@ -611,7 +620,7 @@ public class GuiCreateRailroad implements Initializable {
     }
 
     public boolean isConnectedToNorth(int x, int y) {
-        if(x > 100 || x < 0 || y > 100 || y < 0)
+        if (x > 100 || x < 0 || y > 100 || y < 0)
             return false;
 
         HBox box1 = this.railroadLines.get(y);
@@ -620,7 +629,7 @@ public class GuiCreateRailroad implements Initializable {
     }
 
     public boolean isConnectedToSouth(int x, int y) {
-        if(x > 100 || x < 0 || y > 100 || y < 0)
+        if (x > 100 || x < 0 || y > 100 || y < 0)
             return false;
 
         HBox box1 = this.railroadLines.get(y);
@@ -629,7 +638,7 @@ public class GuiCreateRailroad implements Initializable {
     }
 
     public boolean isConnectedToEast(int x, int y) {
-        if(x > 100 || x < 0 || y > 100 || y < 0)
+        if (x > 100 || x < 0 || y > 100 || y < 0)
             return false;
 
         HBox box1 = this.railroadLines.get(y);
@@ -638,7 +647,7 @@ public class GuiCreateRailroad implements Initializable {
     }
 
     public boolean isConnectedToWest(int x, int y) {
-        if(x > 100 || x < 0 || y > 100 || y < 0)
+        if (x > 100 || x < 0 || y > 100 || y < 0)
             return false;
 
         HBox box1 = this.railroadLines.get(y);
@@ -648,10 +657,10 @@ public class GuiCreateRailroad implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        for(int y = 0; y < 100; y++) {
+        for (int y = 0; y < 100; y++) {
             HBox box = new HBox();
             railroadCells.put(box, new ArrayList<>());
-            for(int x = 0; x < 100; x++) {
+            for (int x = 0; x < 100; x++) {
                 ImageView view = new ImageView(shouldHide.isSelected() ? RailroadImages.EMPTY : RailroadImages.EMPTY_2);
                 view.setFitHeight(32);
                 view.setFitWidth(32);
@@ -663,10 +672,10 @@ public class GuiCreateRailroad implements Initializable {
                 int finalY = y;
                 int finalX = x;
                 view.setOnMouseClicked(mouseEvent -> {
-                    if(mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+                    if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
                         switch (mode) {
                             case STRAIGHT:
-                                if(startX != -1 && startY != -1 && mouseEvent.isShiftDown()) {
+                                if (startX != -1 && startY != -1 && mouseEvent.isShiftDown()) {
                                     switch (rotation) {
                                         case NORTH:
                                         case SOUTH:
@@ -697,9 +706,9 @@ public class GuiCreateRailroad implements Initializable {
                                 this.setImage(finalX, finalY, getImageForModeAndRotation(false));
                                 break;
                         }
-                    } else if(mouseEvent.getButton().equals(MouseButton.MIDDLE)) {
+                    } else if (mouseEvent.getButton().equals(MouseButton.MIDDLE)) {
                         this.onNextRotation(null);
-                    } else if(mouseEvent.getButton().equals(MouseButton.SECONDARY)) {
+                    } else if (mouseEvent.getButton().equals(MouseButton.SECONDARY)) {
                         switch (mode) {
                             case STRAIGHT:
                                 this.onSetModeToDelete(null);
@@ -730,14 +739,14 @@ public class GuiCreateRailroad implements Initializable {
                                 break;
                         }
                     }
-                    if(view.getImage().equals(RailroadImages.EMPTY) || view.getImage().equals(RailroadImages.EMPTY_2) || RailroadImages.HOVER_IMAGES.contains(view.getImage()))
+                    if (view.getImage().equals(RailroadImages.EMPTY) || view.getImage().equals(RailroadImages.EMPTY_2) || RailroadImages.HOVER_IMAGES.contains(view.getImage()))
                         view.setImage(this.hover_image);
                 });
 
                 view.setOnScroll(scrollEvent -> {
-                    if(scrollEvent.isShiftDown()) {
+                    if (scrollEvent.isShiftDown()) {
                         this.onNextRotation(null);
-                        if(RailroadImages.HOVER_IMAGES.contains(view.getImage()))
+                        if (RailroadImages.HOVER_IMAGES.contains(view.getImage()))
                             view.setImage(this.hover_image);
                         scrollEvent.consume();
                     }
@@ -747,7 +756,7 @@ public class GuiCreateRailroad implements Initializable {
                     mouseX = finalX;
                     mouseY = finalY;
 
-                    if(startX != -1 && startY != -1 && this.straight.isSelected()) {
+                    if (startX != -1 && startY != -1 && this.straight.isSelected()) {
                         switch (rotation) {
                             case NORTH:
                             case SOUTH:
@@ -758,7 +767,7 @@ public class GuiCreateRailroad implements Initializable {
                                     if (RailroadImages.HOVER_IMAGES.contains(cells.get(startX).getImage()))
                                         cells.get(startX).setImage(shouldHide.isSelected() ? RailroadImages.EMPTY : RailroadImages.EMPTY_2);
                                 }
-                                if(mouseEvent.isShiftDown())
+                                if (mouseEvent.isShiftDown())
                                     this.connectColumn(startY, finalY, startX, true);
                                 break;
                             case EAST:
@@ -766,22 +775,22 @@ public class GuiCreateRailroad implements Initializable {
                                 HBox box1 = this.railroadLines.get(startY);
                                 ArrayList<ImageView> cells = this.railroadCells.get(box1);
                                 for (int i = 0; i < 100; i++) {
-                                    if(RailroadImages.HOVER_IMAGES.contains(cells.get(i).getImage()))
+                                    if (RailroadImages.HOVER_IMAGES.contains(cells.get(i).getImage()))
                                         cells.get(i).setImage(shouldHide.isSelected() ? RailroadImages.EMPTY : RailroadImages.EMPTY_2);
                                 }
 
-                                if(mouseEvent.isShiftDown())
+                                if (mouseEvent.isShiftDown())
                                     this.connectRow(startX, finalX, startY, true);
                                 break;
                         }
                     }
 
-                    if(view.getImage().equals(RailroadImages.EMPTY) || view.getImage().equals(RailroadImages.EMPTY_2))
+                    if (view.getImage().equals(RailroadImages.EMPTY) || view.getImage().equals(RailroadImages.EMPTY_2))
                         view.setImage(this.hover_image);
                 });
 
                 view.setOnMouseExited(mouseEvent -> {
-                    if(RailroadImages.HOVER_IMAGES.contains(view.getImage()))
+                    if (RailroadImages.HOVER_IMAGES.contains(view.getImage()))
                         view.setImage(shouldHide.isSelected() ? RailroadImages.EMPTY : RailroadImages.EMPTY_2);
                 });
 
@@ -794,8 +803,8 @@ public class GuiCreateRailroad implements Initializable {
 
         }
         this.railroadSection.setOnKeyPressed(keyEvent -> {
-            if(keyEvent.getCode().equals(KeyCode.SHIFT)) {
-                if(startX != -1 && startY != -1) {
+            if (keyEvent.getCode().equals(KeyCode.SHIFT)) {
+                if (startX != -1 && startY != -1) {
                     switch (rotation) {
                         case NORTH:
                         case SOUTH:
@@ -814,7 +823,7 @@ public class GuiCreateRailroad implements Initializable {
                             HBox box1 = this.railroadLines.get(startY);
                             ArrayList<ImageView> cells = this.railroadCells.get(box1);
                             for (int i = 0; i < 100; i++) {
-                                if(RailroadImages.HOVER_IMAGES.contains(cells.get(i).getImage()))
+                                if (RailroadImages.HOVER_IMAGES.contains(cells.get(i).getImage()))
                                     cells.get(i).setImage(shouldHide.isSelected() ? RailroadImages.EMPTY : RailroadImages.EMPTY_2);
                             }
 
@@ -826,8 +835,8 @@ public class GuiCreateRailroad implements Initializable {
         });
 
         this.railroadSection.setOnKeyReleased(keyEvent -> {
-            if(keyEvent.getCode().equals(KeyCode.SHIFT)) {
-                if(startX != -1 && startY != -1) {
+            if (keyEvent.getCode().equals(KeyCode.SHIFT)) {
+                if (startX != -1 && startY != -1) {
                     switch (rotation) {
                         case NORTH:
                         case SOUTH:
@@ -844,7 +853,7 @@ public class GuiCreateRailroad implements Initializable {
                             HBox box1 = this.railroadLines.get(startY);
                             ArrayList<ImageView> cells = this.railroadCells.get(box1);
                             for (int i = 0; i < 100; i++) {
-                                if(RailroadImages.HOVER_IMAGES.contains(cells.get(i).getImage()))
+                                if (RailroadImages.HOVER_IMAGES.contains(cells.get(i).getImage()))
                                     cells.get(i).setImage(shouldHide.isSelected() ? RailroadImages.EMPTY : RailroadImages.EMPTY_2);
                             }
                             break;
@@ -855,10 +864,10 @@ public class GuiCreateRailroad implements Initializable {
     }
 
     public void calculateConnection(int fromX, int fromY, int toX, int toY, int startDirection) {
-        switch(startDirection) {
+        switch (startDirection) {
             case 0:
-                if(fromX > toX) {
-                    if(fromY < toY) {
+                if (fromX > toX) {
+                    if (fromY < toY) {
                         this.setImage(fromX + 1, fromY, RailroadImages.CURVE_SOUTH_WEST);
 
                         this.connectColumn(fromY + 1, toY, fromX + 1, false);
@@ -868,7 +877,7 @@ public class GuiCreateRailroad implements Initializable {
                         this.connectRow(fromX, toX, toY, false);
 
                         this.setImage(toX, toY, RailroadImages.STRAIGHT_HORIZONTAL);
-                    } else if(fromY > toY) {
+                    } else if (fromY > toY) {
                         this.setImage(fromX + 1, fromY, RailroadImages.CURVE_NORTH_WEST);
 
                         this.connectColumn(fromY - 1, toY, fromX + 1, false);
@@ -889,16 +898,16 @@ public class GuiCreateRailroad implements Initializable {
 
                         this.setImage(toX, fromY, RailroadImages.STRAIGHT_VERTICAL);
                     }
-                } else if(fromX < toX) {
+                } else if (fromX < toX) {
                     this.connectRow(fromX, toX, fromY, false);
 
                     HBox box1 = this.railroadLines.get(fromY);
                     ArrayList<ImageView> cells = this.railroadCells.get(box1);
-                    if(fromY < toY) {
+                    if (fromY < toY) {
                         cells.get(toX).setImage(RailroadImages.CURVE_SOUTH_WEST);
                         this.connectColumn(fromY + 1, toY, toX, false);
                         this.setImage(toX, toY, RailroadImages.STRAIGHT_VERTICAL);
-                    } else if(fromY > toY) {
+                    } else if (fromY > toY) {
                         cells.get(toX).setImage(RailroadImages.CURVE_NORTH_WEST);
                         this.connectColumn(fromY - 1, toY, toX, false);
                         this.setImage(toX, toY, RailroadImages.STRAIGHT_VERTICAL);
@@ -927,21 +936,21 @@ public class GuiCreateRailroad implements Initializable {
     }
 
     public void connectColumn(int from, int to, int row, boolean isHover) {
-        if(from < to) {
+        if (from < to) {
             for (int i = from; i <= to; i++) {
                 HBox box1 = this.railroadLines.get(i);
                 ArrayList<ImageView> cells = this.railroadCells.get(box1);
-                if(isHover) {
+                if (isHover) {
                     if (cells.get(row).getImage().equals(RailroadImages.EMPTY) || cells.get(row).getImage().equals(RailroadImages.EMPTY_2))
                         cells.get(row).setImage(RailroadImages.STRAIGHT_VERTICAL_HOVER);
                 } else
                     cells.get(row).setImage(RailroadImages.STRAIGHT_VERTICAL);
             }
-        } else if(from > to) {
+        } else if (from > to) {
             for (int i = from; i >= to; i--) {
                 HBox box1 = this.railroadLines.get(i);
                 ArrayList<ImageView> cells = this.railroadCells.get(box1);
-                if(isHover) {
+                if (isHover) {
                     if (cells.get(row).getImage().equals(RailroadImages.EMPTY) || cells.get(row).getImage().equals(RailroadImages.EMPTY_2))
                         cells.get(row).setImage(RailroadImages.STRAIGHT_VERTICAL_HOVER);
                 } else
@@ -953,17 +962,17 @@ public class GuiCreateRailroad implements Initializable {
     public void connectRow(int from, int to, int column, boolean isHover) {
         HBox box1 = this.railroadLines.get(column);
         ArrayList<ImageView> cells = this.railroadCells.get(box1);
-        if(from < to) {
+        if (from < to) {
             for (int i = from; i <= to; i++) {
-                if(isHover) {
+                if (isHover) {
                     if (cells.get(i).getImage().equals(RailroadImages.EMPTY) || cells.get(i).getImage().equals(RailroadImages.EMPTY_2))
                         cells.get(i).setImage(RailroadImages.STRAIGHT_HORIZONTAL_HOVER);
                 } else
                     cells.get(i).setImage(RailroadImages.STRAIGHT_HORIZONTAL);
             }
-        } else if(from > to) {
+        } else if (from > to) {
             for (int i = from; i >= to; i--) {
-                if(isHover) {
+                if (isHover) {
                     if (cells.get(i).getImage().equals(RailroadImages.EMPTY) || cells.get(i).getImage().equals(RailroadImages.EMPTY_2))
                         cells.get(i).setImage(RailroadImages.STRAIGHT_HORIZONTAL_HOVER);
                 } else

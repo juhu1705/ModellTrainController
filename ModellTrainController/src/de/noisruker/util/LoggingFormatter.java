@@ -12,29 +12,29 @@ import java.util.logging.LogRecord;
  */
 class LoggingFormatter extends Formatter {
 
-	private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+    private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
 
-	@Override
-	public String format(LogRecord record) {
+    @Override
+    public String format(LogRecord record) {
 
-		StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
 
-		sb.append("[").append(LocalDateTime.now().format(dateTimeFormatter)).append("] [").append(record.getLevel())
-				.append(" | ").append(record.getSourceClassName()).append("] ").append(record.getMessage()).append("\n");
+        sb.append("[").append(LocalDateTime.now().format(dateTimeFormatter)).append("] [").append(record.getLevel())
+                .append(" | ").append(record.getSourceClassName()).append("] ").append(record.getMessage()).append("\n");
 
-		Throwable thrown = record.getThrown();
-		if (thrown != null) {
-			sb.append(thrown);
-			sb.append("\n");
+        Throwable thrown = record.getThrown();
+        if (thrown != null) {
+            sb.append(thrown);
+            sb.append("\n");
 
-			for (StackTraceElement ste : thrown.getStackTrace()) {
-				sb.append("    at ");
-				sb.append(ste);
-				sb.append("\n");
-			}
-		}
+            for (StackTraceElement ste : thrown.getStackTrace()) {
+                sb.append("    at ");
+                sb.append(ste);
+                sb.append("\n");
+            }
+        }
 
-		return sb.toString();
-	}
+        return sb.toString();
+    }
 
 }

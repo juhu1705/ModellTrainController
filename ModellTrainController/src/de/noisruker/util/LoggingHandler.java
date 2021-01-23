@@ -11,24 +11,24 @@ import java.util.logging.LogRecord;
  */
 public class LoggingHandler extends Handler {
 
-	@Override
-	public void publish(LogRecord record) {
-		String output = this.getFormatter().format(record);
+    @Override
+    public void publish(LogRecord record) {
+        String output = this.getFormatter().format(record);
 
-		if (record.getLevel().intValue() >= Level.WARNING.intValue())
-			System.err.print(output);
-		else
-			System.out.print(output);
-	}
+        if (record.getLevel().intValue() >= Level.WARNING.intValue())
+            System.err.print(output);
+        else
+            System.out.print(output);
+    }
 
-	@Override
-	public synchronized void flush() {
+    @Override
+    public synchronized void flush() {
 
-	}
+    }
 
-	@Override
-	public synchronized void close() throws SecurityException {
+    @Override
+    public synchronized void close() throws SecurityException {
 
-	}
+    }
 
 }

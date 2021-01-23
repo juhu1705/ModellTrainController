@@ -36,7 +36,7 @@ public class Progress {
 
     public final void setProgress(double progress) {
         to = progress;
-        if(!started) {
+        if (!started) {
             new Thread(() -> {
                 started = true;
                 double to = Progress.getInstance().to;
@@ -44,7 +44,8 @@ public class Progress {
                     Platform.runLater(() -> Progress.getInstance().progress.set(Progress.getInstance().progress.get() + 0.01));
                     try {
                         Thread.sleep(10);
-                    } catch (InterruptedException ignored) { }
+                    } catch (InterruptedException ignored) {
+                    }
                 }
                 if (to < Progress.getInstance().progress.get())
                     Platform.runLater(() -> Progress.getInstance().progress.set(to));

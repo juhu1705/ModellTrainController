@@ -32,33 +32,34 @@ public class RailroadCurve extends AbstractRailroadElement {
     }
 
     @Override
-    public void onLocoNetMessage(AbstractMessage message) { }
+    public void onLocoNetMessage(AbstractMessage message) {
+    }
 
     @Override
     public Position getToPos(Position from) {
         switch (rotation) {
             case NORTH:
-                if(from.equals(new Position(position.getX(), position.getY() - 1)))
+                if (from.equals(new Position(position.getX(), position.getY() - 1)))
                     return new Position(position.getX() + 1, position.getY());
-                else if(from.equals(new Position(position.getX() + 1, position.getY())))
+                else if (from.equals(new Position(position.getX() + 1, position.getY())))
                     return new Position(position.getX(), position.getY() - 1);
                 break;
             case SOUTH:
-                if(from.equals(new Position(position.getX(), position.getY() + 1)))
+                if (from.equals(new Position(position.getX(), position.getY() + 1)))
                     return new Position(position.getX() - 1, position.getY());
-                else if(from.equals(new Position(position.getX() - 1, position.getY())))
+                else if (from.equals(new Position(position.getX() - 1, position.getY())))
                     return new Position(position.getX(), position.getY() + 1);
                 break;
             case WEST:
-                if(from.equals(new Position(position.getX() - 1, position.getY())))
+                if (from.equals(new Position(position.getX() - 1, position.getY())))
                     return new Position(position.getX(), position.getY() - 1);
-                else if(from.equals(new Position(position.getX(), position.getY() - 1)))
+                else if (from.equals(new Position(position.getX(), position.getY() - 1)))
                     return new Position(position.getX() - 1, position.getY());
                 break;
             case EAST:
-                if(from.equals(new Position(position.getX(), position.getY() + 1)))
+                if (from.equals(new Position(position.getX(), position.getY() + 1)))
                     return new Position(position.getX() + 1, position.getY());
-                else if(from.equals(new Position(position.getX() + 1, position.getY())))
+                else if (from.equals(new Position(position.getX() + 1, position.getY())))
                     return new Position(position.getX(), position.getY() + 1);
                 break;
         }
