@@ -80,7 +80,7 @@ public class Util {
         if (new File("./resources/assets/textures/logo/logo.png").exists())
             i = new Image(new File("./resources/assets/textures/logo/logo.png").toURI().toString());
         else
-            i = new Image("/assets/textures/logo/logo.png");
+            i = new Image(Ref.LOGO);
         Parent root = null;
 
         try {

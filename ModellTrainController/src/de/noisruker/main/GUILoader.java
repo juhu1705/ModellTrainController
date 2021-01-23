@@ -62,7 +62,7 @@ public class GUILoader extends Application {
         if (new File("./resources/assets/textures/logo/logo.png").exists()) {
             i = new Image(new File("./resources/assets/textures/logo/logo.png").toURI().toString());
         } else
-            i = new Image("/assets/textures/logo/logo.png");
+            i = new Image(Ref.LOGO);
 
         stage.getIcons().add(i);
 

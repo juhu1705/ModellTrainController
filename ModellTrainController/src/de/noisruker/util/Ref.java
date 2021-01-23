@@ -34,10 +34,14 @@ public class Ref {
     public static final ArrayList<JMetro> other_page_themes = new ArrayList<>();
     public static Theme theme = Theme.DARK;
     public static final String ASSETS_FOLDER = "./resources/assets/";
+    public static final String LOGO = Ref.class.getResource("/assets/textures/logo/logo.png").toExternalForm();
     public static final String THEME_IMPROVEMENTS =  Ref.class.getResource("theme.css").toExternalForm();
     public static final String DARK_THEME_FIXES = Ref.class.getResource("dark.css").toExternalForm();
     public static final String HOME_FOLDER;
 
+    public static String getFileString(String s) {
+        return Ref.class.getResource(s).toExternalForm();
+    }
 
     static {
         HOME_FOLDER = System.getProperty("user.home") + "/.TrainController/";
