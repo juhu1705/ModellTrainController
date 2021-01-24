@@ -465,6 +465,12 @@ public class GuiMain implements Initializable {
         Util.onClose(event);
     }
 
+    public void onAbout(ActionEvent event) {
+        Stage s = Util.openWindow("/assets/layouts/about.fxml", Ref.language.getString("window.about"), GUILoader.getPrimaryStage());
+        if(s != null)
+            s.setResizable(false);
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         GuiMain.instance = this;

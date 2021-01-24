@@ -5,7 +5,7 @@
     <groupId>de.noisruker.traincontroller</groupId>
     <artifactId>train_controller</artifactId>
     <name>train_controller</name>
-    <version>0.0.1</version>
+    <version>0.0.1pre1</version>
 
     <properties>
         <javafx.version>16-ea+4</javafx.version>

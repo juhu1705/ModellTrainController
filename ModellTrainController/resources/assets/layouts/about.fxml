@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+
+<VBox spacing="20.0" styleClass="background" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.noisruker.gui.GuiAbout">
+   <padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+   </padding>
+   <children>
+      <HBox spacing="20.0">
+         <children>
+            <ImageView fitHeight="64.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../textures/logo/logo.png" />
+               </image>
+            </ImageView>
+            <VBox HBox.hgrow="ALWAYS">
+               <children>
+                  <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%window.train_controller" VBox.vgrow="ALWAYS">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="version" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+      <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%label.dependencies" VBox.vgrow="ALWAYS" />
+      <TextArea disable="true" editable="false" focusTraversable="false" prefHeight="116.0" prefWidth="300.0" text="Java: 15.0.2&#10;JavaFX: 16-ea+4&#10;Ikonli: 12.1.0&#10;J-Metro: 11.6.12&#10;jssc: 2.8.0 &#10;ControlsFX: 11.0.3" wrapText="true" />
+      <Label maxWidth="1.7976931348623157E308" text="%label.my_mail" HBox.hgrow="ALWAYS" />
+      <HBox spacing="5">
+         <children>
+            <FontIcon iconLiteral="far-copyright" iconColor="white" />
+            <Label alignment="CENTER_RIGHT" text="%label.copyright" HBox.hgrow="ALWAYS" />
+         </children>
+      </HBox>
+   </children>
+</VBox>

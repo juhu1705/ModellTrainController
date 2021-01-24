@@ -1,11 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.input.*?>
-<?import javafx.scene.layout.*?>
-<?import org.controlsfx.control.*?>
-<?import org.kordamp.ikonli.javafx.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.ContextMenu?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.control.TreeView?>
+<?import javafx.scene.input.KeyCodeCombination?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import org.controlsfx.control.ToggleSwitch?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.noisruker.gui.GuiMain">
    <top>
@@ -15,28 +34,87 @@
               <menus>
                 <Menu mnemonicParsing="false" text="%menu.file">
                   <items>
-                        <MenuItem mnemonicParsing="false" onAction="#onSave" text="%menu.save" />
-                        <MenuItem mnemonicParsing="false" onAction="#onLoad" text="%menu.reload" />
+                        <MenuItem mnemonicParsing="false" onAction="#onSave" text="%menu.save">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="S" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
+                           </accelerator></MenuItem>
+                        <MenuItem mnemonicParsing="false" onAction="#onLoad" text="%menu.reload">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="R" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
+                           </accelerator></MenuItem>
                         <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem mnemonicParsing="false" onAction="#onSaveTo" text="%menu.save_to" />
-                        <MenuItem mnemonicParsing="false" onAction="#onLoadFrom" text="%menu.load_from" />
+                        <MenuItem mnemonicParsing="false" onAction="#onSaveTo" text="%menu.save_to">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="S" control="UP" meta="UP" shift="DOWN" shortcut="DOWN" />
+                           </accelerator></MenuItem>
+                        <MenuItem mnemonicParsing="false" onAction="#onLoadFrom" text="%menu.load_from">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="O" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
+                           </accelerator></MenuItem>
                         <SeparatorMenuItem mnemonicParsing="false" />
-                    <MenuItem mnemonicParsing="false" onAction="#onClose" text="%menu.close" />
+                    <MenuItem mnemonicParsing="false" onAction="#onClose" text="%menu.close">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="DELETE" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
+                           </accelerator></MenuItem>
                   </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="%menu.edit">
                   <items>
-                        <Menu mnemonicParsing="false" text="%menu.add">
+                        <Menu mnemonicParsing="false" text="%menu.train">
                           <items>
-                          <MenuItem mnemonicParsing="false" onAction="#onAddTrains" text="%menu.add_train" />
+                              <MenuItem mnemonicParsing="false" onAction="#onStartTrainControl" text="%button.open">
+                                 <accelerator>
+                                    <KeyCodeCombination alt="DOWN" code="O" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
+                                 </accelerator></MenuItem>
+                              <MenuItem mnemonicParsing="false" onAction="#onEditTrain" text="%button.edit">
+                                 <accelerator>
+                                    <KeyCodeCombination alt="UP" code="E" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
+                                 </accelerator></MenuItem>
+                              <MenuItem mnemonicParsing="false" onAction="#onDeleteTrain" text="%button.delete">
+                                 <accelerator>
+                                    <KeyCodeCombination alt="UP" code="D" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
+                                 </accelerator></MenuItem>
+                              <SeparatorMenuItem mnemonicParsing="false" />
+                          <MenuItem mnemonicParsing="false" onAction="#onAddTrains" text="%menu.add_train">
+                                 <accelerator>
+                                    <KeyCodeCombination alt="UP" code="A" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
+                                 </accelerator></MenuItem>
                           </items>
                         </Menu>
-                      <MenuItem mnemonicParsing="false" onAction="#onResetAllTrains" text="%menu.reset_trains" />
+                      <MenuItem mnemonicParsing="false" onAction="#onResetAllTrains" text="%menu.reset_trains">
+                           <accelerator>
+                              <KeyCodeCombination alt="DOWN" code="R" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
+                           </accelerator></MenuItem>
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem mnemonicParsing="false" onAction="#onCreateRailroad" text="%button.create_railroad">
+                           <accelerator>
+                              <KeyCodeCombination alt="DOWN" code="C" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
+                           </accelerator></MenuItem>
                   </items>
                 </Menu>
+                  <Menu mnemonicParsing="false" text="%menu.loconet">
+                    <items>
+                      <MenuItem mnemonicParsing="false" onAction="#onStartRailroad" text="%button.turn_on">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="SPACE" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
+                           </accelerator></MenuItem>
+                        <MenuItem mnemonicParsing="false" onAction="#onStopRailroad" text="%button.turn_off">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="SPACE" control="UP" meta="UP" shift="UP" shortcut="ANY" />
+                           </accelerator></MenuItem>
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem mnemonicParsing="false" onAction="#onStopAllTrains" text="%button.stop_all_trains">
+                           <accelerator>
+                              <KeyCodeCombination alt="DOWN" code="SPACE" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
+                           </accelerator></MenuItem>
+                    </items>
+                  </Menu>
                 <Menu mnemonicParsing="false" text="%menu.help">
                   <items>
-                    <MenuItem mnemonicParsing="false" text="%menu.about" />
+                    <MenuItem mnemonicParsing="false" onAction="#onAbout" text="%menu.about">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="F1" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
+                           </accelerator></MenuItem>
                         <MenuItem mnemonicParsing="false" onAction="#onOpenHelp" text="%menu.help">
                            <accelerator>
                               <KeyCodeCombination alt="UP" code="H" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
@@ -56,8 +134,6 @@
             <ToolBar maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT">
                <items>
                   <ComboBox fx:id="mode" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" />
-                  <Separator orientation="VERTICAL" />
-                   <Button contentDisplay="CENTER" mnemonicParsing="false" onAction="#onCreateRailroad" text="%button.create_railroad" />
                   <Separator orientation="VERTICAL" />
                   <Button mnemonicParsing="false" onAction="#onStopAllTrains" text="%button.stop_all_trains" />
                   <Button mnemonicParsing="false" onAction="#onStopRailroad" text="%button.turn_off" />
@@ -83,6 +159,7 @@
                                                  <MenuItem mnemonicParsing="false" onAction="#onStartTrainControl" text="%button.open" />
                                                  <MenuItem mnemonicParsing="false" onAction="#onEditTrain" text="%button.edit" />
                                                  <MenuItem mnemonicParsing="false" onAction="#onDeleteTrain" text="%button.delete" />
+                                          <SeparatorMenuItem mnemonicParsing="false" />
                                                  <MenuItem mnemonicParsing="false" onAction="#onAddTrains" text="%menu.add_train" />
                                              </items>
                                          </ContextMenu>

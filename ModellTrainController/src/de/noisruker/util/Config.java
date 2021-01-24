@@ -37,7 +37,7 @@ public class Config {
     @ConfigElement(defaultValue = "false", type = "check", description = "fullScreen.description", name = "fullScreen.text", location = "config", visible = true)
     public static boolean fullScreen;
 
-    @ConfigElement(defaultValue = "true", type = "check", description = "tips.description", name = "tips.text", location = "config.controls", visible = true)
+    @ConfigElement(defaultValue = "true", type = "check", description = "tips.description", name = "tips.text", location = "config.controls", visible = false)
     public static boolean tips;
 
     @ConfigElement(defaultValue = "", type = "choose", description = "port.description", name = "port.text", location = "config.loconet", visible = true)
@@ -68,8 +68,7 @@ public class Config {
             ConfigManager.getInstance().registerOptionParameters("mode", () -> {
                 ArrayList<String> modes = new ArrayList<>();
                 Collections.addAll(modes, Config.MODE_MANUAL,
-                        Config.MODE_PLAN,
-                        Config.MODE_RANDOM);
+                        Config.MODE_PLAN);
                 return modes;
             });
 
