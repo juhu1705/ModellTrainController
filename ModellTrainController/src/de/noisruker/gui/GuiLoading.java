@@ -61,7 +61,7 @@ public class GuiLoading implements Initializable {
                     GuiLoading.startLocoNet();
                 } else {
                     Util.updateWindow(GUILoader.getPrimaryStage(), "/assets/layouts/init_settings.fxml");
-                    Platform.runLater(() -> Util.updateWindow(GUILoader.getPrimaryStage(), "/assets/layouts/main.fxml").setResizable(true));
+                    //Platform.runLater(() -> Util.updateWindow(GUILoader.getPrimaryStage(), "/assets/layouts/main.fxml").setResizable(true));
                 }
             });
         }).start();
