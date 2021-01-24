@@ -417,6 +417,7 @@ public class GuiMain implements Initializable {
                 Desktop.getDesktop().browse(new URI("https://github.com/juhu1705/ModellTrainController/wiki"));
             else {
                 Ref.LOGGER.log(Level.SEVERE, "Can not browse link! Here the link to the help page: https://github.com/juhu1705/ModellTrainController/wiki");
+                Notifications.create().darkStyle().title("Can not browse link!").text("Here the link to the help page: https://github.com/juhu1705/ModellTrainController/wiki").owner(GUILoader.getPrimaryStage()).showConfirm();
             }
         } catch (IOException | URISyntaxException | UnsupportedOperationException e) {
             Ref.LOGGER.log(Level.SEVERE, "Can not browse link! Here the link to the help page: https://github.com/juhu1705/ModellTrainController/wiki");
