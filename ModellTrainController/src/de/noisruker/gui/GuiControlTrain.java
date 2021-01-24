@@ -139,7 +139,7 @@ public class GuiControlTrain implements Initializable {
         if (t.getPicturePath() != null && !t.getPicturePath().isBlank())
             this.picture.setImage(new Image(t.getPicturePath()));
         else
-            this.picture.setImage(new Image("/assets/textures/images/no_picture.png"));
+            this.picture.setImage(new Image(Ref.getFileString("/assets/textures/images/no_picture.png")));
     }
 
     public void onClose(WindowEvent event) {

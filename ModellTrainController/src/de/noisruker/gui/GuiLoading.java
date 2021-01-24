@@ -56,27 +56,6 @@ public class GuiLoading implements Initializable {
 
     public static void checkForUpdates() throws InterruptedException {
         new Thread(() -> {
-            try {
-                Progress.getInstance().setProgressDescription(Ref.language.getString("info.connecting_to_update_server"));
-                Progress.getInstance().setProgress(0.25);
-
-                Progress.getInstance().setProgressDescription(Ref.language.getString("info.update_check"));
-                Progress.getInstance().setProgress(0.5);
-
-                Thread.sleep(500);
-
-                Progress.getInstance().setProgressDescription(Ref.language.getString("info.waiting"));
-                Progress.getInstance().setProgress(0.75);
-
-
-                Progress.getInstance().setProgressDescription(Ref.language.getString("info.finished"));
-                Progress.getInstance().setProgress(1);
-
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
             Platform.runLater(() -> {
                 if (Config.startImmediately && Arrays.asList(SerialPortList.getPortNames()).contains(Config.port)) {
                     GuiLoading.startLocoNet();
@@ -109,7 +88,7 @@ public class GuiLoading implements Initializable {
 
             Progress.getInstance().setProgress(0);
             try {
-                for (byte i = 1; i < 6; i++) {
+                for (byte i = 1; i < (Config.fastStarting ? 3 : 6); i++) {
                     LocoNet.checkConnection = i;
 
                     Train.addTrain(i);
@@ -127,7 +106,7 @@ public class GuiLoading implements Initializable {
                         timeLeft--;
                     }
                     LocoNet.connectionChecked = false;
-                    Progress.getInstance().setProgress((double) i / 5d);
+                    Progress.getInstance().setProgress((double) i / (Config.fastStarting ? 2d : 5d));
                     Thread.sleep(300);
                 }
             } catch (InterruptedException e) {
@@ -153,21 +132,23 @@ public class GuiLoading implements Initializable {
                 Ref.LOGGER.log(Level.WARNING, "Loading of Railroad failed", e);
             }
 
-            Progress.getInstance().setProgressDescription(Ref.language.getString("info.init_switches"));
-            Progress.getInstance().setProgress(0);
+            if(!Config.fastStarting) {
+                Progress.getInstance().setProgressDescription(Ref.language.getString("info.init_switches"));
+                Progress.getInstance().setProgress(0);
 
-            for (int i = 0; i < Switch.getAllSwitches().size(); i++) {
-                Switch.getAllSwitches().get(i).setAndUpdateState(true);
-                Progress.getInstance().setProgress(((double) i) / ((double) Switch.getAllSwitches().size()));
+                for (int i = 0; i < Switch.getAllSwitches().size(); i++) {
+                    Switch.getAllSwitches().get(i).setAndUpdateState(true);
+                    Progress.getInstance().setProgress(((double) i) / ((double) Switch.getAllSwitches().size()));
+                    try {
+                        Thread.sleep(200);
+                    } catch (InterruptedException ignored) {
+                    }
+                }
+
                 try {
-                    Thread.sleep(200);
+                    Thread.sleep(500);
                 } catch (InterruptedException ignored) {
                 }
-            }
-
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException ignored) {
             }
 
             Progress.getInstance().setProgressDescription(Ref.language.getString("info.init_signals"));
@@ -180,6 +161,11 @@ public class GuiLoading implements Initializable {
                     Thread.sleep(200);
                 } catch (InterruptedException ignored) {
                 }
+            }
+
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException ignored) {
             }
 
             LocoNet.getRailroad().init();

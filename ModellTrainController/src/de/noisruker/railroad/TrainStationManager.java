@@ -84,6 +84,7 @@ public class TrainStationManager {
         this.actual = this.stations.indexOf(station);
         train.stopTrainImmediately();
         train.resetRailway();
+        train.stopAdd = null;
         train.setDestination(this.stations.get(actual).sensor);
         this.stations.get(actual).init();
     }

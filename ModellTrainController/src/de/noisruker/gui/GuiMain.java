@@ -151,6 +151,11 @@ public class GuiMain implements Initializable {
         this.updateTrains();
     }
 
+    public void onResetAllTrains(ActionEvent event) {
+        LocoNet.getInstance().getTrains().forEach(Train::reset);
+        this.updateTrainStationManager();
+    }
+
     public void onStopAllTrains(ActionEvent event) {
         LocoNet.getInstance().getTrains().forEach(train -> train.stopTrainImmediately());
     }

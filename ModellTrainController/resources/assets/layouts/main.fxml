@@ -31,6 +31,7 @@
                           <MenuItem mnemonicParsing="false" onAction="#onAddTrains" text="%menu.add_train" />
                           </items>
                         </Menu>
+                      <MenuItem mnemonicParsing="false" onAction="#onResetAllTrains" text="%menu.reset_trains" />
                   </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="%menu.help">
@@ -149,22 +150,22 @@
                 </Tab>
                 <Tab closable="false" text="%tab.sections">
                      <content>
-                        <SplitPane dividerPositions="0.6324786324786325" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="460.0" prefWidth="394.0">
+                        <SplitPane dividerPositions="0.5">
                            <items>
-                              <TreeView fx:id="sensors" onMouseClicked="#onSensorSelectionChanged" prefHeight="460.0" prefWidth="253.0" />
-                              <VBox maxWidth="-Infinity" spacing="20.0">
+                              <TreeView fx:id="sensors" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#onSensorSelectionChanged" />
+                              <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="20.0">
                                  <children>
-                                    <Label fx:id="sensorLabel" alignment="CENTER" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
+                                    <Label fx:id="sensorLabel" alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
                                     <Label text="%label.name" />
-                                    <TextField fx:id="sensorName" disable="true" onAction="#onSensorNameChanged" />
-                                    <HBox spacing="10.0">
+                                    <TextField fx:id="sensorName" disable="true" maxHeight="-Infinity" maxWidth="-Infinity" onAction="#onSensorNameChanged" pickOnBounds="false" VBox.vgrow="ALWAYS" />
+                                    <HBox maxHeight="-Infinity" maxWidth="1.7976931348623157E308" spacing="10.0" VBox.vgrow="ALWAYS">
                                        <children>
                                           <ToggleSwitch fx:id="sensorListed" disable="true" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="0.0" prefWidth="0.0">
                                              <tooltip>
                                                 <Tooltip text="%tooltip.list_sensor" />
                                              </tooltip>
                                           </ToggleSwitch>
-                                          <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%label.list_sensor" HBox.hgrow="ALWAYS">
+                                          <Label maxHeight="1.7976931348623157E308" text="%label.list_sensor" HBox.hgrow="ALWAYS">
                                              <tooltip>
                                                 <Tooltip text="%tooltip.list_sensor" />
                                              </tooltip>

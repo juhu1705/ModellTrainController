@@ -379,6 +379,22 @@ public class Train implements Serializable, Comparable<Train> {
         this.updateSpeed();
     }
 
+    public void reset() {
+        this.stopTrainImmediately();
+        this.resetRailway();
+
+        this.trainStationManager.stations.clear();
+
+        this.previousSensor = null;
+        this.destination = null;
+        this.railway = null;
+        this.nextSensor = null;
+        this.nextNextSensor = null;
+        this.stopNext = false;
+
+        this.stopAdd = null;
+    }
+
     private void checkDriving() {
         if (this.railway == null && this.destination != null) {
             Ref.LOGGER.info("Calculate railway");
@@ -418,6 +434,8 @@ public class Train implements Serializable, Comparable<Train> {
         }
         if (destination == null && !stopNext) {
             this.trainStationManager.update();
+            if(this.speed > 0)
+                this.stopTrain();
         }
     }
 

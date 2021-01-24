@@ -2,7 +2,7 @@ package de.noisruker.util;
 
 public enum Language {
 
-    GERMAN(Ref.getFileString("/assets/language/de.properties")), ENGLISH(Ref.getFileString("/assets/language/en.properties"));
+    GERMAN("/assets/language/de.properties"), ENGLISH("/assets/language/en.properties");
 
     protected String location;
 

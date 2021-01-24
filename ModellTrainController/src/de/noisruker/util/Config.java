@@ -31,7 +31,7 @@ public class Config {
     @ConfigElement(defaultValue = "false", type = "check", description = "startImmediately.description", name = "startImmediately.text", location = "config.loconet", visible = true)
     public static boolean startImmediately;
 
-    @ConfigElement(defaultValue = "false", type = "check", description = "fastStarting.description", name = "fastStarting.text", location = "config.controls", visible = false)
+    @ConfigElement(defaultValue = "false", type = "check", description = "fast_starting.description", name = "fast_starting.text", location = "config.controls", visible = true)
     public static boolean fastStarting;
 
     @ConfigElement(defaultValue = "false", type = "check", description = "fullScreen.description", name = "fullScreen.text", location = "config", visible = true)
@@ -43,7 +43,7 @@ public class Config {
     @ConfigElement(defaultValue = "", type = "choose", description = "port.description", name = "port.text", location = "config.loconet", visible = true)
     public static String port;
 
-    @ConfigElement(defaultValue = "", type = "choose", description = "mode.description", name = "mode.text", location = "config.controls", visible = true)
+    @ConfigElement(defaultValue = "manual", type = "choose", description = "mode.description", name = "mode.text", location = "config.controls", visible = true)
     public static String mode;
 
     @ConfigElement(defaultValue = "DARK", type = "choose", description = "theme.description", name = "theme.text", location = "config", visible = true)
