@@ -413,9 +413,13 @@ public class GuiMain implements Initializable {
 
     public void onOpenHelp(ActionEvent event) {
         try {
-            Desktop.getDesktop().browse(new URI("https://github.com/juhu1705/ModellTrainController/wiki"));
-        } catch (IOException | URISyntaxException e) {
-            Ref.LOGGER.log(Level.SEVERE, "Can not browse link!", e);
+            if(Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE))
+                Desktop.getDesktop().browse(new URI("https://github.com/juhu1705/ModellTrainController/wiki"));
+            else {
+                Ref.LOGGER.log(Level.SEVERE, "Can not browse link! Here the link to the help page: https://github.com/juhu1705/ModellTrainController/wiki");
+            }
+        } catch (IOException | URISyntaxException | UnsupportedOperationException e) {
+            Ref.LOGGER.log(Level.SEVERE, "Can not browse link! Here the link to the help page: https://github.com/juhu1705/ModellTrainController/wiki");
         }
     }
 
