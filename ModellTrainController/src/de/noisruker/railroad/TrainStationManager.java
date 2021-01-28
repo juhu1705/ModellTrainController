@@ -37,6 +37,9 @@ public class TrainStationManager {
     }
 
     protected void update() {
+        if(this.actual >= this.stations.size()) {
+            this.actual = -1;
+        }
         if (this.actual != -1) {
             if (this.stations.get(actual).update()) {
                 this.setNextStation();
