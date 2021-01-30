@@ -16,7 +16,7 @@ public class Railway {
 
     private HashMap<Switch, UsedWayIndicator> usedSwitches = new HashMap<>();
 
-    private HashMap<Integer, AbstractRailroadElement> way = new HashMap<>();
+    protected HashMap<Integer, AbstractRailroadElement> way = new HashMap<>();
 
     private HashMap<Switch, Integer> waitForSwitch = new HashMap<>();
 

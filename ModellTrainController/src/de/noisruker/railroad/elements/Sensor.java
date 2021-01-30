@@ -2,6 +2,7 @@ package de.noisruker.railroad.elements;
 
 import de.noisruker.gui.GuiMain;
 import de.noisruker.gui.RailroadImages;
+import de.noisruker.loconet.LocoNet;
 import de.noisruker.loconet.messages.AbstractMessage;
 import de.noisruker.loconet.messages.SensorMessage;
 import de.noisruker.railroad.Position;
@@ -92,6 +93,11 @@ public class Sensor extends AbstractRailroadElement {
                     sensor.train = t;
             }
             this.train = t;
+
+            // TODO - Handle next sensors!
+
+            LocoNet.getRailroad().getNextSensor(this, t);
+
             return true;
         }
         return false;

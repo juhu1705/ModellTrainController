@@ -6,6 +6,7 @@ import de.noisruker.loconet.LocoNetMessageReceiver;
 import de.noisruker.loconet.messages.SensorMessage;
 import de.noisruker.railroad.elements.AbstractRailroadElement;
 import de.noisruker.railroad.elements.Sensor;
+import de.noisruker.railroad.elements.Switch;
 import de.noisruker.util.Ref;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
+import java.util.HashMap;
 
 public class Railroad {
 
@@ -51,6 +53,46 @@ public class Railroad {
                 this.handleMessage(s);
             }
         });
+    }
+
+    public Sensor getNextSensor(Sensor s, Train t) {
+        // TODO - Add correct from position!
+
+        Sensor next = goToNextSensor(s, s.getPosition(), t, s);
+
+        return next;
+    }
+
+    private Sensor goToNextSensor(AbstractRailroadElement element, Position from, Train t, Sensor sensor) {
+        if(element instanceof Sensor)
+            return (Sensor) element;
+
+        Position newPos = element.getToPos(from);
+
+        if(element instanceof Switch) {
+            if(!((Switch) element).isSwitchPossible(from))
+                return null;
+
+            Switch s = (Switch) element;
+
+            if(t.waitForSwitch.containsKey(sensor)) {
+                HashMap<Switch, Integer> waiting = t.waitForSwitch.get(sensor);
+
+                if(waiting.containsKey(s)) {
+                    newPos = t.railway.way.get(waiting.get(s) + 1).getPosition();
+                }
+            }
+        }
+
+        if(newPos == null || newPos.equals(from))
+            return null;
+
+        AbstractRailroadElement newElement = this.getElementByPosition(newPos);
+
+        if(newElement == null)
+            return null;
+
+        return goToNextSensor(newElement, element.getPosition(), t, sensor);
     }
 
     private void handleMessage(SensorMessage s) {

@@ -82,7 +82,7 @@ public class Train implements Serializable, Comparable<Train> {
     protected Position prev = null;
     protected Sensor actualSensor = null, nextSensor = null, nextNextSensor = null, previousSensor = null, destination = null, stopAdd = null;
 
-    private Railway railway = null;
+    protected Railway railway = null;
     private final TrainStationManager trainStationManager;
 
     /**
