@@ -15,6 +15,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -207,6 +210,11 @@ public class TrainStationManager {
                 station.getStyleClass().add("temporary");
             station.setPadding(new Insets(5, 10, 5, 10));
             station.setSpacing(20);
+            station.setOnDragDetected(event -> {
+                Dragboard db = box.startDragAndDrop(TransferMode.MOVE);
+
+                event.consume();
+            });
 
             VBox v1 = new VBox(), v2 = new VBox();
             v2.setSpacing(10);

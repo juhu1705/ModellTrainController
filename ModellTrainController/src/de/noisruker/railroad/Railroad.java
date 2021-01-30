@@ -56,9 +56,35 @@ public class Railroad {
     }
 
     public Sensor getNextSensor(Sensor s, Train t) {
-        // TODO - Add correct from position!
+        Position lastPosition;
 
-        Sensor next = goToNextSensor(s, s.getPosition(), t, s);
+        AbstractRailroadElement lastElement = t.railway.way.get(t.railway.positionIndex);
+        if(lastElement.equals(s))
+            lastPosition = t.railway.way.get(t.railway.positionIndex - 1).getPosition();
+        else {
+            int index = t.railway.positionIndex;
+
+            while (index > 0 && !t.railway.way.get(index).equals(s))
+                index--;
+
+            if(index == 0) {
+                if(t.railway.way.get(index).equals(s)) {
+                    lastPosition = t.railway.way.get(index).getToPos(t.railway.way.get(index + 1).getPosition());
+                } else {
+                    while (index < t.railway.actualIndex && !t.railway.way.get(index).equals(s))
+                        index++;
+
+                    if(t.railway.way.get(index).equals(s))
+                        lastPosition = t.railway.way.get(index - 1).getPosition();
+                    else
+                        return null;
+                }
+            } else
+                lastPosition = t.railway.way.get(index - 1).getPosition();
+        }
+
+
+        Sensor next = goToNextSensor(s, lastPosition, t, s);
 
         return next;
     }

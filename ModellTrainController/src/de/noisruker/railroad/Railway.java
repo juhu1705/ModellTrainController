@@ -20,7 +20,7 @@ public class Railway {
 
     private HashMap<Switch, Integer> waitForSwitch = new HashMap<>();
 
-    private int actualIndex = 0, startIndex = 0, positionIndex = 0, positionIndex1 = 0;
+    protected int actualIndex = 0, startIndex = 0, positionIndex = 0, positionIndex1 = 0;
 
     private final boolean priorWayTrue, checkSensors;
 
