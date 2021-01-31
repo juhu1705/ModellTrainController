@@ -71,4 +71,9 @@ public class RailroadCurve extends AbstractRailroadElement {
         super.saveTo(writer);
         Util.closeWriting();
     }
+
+    @Override
+    public String toString() {
+        return super.toString();
+    }
 }

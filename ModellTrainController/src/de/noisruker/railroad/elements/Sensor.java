@@ -8,6 +8,7 @@ import de.noisruker.loconet.messages.SensorMessage;
 import de.noisruker.railroad.Position;
 import de.noisruker.railroad.RailRotation;
 import de.noisruker.railroad.Train;
+import de.noisruker.util.Ref;
 import de.noisruker.util.Util;
 import javafx.application.Platform;
 import javafx.scene.image.Image;
@@ -41,8 +42,8 @@ public class Sensor extends AbstractRailroadElement {
     private boolean state, list;
     private String name = "";
 
-    private Train train, securitySavedTrain;
-    private int cooldown = -1;
+    private Train train;
+    private int cooldown = -1, requestCount = 0;
 
     public Sensor(int address, boolean state, Position position, RailRotation rotation) {
         super("sensor", position, rotation);
@@ -87,26 +88,62 @@ public class Sensor extends AbstractRailroadElement {
     }
 
     public boolean addTrain(Train t) {
-        if (this.train == null) {
+        if (this.train == null && (this.equals(t.getActualPosition()) || !this.getState())) {
             Sensor s = LocoNet.getRailroad().getNextSensor(this, t);
 
             if(s != null && !s.addTrain(t))
                 return false;
 
-            for (Sensor sensor : Sensor.getAllSensors()) {
-                if (this.getAddress() == sensor.getAddress())
-                    sensor.train = t;
-            }
             this.train = t;
+            this.sync();
 
+            if (GuiMain.getInstance() != null)
+                this.updateGUI();
+
+            if(requestCount < 0)
+                requestCount = 0;
+
+            requestCount++;
+
+            return true;
+        } else if(this.train != null && this.train.equals(t)) {
+            Sensor s = LocoNet.getRailroad().getNextSensor(this, t);
+            if(s != null && !s.addTrain(t))
+                return false;
+
+            if(requestCount < 0)
+                requestCount = 0;
+
+            this.sync();
+            this.updateGUI();
+
+            requestCount++;
             return true;
         }
         return false;
     }
 
+    public void sync() {
+        for (Sensor sensor : Sensor.getAllSensors()) {
+            if (this.getAddress() == sensor.getAddress()) {
+                sensor.train = this.train;
+                sensor.requestCount++;
+                sensor.updateGUI();
+            }
+        }
+    }
+
+    public void updateGUI() {
+        Platform.runLater(() -> {
+            GuiMain gui = GuiMain.getInstance();
+            HBox box = gui.railroadLines.get(this.position.getY());
+            gui.railroadCells.get(box).get(this.position.getX()).setImage(this.getImage());
+        });
+    }
+
     public void onTrainLeft(int address) {
-        if (address == this.getAddress()) {
-            this.securitySavedTrain = this.trainLeft();
+        if (address == this.getAddress() && this.train != null) {
+            this.cooldown = 4;
         }
         if (this.getAddress() == 2 && address == 2) {
             for (Signal s : Signal.getAllSignals())
@@ -116,28 +153,31 @@ public class Sensor extends AbstractRailroadElement {
 
     public void onTrainEnter(int address) {
         if (address == this.address) {
-            if (securitySavedTrain != null && this.train == null)
-                this.addTrain(securitySavedTrain);
-            this.securitySavedTrain = null;
+            if(this.cooldown != -1)
+                this.cooldown = -1;
         }
     }
 
     public void update() {
-        if (this.securitySavedTrain != null) {
-            if (cooldown == -1)
-                cooldown = 4;
-            else {
-                cooldown--;
-                if (cooldown == 0)
-                    this.securitySavedTrain = null;
-            }
-        } else if (cooldown >= 0)
+        if (cooldown > 0)
+            cooldown--;
+        else if(cooldown == 0) {
             cooldown = -1;
+            requestCount--;
+            Ref.LOGGER.info("Sensor: " + this.toString() + "; Count: " + requestCount);
+            if(requestCount < 0)
+                requestCount = 0;
+            if(requestCount == 0)
+                this.trainLeft();
+        }
     }
 
     public Train trainLeft() {
         Train t = this.train;
         this.train = null;
+
+        if (GuiMain.getInstance() != null)
+            this.updateGUI();
         return t;
     }
 
@@ -161,8 +201,10 @@ public class Sensor extends AbstractRailroadElement {
     @Override
     public Image getImage() {
         return rotation.equals(RailRotation.NORTH) || rotation.equals(RailRotation.SOUTH) ?
-                state ? RailroadImages.STRAIGHT_SENSOR_VERTICAL_OFF : RailroadImages.STRAIGHT_SENSOR_VERTICAL :
-                state ? RailroadImages.STRAIGHT_SENSOR_HORIZONTAL_OFF : RailroadImages.STRAIGHT_SENSOR_HORIZONTAL;
+                state ? RailroadImages.STRAIGHT_SENSOR_VERTICAL_OFF :
+                        this.train == null ? RailroadImages.STRAIGHT_SENSOR_VERTICAL : RailroadImages.EMPTY :
+                state ? RailroadImages.STRAIGHT_SENSOR_HORIZONTAL_OFF :
+                        this.train == null ? RailroadImages.STRAIGHT_SENSOR_HORIZONTAL : RailroadImages.EMPTY;
     }
 
     @Override

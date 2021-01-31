@@ -688,4 +688,13 @@ public class Switch extends AbstractRailroadElement {
     public int hashCode() {
         return Objects.hash(address);
     }
+
+    @Override
+    public String toString() {
+        return "Switch{" +
+                "position=" + position +
+                ", address=" + address +
+                ", normalPosition=" + normalPosition +
+                '}';
+    }
 }

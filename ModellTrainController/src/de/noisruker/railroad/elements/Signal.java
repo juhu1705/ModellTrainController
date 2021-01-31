@@ -151,4 +151,12 @@ public class Signal extends AbstractRailroadElement {
     public int hashCode() {
         return Objects.hash(super.hashCode(), address);
     }
+
+    @Override
+    public String toString() {
+        return "Signal{" +
+                "position=" + position +
+                ", address=" + address +
+                '}';
+    }
 }

@@ -83,4 +83,11 @@ public abstract class AbstractRailroadElement implements SaveAble {
     public RailRotation getRotation() {
         return this.rotation;
     }
+
+    @Override
+    public String toString() {
+        return elementName + "{" +
+                position +
+                '}';
+    }
 }

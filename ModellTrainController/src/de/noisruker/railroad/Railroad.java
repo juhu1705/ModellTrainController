@@ -13,12 +13,15 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
+import javax.swing.*;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 
 public class Railroad {
 
@@ -57,34 +60,40 @@ public class Railroad {
 
     public Sensor getNextSensor(Sensor s, Train t) {
         Position lastPosition;
-
-        AbstractRailroadElement lastElement = t.railway.way.get(t.railway.positionIndex);
-        if(lastElement.equals(s))
-            lastPosition = t.railway.way.get(t.railway.positionIndex - 1).getPosition();
+        if(s.equals(t.actualSensor))
+            lastPosition = t.getPrevPosition();
         else {
-            int index = t.railway.positionIndex;
+            AbstractRailroadElement lastElement = t.railway.way.get(t.railway.positionIndex);
+            if (lastElement.equals(s))
+                lastPosition = t.railway.way.get(t.railway.positionIndex - 1).getPosition();
+            else {
+                int index = t.railway.positionIndex;
 
-            while (index > 0 && !t.railway.way.get(index).equals(s))
-                index--;
+                while (index > 0 && !t.railway.way.get(index).equals(s))
+                    index--;
 
-            if(index == 0) {
-                if(t.railway.way.get(index).equals(s)) {
-                    lastPosition = t.railway.way.get(index).getToPos(t.railway.way.get(index + 1).getPosition());
-                } else {
-                    while (index < t.railway.actualIndex && !t.railway.way.get(index).equals(s))
-                        index++;
+                if (index == 0) {
+                    if (t.railway.way.get(index).equals(s)) {
+                        lastPosition = t.railway.way.get(index).getToPos(t.railway.way.get(index + 1).getPosition());
+                    } else {
+                        while (index < t.railway.actualIndex && !s.equals(t.railway.way.get(index))) {
+                            index++;
+                        }
 
-                    if(t.railway.way.get(index).equals(s))
-                        lastPosition = t.railway.way.get(index - 1).getPosition();
-                    else
-                        return null;
-                }
-            } else
-                lastPosition = t.railway.way.get(index - 1).getPosition();
+                        if (t.railway.way.containsKey(index) && t.railway.way.get(index).equals(s))
+                            lastPosition = t.railway.way.get(index - 1).getPosition();
+                        else
+                            return null;
+                    }
+                } else
+                    lastPosition = t.railway.way.get(index - 1).getPosition();
+            }
         }
 
+        if(s.getToPos(lastPosition) == null)
+            return null;
 
-        Sensor next = goToNextSensor(s, lastPosition, t, s);
+        Sensor next = goToNextSensor(this.getElementByPosition(s.getToPos(lastPosition)), s.getPosition(), t, s);
 
         return next;
     }
@@ -101,11 +110,56 @@ public class Railroad {
 
             Switch s = (Switch) element;
 
-            if(t.waitForSwitch.containsKey(sensor)) {
-                HashMap<Switch, Integer> waiting = t.waitForSwitch.get(sensor);
+            int checkFrom = 0;
+            boolean success = false;
+            for(Map.Entry<Integer, AbstractRailroadElement> e: t.railway.way.entrySet()) {
+                if(e.getValue().equals(sensor)) {
+                    checkFrom = e.getKey();
+                }
+            }
+            for(int i = checkFrom; i < t.railway.actualIndex; i++) {
+                if(t.railway.way.containsKey(i) && t.railway.way.containsKey(i - 1)) {
+                    if(s.equals(t.railway.way.get(i)) && from.equals(t.railway.way.get(i - 1).getPosition())) {
+                        if(t.railway.way.containsKey(i + 1)) {
+                            newPos = t.railway.way.get(i + 1).getPosition();
+                            success = true;
+                        }
+                    }
+                }
+            }
 
-                if(waiting.containsKey(s)) {
-                    newPos = t.railway.way.get(waiting.get(s) + 1).getPosition();
+            if(!success) {
+                newPos = s.getNextPositionSwitchSpecial(from, true);
+
+                if(newPos == null || newPos.equals(from))
+                    return null;
+                AbstractRailroadElement newElement = this.getElementByPosition(newPos);
+                if(newElement == null)
+                    return null;
+
+                Sensor sensor1 = goToNextSensor(newElement, element.getPosition(), t, sensor);
+                if(sensor1 == null)
+                    return null;
+                if(sensor1.isFree(t)) {
+                    s.setAndUpdateState(true);
+                    return sensor1;
+                }
+
+                newPos = s.getNextPositionSwitchSpecial(from, false);
+
+                if(newPos == null || newPos.equals(from))
+                    return null;
+                AbstractRailroadElement newElement1 = this.getElementByPosition(newPos);
+                if(newElement1 == null)
+                    return null;
+
+                Sensor sensor2 = goToNextSensor(newElement1, element.getPosition(), t, sensor);
+                if(sensor2 == null)
+                    return null;
+
+                if(sensor2.isFree(t)) {
+                    s.setAndUpdateState(false);
+                    return sensor2;
                 }
             }
         }
@@ -229,4 +283,12 @@ public class Railroad {
         isStopped = true;
     }
 
+    @Override
+    public String toString() {
+        return "Railroad{" +
+                "railroadElements=" + Arrays.toString(railroadElements) +
+                ", stopTrainControlSystem=" + stopTrainControlSystem +
+                ", isStopped=" + isStopped +
+                '}';
+    }
 }
