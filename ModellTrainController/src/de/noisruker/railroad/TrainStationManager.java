@@ -17,7 +17,6 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -27,13 +26,23 @@ import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.util.ArrayList;
 
+import static javafx.scene.input.TransferMode.MOVE;
+
 public class TrainStationManager {
+
+    private static long actualID = 1L;
+
+    private static long nextID() {
+        return actualID++;
+    }
 
     private final Train train;
 
     ArrayList<TrainStation> stations = new ArrayList<>();
 
     private int actual = -1;
+
+
 
     public TrainStationManager(Train train) {
         this.train = train;
@@ -131,6 +140,7 @@ public class TrainStationManager {
         TrainStationManager myManager;
 
         private final Sensor sensor;
+        private final long id;
         private boolean isTemporary;
 
         public TrainStation(Sensor sensor, boolean isTemporary, TrainStationManager myManager) {
@@ -144,6 +154,8 @@ public class TrainStationManager {
                 button.setSelected(true);
                 Util.runNext(() -> this.myManager.activateStation(this));
             });
+
+            id = TrainStationManager.nextID();
         }
 
         private ArrayList<AbstractDrivingCondition> conditions = new ArrayList<>();
@@ -211,9 +223,23 @@ public class TrainStationManager {
             station.setPadding(new Insets(5, 10, 5, 10));
             station.setSpacing(20);
             station.setOnDragDetected(event -> {
-                Dragboard db = box.startDragAndDrop(TransferMode.MOVE);
+                Dragboard db = box.startDragAndDrop(MOVE);
+
+                ClipboardContent cc = new ClipboardContent();
+
+                cc.putString("ID: " + this.id);
+
+                db.setContent(cc);
 
                 event.consume();
+            });
+            station.setOnDragOver(event -> {
+                if(event.getDragboard().hasString())
+                    event.acceptTransferModes(MOVE);
+            });
+            station.setOnDragDropped(event -> {
+                event.acceptTransferModes(MOVE);
+                myManager.move(event.getDragboard().getString(), this);
             });
 
             VBox v1 = new VBox(), v2 = new VBox();
@@ -342,6 +368,20 @@ public class TrainStationManager {
 
             if (GuiMain.getInstance() != null)
                 Platform.runLater(GuiMain.getInstance()::updateTrainStationManager);
+        }
+    }
+
+    private void move(String string, TrainStation station) {
+        for(int i1 = 0; i1 < this.stations.size(); i1++) {
+            TrainStation s = this.stations.get(i1);
+            if(string.equals("ID: " + s.id)) {
+                int i2 = this.stations.indexOf(station);
+
+                this.stations.remove(i1);
+                this.stations.add(i2, s);
+
+                return;
+            }
         }
     }
 
