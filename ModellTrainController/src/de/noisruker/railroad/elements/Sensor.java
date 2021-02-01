@@ -202,9 +202,11 @@ public class Sensor extends AbstractRailroadElement {
     public Image getImage() {
         return rotation.equals(RailRotation.NORTH) || rotation.equals(RailRotation.SOUTH) ?
                 state ? RailroadImages.STRAIGHT_SENSOR_VERTICAL_OFF :
-                        this.train == null ? RailroadImages.STRAIGHT_SENSOR_VERTICAL : RailroadImages.EMPTY :
+                        this.train == null ? RailroadImages.STRAIGHT_SENSOR_VERTICAL :
+                                RailroadImages.STRAIGHT_SENSOR_VERTICAL_RESERVED :
                 state ? RailroadImages.STRAIGHT_SENSOR_HORIZONTAL_OFF :
-                        this.train == null ? RailroadImages.STRAIGHT_SENSOR_HORIZONTAL : RailroadImages.EMPTY;
+                        this.train == null ? RailroadImages.STRAIGHT_SENSOR_HORIZONTAL :
+                                RailroadImages.STRAIGHT_SENSOR_HORIZONTAL_RESERVED;
     }
 
     @Override

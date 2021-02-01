@@ -46,6 +46,8 @@ public class RailroadImages {
     public static final Image STRAIGHT_SENSOR_HORIZONTAL_HOVER = new Image(Ref.getFileString("/assets/textures/railroad/straight_rails/straight_sensor_rail_horizontal_hover.png"));
     public static final Image STRAIGHT_SENSOR_VERTICAL_OFF = new Image(Ref.getFileString("/assets/textures/railroad/straight_rails/straight_sensor_rail_vertical_off.png"));
     public static final Image STRAIGHT_SENSOR_HORIZONTAL_OFF = new Image(Ref.getFileString("/assets/textures/railroad/straight_rails/straight_sensor_rail_horizontal_off.png"));
+    public static final Image STRAIGHT_SENSOR_VERTICAL_RESERVED = new Image(Ref.getFileString("/assets/textures/railroad/straight_rails/straight_sensor_rail_vertical_reserved.png"));
+    public static final Image STRAIGHT_SENSOR_HORIZONTAL_RESERVED = new Image(Ref.getFileString("/assets/textures/railroad/straight_rails/straight_sensor_rail_horizontal_reserved.png"));
     public static final Image STRAIGHT_NORTH_HOVER = new Image(Ref.getFileString("/assets/textures/railroad/directional_rails/straight_north_hover.png"));
     public static final Image STRAIGHT_SOUTH_HOVER = new Image(Ref.getFileString("/assets/textures/railroad/directional_rails/straight_south_hover.png"));
     public static final Image STRAIGHT_EAST_HOVER = new Image(Ref.getFileString("/assets/textures/railroad/directional_rails/straight_east_hover.png"));
