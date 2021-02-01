@@ -291,4 +291,10 @@ public class Util {
         Sensor.getAllSensors().clear();
         Signal.getAllSignals().clear();
     }
+
+    public static void resetSensorsContainsTrain(Train train) {
+        for(Sensor s: Sensor.getAllSensors())
+            if(train.equals(s.getTrain()))
+                s.reset();
+    }
 }

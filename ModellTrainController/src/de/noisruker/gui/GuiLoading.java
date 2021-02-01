@@ -18,6 +18,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 import jssc.SerialPortException;
 import jssc.SerialPortList;
 import org.xml.sax.SAXException;
@@ -196,10 +197,13 @@ public class GuiLoading implements Initializable {
             }
 
             Platform.runLater(() -> {
-                Util.updateWindow(GUILoader.getPrimaryStage(), "/assets/layouts/main.fxml").setResizable(true);
-                GUILoader.getPrimaryStage().setMaximized(true);
-                if (Config.fullScreen)
-                    GUILoader.getPrimaryStage().setFullScreen(true);
+                Stage s = Util.updateWindow(GUILoader.getPrimaryStage(), "/assets/layouts/main.fxml");
+                if(s != null) {
+                    s.setResizable(true);
+                    s.setMaximized(true);
+                    if (Config.fullScreen)
+                        s.setFullScreen(true);
+                }
             });
         }).start();
     }

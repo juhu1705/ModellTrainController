@@ -427,7 +427,6 @@ public class GuiMain implements Initializable {
     public void onActualPositionEdited(ActionEvent event) {
         if (this.actualPosition.getValue() != null) {
             if (this.actual != null) {
-                this.addStation.setDisable(false);
                 Sensor s = Util.getSensorByString(this.actualPosition.getValue(), Sensor.getAllSensors());
                 if (s == null)
                     return;
@@ -437,24 +436,24 @@ public class GuiMain implements Initializable {
                         Ref.language.getString("button.unset"));
                 switch (s.getRotation()) {
                     case NORTH, SOUTH -> {
-                        Position p = new Position(s.getPosition().getX(), s.getPosition().getY() - 1);
                         this.up.setDisable(false);
                         this.down.setDisable(false);
                         this.right.setDisable(true);
                         this.left.setDisable(true);
-                        this.up.setSelected(true);
-                        if (this.actual.getPrevPosition() == null)
-                            this.actual.setLastPosition(p);
+                        this.up.setSelected(false);
+                        this.down.setSelected(false);
+                        this.left.setSelected(false);
+                        this.right.setSelected(false);
                     }
                     case EAST, WEST -> {
                         this.up.setDisable(true);
                         this.down.setDisable(true);
                         this.right.setDisable(false);
                         this.left.setDisable(false);
-                        this.left.setSelected(true);
-                        Position p1 = new Position(s.getPosition().getX() - 1, s.getPosition().getY());
-                        if (this.actual.getPrevPosition() == null)
-                            this.actual.setLastPosition(p1);
+                        this.up.setSelected(false);
+                        this.down.setSelected(false);
+                        this.left.setSelected(false);
+                        this.right.setSelected(false);
                     }
                 }
             }
@@ -606,6 +605,7 @@ public class GuiMain implements Initializable {
                 this.up.setSelected(true);
                 this.actual.setLastPosition(new Position(this.actual.getActualPosition().getPosition().getX(),
                         this.actual.getActualPosition().getPosition().getY() + 1));
+                this.addStation.setDisable(false);
             }
         });
 
@@ -614,6 +614,7 @@ public class GuiMain implements Initializable {
                 this.down.setSelected(true);
                 this.actual.setLastPosition(new Position(this.actual.getActualPosition().getPosition().getX(),
                         this.actual.getActualPosition().getPosition().getY() - 1));
+                this.addStation.setDisable(false);
             }
         });
 
@@ -622,6 +623,7 @@ public class GuiMain implements Initializable {
                 this.left.setSelected(true);
                 this.actual.setLastPosition(new Position(this.actual.getActualPosition().getPosition().getX() + 1,
                         this.actual.getActualPosition().getPosition().getY()));
+                this.addStation.setDisable(false);
             }
         });
 
@@ -630,6 +632,7 @@ public class GuiMain implements Initializable {
                 this.right.setSelected(true);
                 this.actual.setLastPosition(new Position(this.actual.getActualPosition().getPosition().getX() - 1,
                         this.actual.getActualPosition().getPosition().getY()));
+                this.addStation.setDisable(false);
             }
         });
 

@@ -62,7 +62,7 @@ public class Railroad {
         Position lastPosition;
         if(s.equals(t.actualSensor))
             lastPosition = t.getPrevPosition();
-        else {
+        else if(t.railway != null) {
             AbstractRailroadElement lastElement = t.railway.way.get(t.railway.positionIndex);
             if (lastElement.equals(s))
                 lastPosition = t.railway.way.get(t.railway.positionIndex - 1).getPosition();
@@ -88,6 +88,21 @@ public class Railroad {
                 } else
                     lastPosition = t.railway.way.get(index - 1).getPosition();
             }
+        } else {
+            Sensor actual = t.getActualPosition();
+            AbstractRailroadElement element = this.getElementByPosition(actual.getToPos(t.prev));
+            Position last = actual.getPosition();
+            while(element.equals(s)) {
+                if(element instanceof Switch) {
+                    if(t.switchOnDestination.containsKey(element))
+                        element = this.getElementByPosition(((Switch) element).getNextPositionSwitchSpecial(last,
+                                t.switchOnDestination.get(element)));
+                    else
+                        element = this.getElementByPosition(element.getToPos(last));
+                } else
+                    element = this.getElementByPosition(element.getToPos(last));
+            }
+            lastPosition = last;
         }
 
         if(s.getToPos(lastPosition) == null)
@@ -112,17 +127,19 @@ public class Railroad {
 
             int checkFrom = 0;
             boolean success = false;
-            for(Map.Entry<Integer, AbstractRailroadElement> e: t.railway.way.entrySet()) {
-                if(e.getValue().equals(sensor)) {
-                    checkFrom = e.getKey();
+            if(t.railway != null) {
+                for (Map.Entry<Integer, AbstractRailroadElement> e : t.railway.way.entrySet()) {
+                    if (e.getValue().equals(sensor)) {
+                        checkFrom = e.getKey();
+                    }
                 }
-            }
-            for(int i = checkFrom; i < t.railway.actualIndex; i++) {
-                if(t.railway.way.containsKey(i) && t.railway.way.containsKey(i - 1)) {
-                    if(s.equals(t.railway.way.get(i)) && from.equals(t.railway.way.get(i - 1).getPosition())) {
-                        if(t.railway.way.containsKey(i + 1)) {
-                            newPos = t.railway.way.get(i + 1).getPosition();
-                            success = true;
+                for (int i = checkFrom; i < t.railway.actualIndex; i++) {
+                    if (t.railway.way.containsKey(i) && t.railway.way.containsKey(i - 1)) {
+                        if (s.equals(t.railway.way.get(i)) && from.equals(t.railway.way.get(i - 1).getPosition())) {
+                            if (t.railway.way.containsKey(i + 1)) {
+                                newPos = t.railway.way.get(i + 1).getPosition();
+                                success = true;
+                            }
                         }
                     }
                 }
@@ -141,7 +158,7 @@ public class Railroad {
                 if(sensor1 == null)
                     return null;
                 if(sensor1.isFree(t)) {
-                    s.setAndUpdateState(true);
+                    t.switchOnDestination.put(s, true);
                     return sensor1;
                 }
 
@@ -158,7 +175,7 @@ public class Railroad {
                     return null;
 
                 if(sensor2.isFree(t)) {
-                    s.setAndUpdateState(false);
+                    t.switchOnDestination.put(s, false);
                     return sensor2;
                 }
             }

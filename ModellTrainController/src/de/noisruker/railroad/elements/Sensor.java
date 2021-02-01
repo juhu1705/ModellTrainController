@@ -97,29 +97,14 @@ public class Sensor extends AbstractRailroadElement {
             this.train = t;
             this.sync();
 
-            if (GuiMain.getInstance() != null)
-                this.updateGUI();
-
-            if(requestCount < 0)
-                requestCount = 0;
-
-            requestCount++;
-            Ref.LOGGER.info("Sensor: " + this.toString() + "; Count: " + requestCount);
-
             return true;
         } else if(this.train != null && this.train.equals(t)) {
             Sensor s = LocoNet.getRailroad().getNextSensor(this, t);
             if(s != null && !s.addTrain(t))
                 return false;
 
-            if(requestCount < 0)
-                requestCount = 0;
-
             this.sync();
-            this.updateGUI();
 
-            requestCount++;
-            Ref.LOGGER.info("Sensor: " + this.toString() + "; Count: " + requestCount);
             return true;
         }
         return false;
@@ -128,14 +113,20 @@ public class Sensor extends AbstractRailroadElement {
     public void sync() {
         for (Sensor sensor : Sensor.getAllSensors()) {
             if (this.getAddress() == sensor.getAddress()) {
+                if(sensor.requestCount < 0)
+                    sensor.requestCount = 0;
+
                 sensor.train = this.train;
                 sensor.requestCount++;
+                Ref.LOGGER.info("Sensor: " + this.toString() + "; Count: " + requestCount);
                 sensor.updateGUI();
             }
         }
     }
 
     public void updateGUI() {
+        if(GuiMain.getInstance() == null)
+            return;
         Platform.runLater(() -> {
             GuiMain gui = GuiMain.getInstance();
             HBox box = gui.railroadLines.get(this.position.getY());
@@ -145,6 +136,7 @@ public class Sensor extends AbstractRailroadElement {
 
     public void onTrainLeft(int address) {
         if (address == this.getAddress() && this.train != null) {
+            Ref.LOGGER.info("Sensor: " + this.toString() + "; Count: " + requestCount);
             this.cooldown = 4;
         }
         if (this.getAddress() == 2 && address == 2) {
@@ -155,6 +147,7 @@ public class Sensor extends AbstractRailroadElement {
 
     public void onTrainEnter(int address) {
         if (address == this.address) {
+            Ref.LOGGER.info("Sensor: " + this.toString() + "; Count: " + requestCount);
             if(this.cooldown != -1)
                 this.cooldown = -1;
         }
@@ -264,5 +257,12 @@ public class Sensor extends AbstractRailroadElement {
         if (train.equals(this.train)) return true;
         if (this.train != null) return false;
         return !this.getState();
+    }
+
+    public void reset() {
+        this.train = null;
+        this.requestCount = 0;
+        this.cooldown = -1;
+        this.updateGUI();
     }
 }
