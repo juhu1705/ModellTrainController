@@ -383,6 +383,9 @@ public class TrainStationManager {
                 return;
             }
         }
+        if(GuiMain.getInstance() != null) {
+            GuiMain.getInstance().updateTrainStationManager();
+        }
     }
 
     public enum DrivingConditionMatchmaker {
