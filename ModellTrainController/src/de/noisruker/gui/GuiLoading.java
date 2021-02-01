@@ -61,7 +61,7 @@ public class GuiLoading implements Initializable {
                     GuiLoading.startLocoNet();
                 } else {
                     Util.updateWindow(GUILoader.getPrimaryStage(), "/assets/layouts/init_settings.fxml");
-                    Platform.runLater(() -> Util.updateWindow(GUILoader.getPrimaryStage(), "/assets/layouts/main.fxml").setResizable(true));
+                    // Platform.runLater(() -> Util.updateWindow(GUILoader.getPrimaryStage(), "/assets/layouts/main.fxml").setResizable(true));
                 }
             });
         }).start();
@@ -76,7 +76,6 @@ public class GuiLoading implements Initializable {
             } catch (SerialPortException e) {
                 Progress.getInstance().setProgressDescription(Ref.language.getString("info.connection_failed"));
                 addBackButton();
-                //Platform.runLater(() -> Util.updateWindow(GUILoader.getPrimaryStage(), "/assets/layouts/main.fxml").setResizable(true));
                 return;
             }
             try {
@@ -112,7 +111,6 @@ public class GuiLoading implements Initializable {
             } catch (InterruptedException e) {
                 Progress.getInstance().setProgressDescription(Ref.language.getString("info.connection_failed"));
                 addBackButton();
-                //Platform.runLater(() -> Util.updateWindow(GUILoader.getPrimaryStage(), "/assets/layouts/main.fxml").setResizable(true));
                 return;
             }
 

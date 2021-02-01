@@ -104,6 +104,7 @@ public class Sensor extends AbstractRailroadElement {
                 requestCount = 0;
 
             requestCount++;
+            Ref.LOGGER.info("Sensor: " + this.toString() + "; Count: " + requestCount);
 
             return true;
         } else if(this.train != null && this.train.equals(t)) {
@@ -118,6 +119,7 @@ public class Sensor extends AbstractRailroadElement {
             this.updateGUI();
 
             requestCount++;
+            Ref.LOGGER.info("Sensor: " + this.toString() + "; Count: " + requestCount);
             return true;
         }
         return false;
