@@ -199,10 +199,10 @@ public class GuiLoading implements Initializable {
             Platform.runLater(() -> {
                 Stage s = Util.updateWindow(GUILoader.getPrimaryStage(), "/assets/layouts/main.fxml");
                 if(s != null) {
+                    Ref.LOGGER.info("Open window");
+                    s.centerOnScreen();
+                    Platform.runLater(() -> s.setFullScreen(Config.fullScreen));
                     s.setResizable(true);
-                    s.setMaximized(true);
-                    if (Config.fullScreen)
-                        s.setFullScreen(true);
                 }
             });
         }).start();

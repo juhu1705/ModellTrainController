@@ -377,14 +377,19 @@ public class TrainStationManager {
             if(string.equals("ID: " + s.id)) {
                 int i2 = this.stations.indexOf(station);
 
+                if(i2 == this.actual)
+                    this.actual++;
+                if(i1 == this.actual)
+                    this.actual = i2;
+
                 this.stations.remove(i1);
                 this.stations.add(i2, s);
 
+                if(GuiMain.getInstance() != null)
+                    Platform.runLater(GuiMain.getInstance()::updateTrainStationManager);
+
                 return;
             }
-        }
-        if(GuiMain.getInstance() != null) {
-            GuiMain.getInstance().updateTrainStationManager();
         }
     }
 
