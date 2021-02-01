@@ -284,15 +284,20 @@ public class Train implements Serializable, Comparable<Train> {
     /* Methods for the automatic driving process */
 
     HashMap<Sensor, HashMap<Switch, Integer>> waitForSwitch = new HashMap<>();
+    HashMap<Switch, Boolean> switchOnDestination = new HashMap<>();
 
     public void trainEnter(int nodeAddress) {
         if (this.stopAdd != null && this.stopAdd.getAddress() == nodeAddress && (this.actualSensor == null || !this.actualSensor.getState())) {
             this.stopTrain();
             this.stopAdd = null;
+            Ref.LOGGER.info("Setup waiting");
         }
 
         if (this.destination != null && this.destination.getAddress() == nodeAddress && this.destination.isFree(this) &&
                 (this.destination.equals(this.nextSensor) || this.destination.equals(this.nextNextSensor))) {
+            this.switchOnDestination.forEach(Switch::setAndUpdateState);
+            this.switchOnDestination.clear();
+
             if(!this.equals(this.destination.getTrain()))
                 this.destination.addTrain(this);
 
@@ -317,6 +322,7 @@ public class Train implements Serializable, Comparable<Train> {
             }
             if (GuiMain.getInstance() != null && this.equals(GuiMain.getInstance().actual))
                 Platform.runLater(() -> GuiMain.getInstance().actualPosition.setValue(this.actualSensor.toString()));
+            Ref.LOGGER.info("Wait for destination");
             return;
         }
         if (this.nextSensor != null && this.nextSensor.getAddress() == nodeAddress && this.destination != null && this.railway != null) {
@@ -331,6 +337,7 @@ public class Train implements Serializable, Comparable<Train> {
                     Platform.runLater(() -> GuiMain.getInstance().actualPosition.setValue(this.actualSensor.toString()));
                 if (this.actualSensor != null && this.actualSensor.getAddress() == nodeAddress && this.waitForSwitch.containsKey(this.actualSensor))
                     this.railway.activateSwitches(this.waitForSwitch.remove(this.actualSensor));
+                Ref.LOGGER.info("All needed sensors are served drive to destination");
                 return;
             }
 
@@ -346,7 +353,7 @@ public class Train implements Serializable, Comparable<Train> {
             this.railway.setLastPosToTrain(this, this.actualSensor);
             this.nextSensor = this.nextNextSensor;
             this.nextNextSensor = s;
-
+            Ref.LOGGER.info("Reserved next sensor");
             if (GuiMain.getInstance() != null && this.equals(GuiMain.getInstance().actual))
                 Platform.runLater(() -> GuiMain.getInstance().actualPosition.setValue(this.actualSensor.toString()));
         }
@@ -358,6 +365,7 @@ public class Train implements Serializable, Comparable<Train> {
         if (this.stopAdd != null && this.stopAdd.getAddress() == actualSensor.getAddress() && this.previousSensor != null && this.previousSensor.getAddress() == nodeAddress) {
             this.stopTrain();
             this.stopAdd = null;
+            Ref.LOGGER.info("Train is now waiting");
         }
 
         if (this.previousSensor != null && this.previousSensor.getAddress() == nodeAddress && this.stopNext) {
@@ -370,6 +378,7 @@ public class Train implements Serializable, Comparable<Train> {
             this.nextSensor = null;
             this.nextNextSensor = null;
             this.stopNext = false;
+            Ref.LOGGER.info(this.toString() + "reached destination " + this.actualSensor.toString());
         }
     }
 
@@ -529,6 +538,14 @@ public class Train implements Serializable, Comparable<Train> {
     }
 
     public void setLastPosition(Position p) {
+        this.prev = p;
+        Util.resetSensorsContainsTrain(this);
+        this.actualSensor.addTrain(this);
+        this.switchOnDestination.forEach(Switch::setAndUpdateState);
+        this.switchOnDestination.clear();
+    }
+
+    public void updateLastPosition(Position p) {
         this.prev = p;
     }
 

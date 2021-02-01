@@ -101,7 +101,7 @@ public class Railway {
             element = nextForLastPositionSetting();
         }
         if (element != null && this.positionIndex1 - 1 >= 0)
-            train.setLastPosition(this.way.get(this.positionIndex1 - 1).getPosition());
+            train.updateLastPosition(this.way.get(this.positionIndex1 - 1).getPosition());
     }
 
     public Sensor getNextSensor(Sensor sensor) {
