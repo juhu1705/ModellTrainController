@@ -154,8 +154,6 @@ public class Sensor extends AbstractRailroadElement {
     }
 
     public void update() {
-        if(this.getAddress() == 6)
-            Ref.LOGGER.info("Train " + this.train + "; State " + this.state);
         if (cooldown > 0)
             cooldown--;
         else if(cooldown == 0) {

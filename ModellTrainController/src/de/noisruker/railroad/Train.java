@@ -329,7 +329,7 @@ public class Train implements Serializable, Comparable<Train> {
             return;
         }
         if (this.nextSensor != null && this.nextSensor.getAddress() == nodeAddress && this.destination != null && this.railway != null) {
-            Ref.LOGGER.info("Last Position: " + this.previousSensor + "; " + this.actualSensor + "; " + nextSensor);
+            Ref.LOGGER.info("Last Position: " + this.previousSensor + "; " + this.actualSensor + "; " + nextSensor + "; " + this.nextNextSensor);
             Sensor s = null;
             if(this.nextNextSensor != null)
                 s = this.railway.getNextSensor(this.nextNextSensor);
@@ -445,6 +445,12 @@ public class Train implements Serializable, Comparable<Train> {
                         return;
                     }
 
+                    this.waitForSwitch.put(this.nextSensor, this.railway.getSwitches());
+                    this.waitForSwitch.forEach((sensor, map) -> {
+                        Ref.LOGGER.info("Sensor: " + sensor);
+                        map.forEach((aSwitch, integer) -> Ref.LOGGER.info(aSwitch.toString()));
+                    });
+
                     if (!this.nextNextSensor.isFree(this)) {
                         if (this.nextNextSensor.getTrain() != null && this.nextNextSensor.equals(this.nextNextSensor.getTrain().previousSensor)) {
                             this.stopAdd = this.nextSensor;
@@ -453,11 +459,6 @@ public class Train implements Serializable, Comparable<Train> {
                     } else {
                         if(this.actualSensor.equals(this.nextNextSensor) || !this.equals(this.nextNextSensor.getTrain()))
                             this.nextNextSensor.addTrain(this);
-                        this.waitForSwitch.put(this.nextSensor, this.railway.getSwitches());
-                        this.waitForSwitch.forEach((sensor, map) -> {
-                            Ref.LOGGER.info("Sensor: " + sensor);
-                            map.forEach((aSwitch, integer) -> Ref.LOGGER.info(aSwitch.toString()));
-                        });
                     }
                 }
                 if (this.nextNextSensor != null && this.nextNextSensor.isFree(this)) {
