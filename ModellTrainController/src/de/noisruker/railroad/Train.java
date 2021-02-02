@@ -438,7 +438,7 @@ public class Train implements Serializable, Comparable<Train> {
                 if(!this.equals(this.nextSensor.getTrain()))
                     this.nextSensor.addTrain(this);
 
-                if(!this.destination.equals(this.nextSensor)) {
+                if(this.nextNextSensor == null && !this.destination.equals(this.nextSensor)) {
                     this.nextNextSensor = this.railway.getNextSensor(nextSensor);
                     if(this.nextNextSensor == null) {
                         this.destination = null;
@@ -447,7 +447,7 @@ public class Train implements Serializable, Comparable<Train> {
 
                     if (!this.nextNextSensor.isFree(this)) {
                         if (this.nextNextSensor.getTrain() != null && this.nextNextSensor.equals(this.nextNextSensor.getTrain().previousSensor)) {
-                            this.stopAdd = this.nextNextSensor;
+                            this.stopAdd = this.nextSensor;
                         } else
                             this.stopTrain();
                     } else {
@@ -460,10 +460,10 @@ public class Train implements Serializable, Comparable<Train> {
                         });
                     }
                 }
-
                 if (this.nextNextSensor != null && this.nextNextSensor.isFree(this)) {
                     Ref.LOGGER.info("Train " + this.address + " is driving again 2");
                     Ref.LOGGER.info(this.nextNextSensor + " " + this.nextNextSensor.isFree(this) + " " + this.nextNextSensor.getTrain());
+                    Ref.LOGGER.info(this.nextSensor + " " + this.nextSensor.isFree(this) + " " + this.nextSensor.getTrain());
                     this.applyNormalSpeed();
                     if(this.actualSensor.equals(this.nextNextSensor) || !this.equals(this.nextNextSensor.getTrain()))
                         this.nextNextSensor.addTrain(this);

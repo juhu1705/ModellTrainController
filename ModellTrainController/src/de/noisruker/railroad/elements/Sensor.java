@@ -212,12 +212,7 @@ public class Sensor extends AbstractRailroadElement {
             SensorMessage m = (SensorMessage) message;
             if (m.getAddress() == this.getAddress()) {
                 this.setState(m.getState());
-                if (GuiMain.getInstance() != null)
-                    Platform.runLater(() -> {
-                        GuiMain gui = GuiMain.getInstance();
-                        HBox box = gui.railroadLines.get(this.position.getY());
-                        gui.railroadCells.get(box).get(this.position.getX()).setImage(this.getImage());
-                    });
+                this.updateGUI();
             }
         }
     }
@@ -256,8 +251,7 @@ public class Sensor extends AbstractRailroadElement {
         if(s != null && !s.isFree(train))
             return false;
 
-        if (train.equals(this.train)) return true;
-        if (this.train != null) return false;
+        if (this.train != null) return this.train.equals(train);
         return !this.getState();
     }
 
