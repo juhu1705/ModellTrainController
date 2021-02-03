@@ -320,8 +320,8 @@ public class Railway {
         } else {
             if(train.actualSensor.equals(train.nextNextSensor) || !train.equals(train.nextNextSensor.getTrain()))
                 train.nextNextSensor.addTrain(train);
-            train.waitForSwitch.put(train.nextSensor, this.getSwitches());
         }
+        train.waitForSwitch.put(train.nextSensor, this.getSwitches());
     }
 
     public boolean isShorterThan(Railway railway) {

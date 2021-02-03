@@ -252,8 +252,10 @@ public class Sensor extends AbstractRailroadElement {
             if(Util.contained(t, except))
                 continue;
             if(this.equals(t.getActualPosition()) && this.train == null) {
-                this.addTrain(t);
+                this.train = t;
+                this.requestCount = 1;
                 foundATrain = true;
+                this.sync();
             } else if(this.equals(t.getActualPosition()) && !t.equals(this.train)) {
                 if(foundATrain || this.train != null) {
                     new RailroadOffMessage().send();
@@ -261,6 +263,7 @@ public class Sensor extends AbstractRailroadElement {
                     this.train = t;
                     this.requestCount = 1;
                     foundATrain = true;
+                    this.sync();
                 }
             }
         }

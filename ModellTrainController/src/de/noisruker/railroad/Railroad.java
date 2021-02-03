@@ -69,8 +69,9 @@ public class Railroad {
             else {
                 int index = t.railway.positionIndex;
 
-                while (index > 0 && !t.railway.way.get(index).equals(s))
+                while (index > 0 && !t.railway.way.get(index).equals(s)) {
                     index--;
+                }
 
                 if (index == 0) {
                     if (t.railway.way.get(index).equals(s)) {
