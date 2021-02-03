@@ -247,24 +247,27 @@ public class Sensor extends AbstractRailroadElement {
     }
 
     private void recheckTrains(Train... except) {
+        boolean foundATrain = false;
         for(Train t: LocoNet.getInstance().getTrains()) {
             if(Util.contained(t, except))
                 continue;
-            if(this.equals(t.getActualPosition()) && this.train == null)
+            if(this.equals(t.getActualPosition()) && this.train == null) {
                 this.addTrain(t);
-            else if(this.equals(t.getActualPosition()) && !t.equals(this.train)) {
-                if(train.equals(this.train) && this.equals(train.getActualPosition())) {
+                foundATrain = true;
+            } else if(this.equals(t.getActualPosition()) && !t.equals(this.train)) {
+                if(foundATrain || this.train != null) {
                     new RailroadOffMessage().send();
-                } else if(train.equals(this.train) && !this.equals(train.getActualPosition())) {
+                } else {
                     this.train = t;
                     this.requestCount = 1;
+                    foundATrain = true;
                 }
             }
         }
     }
 
     public boolean isFree(Train train) {
-        this.recheckTrains();
+        this.recheckTrains(train);
 
         Sensor s = LocoNet.getRailroad().getNextSensor(this, train);
 
