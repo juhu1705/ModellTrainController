@@ -4,6 +4,7 @@ import de.noisruker.gui.GuiMain;
 import de.noisruker.gui.RailroadImages;
 import de.noisruker.loconet.LocoNet;
 import de.noisruker.loconet.messages.AbstractMessage;
+import de.noisruker.loconet.messages.RailroadOffMessage;
 import de.noisruker.loconet.messages.SensorMessage;
 import de.noisruker.railroad.Position;
 import de.noisruker.railroad.RailRotation;
@@ -88,6 +89,8 @@ public class Sensor extends AbstractRailroadElement {
     }
 
     public boolean addTrain(Train t) {
+        this.recheckTrains(t);
+
         if (this.train == null && (this.equals(t.getActualPosition()) || !this.getState())) {
             Sensor s = LocoNet.getRailroad().getNextSensor(this, t);
 
@@ -243,7 +246,26 @@ public class Sensor extends AbstractRailroadElement {
         return this.train;
     }
 
+    private void recheckTrains(Train... except) {
+        for(Train t: LocoNet.getInstance().getTrains()) {
+            if(Util.contained(t, except))
+                continue;
+            if(this.equals(t.getActualPosition()) && this.train == null)
+                this.addTrain(t);
+            else if(this.equals(t.getActualPosition()) && !t.equals(this.train)) {
+                if(train.equals(this.train) && this.equals(train.getActualPosition())) {
+                    new RailroadOffMessage().send();
+                } else if(train.equals(this.train) && !this.equals(train.getActualPosition())) {
+                    this.train = t;
+                    this.requestCount = 1;
+                }
+            }
+        }
+    }
+
     public boolean isFree(Train train) {
+        this.recheckTrains();
+
         Sensor s = LocoNet.getRailroad().getNextSensor(this, train);
 
         if(s != null && !s.isFree(train))

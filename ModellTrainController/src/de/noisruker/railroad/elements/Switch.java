@@ -636,11 +636,6 @@ public class Switch extends AbstractRailroadElement {
         Position pTo = isSwitchPossible(from) ? to : from;
 
         Ref.LOGGER.info("Udate switch " + this.address + "; From: " + from + "; to: " + to);
-        Ref.LOGGER.info("If true go to " + getNextPositionSwitchSpecial(from, true));
-        Ref.LOGGER.info("If false go to " + getNextPositionSwitchSpecial(from, false));
-
-        Ref.LOGGER.info("If true go to " + getNextPositionSwitchSpecial(pFrom, true));
-        Ref.LOGGER.info("If false go to " + getNextPositionSwitchSpecial(pFrom, false));
 
         if (getNextPositionSwitchSpecial(pFrom, true).equals(pTo)) {
             Ref.LOGGER.info("Set state to true");

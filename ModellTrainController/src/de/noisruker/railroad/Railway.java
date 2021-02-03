@@ -312,7 +312,8 @@ public class Railway {
             return;
         }
         if (!train.nextNextSensor.isFree(train)) {
-            if (train.nextNextSensor.getTrain() != null && train.nextNextSensor.equals(train.nextNextSensor.getTrain().previousSensor)) {
+            if (train.nextNextSensor.getTrain() != null &&
+                    train.nextNextSensor.equals(train.nextNextSensor.getTrain().previousSensor)) {
                 train.stopAdd = train.nextNextSensor;
             } else
                 train.stopTrain();

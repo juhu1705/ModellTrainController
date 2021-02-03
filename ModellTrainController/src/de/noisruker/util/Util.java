@@ -297,4 +297,11 @@ public class Util {
             if(train.equals(s.getTrain()))
                 s.reset();
     }
+
+    public static boolean contained(Train train, Train... except) {
+        for(Train t: except)
+            if(t.equals(train))
+                return true;
+        return false;
+    }
 }
