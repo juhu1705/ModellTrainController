@@ -18,6 +18,7 @@ import javafx.scene.layout.HBox;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Objects;
 
 public class Sensor extends AbstractRailroadElement {
@@ -27,6 +28,9 @@ public class Sensor extends AbstractRailroadElement {
     public static ArrayList<Sensor> getAllSensors() {
         return allSensors;
     }
+
+    public static final ArrayList<Integer> UPDATED = new ArrayList<>(), MESSAGE_HANDLED = new ArrayList<>();
+    private static final HashMap<Integer, ArrayList<Train>> REQUESTERS = new HashMap<>();
 
     private static void addSensor(Sensor s) {
         for (int i = 0; i < allSensors.size(); i++) {
@@ -40,18 +44,22 @@ public class Sensor extends AbstractRailroadElement {
 
     private final int address;
 
-    private boolean state, list;
+    private boolean state, list, isShort;
     private String name = "";
 
     private Train train;
-    private int cooldown = -1, requestCount = 0;
+    private int cooldown = -1;
 
     public Sensor(int address, boolean state, Position position, RailRotation rotation) {
         super("sensor", position, rotation);
         this.address = address;
         this.state = state;
-        list = true;
+        this.list = true;
+        this.isShort = false;
         Sensor.addSensor(this);
+        if(!Sensor.REQUESTERS.containsKey(this.address)) {
+            Sensor.REQUESTERS.put(this.address, new ArrayList<>());
+        }
     }
 
     @Override
@@ -88,7 +96,19 @@ public class Sensor extends AbstractRailroadElement {
         this.list = list;
     }
 
-    public boolean addTrain(Train t) {
+    public boolean isShort() {
+        return this.isShort;
+    }
+
+    public void setShort(boolean isShort) {
+        this.isShort = isShort;
+    }
+
+    public void appendTrain(Train t) {
+        Sensor.REQUESTERS.get(this.address).add(t);
+    }
+
+    private boolean addTrain(Train t) {
         this.recheckTrains(t);
 
         if (this.train == null && (this.equals(t.getActualPosition()) || !this.getState())) {
@@ -116,12 +136,8 @@ public class Sensor extends AbstractRailroadElement {
     public void sync() {
         for (Sensor sensor : Sensor.getAllSensors()) {
             if (this.getAddress() == sensor.getAddress()) {
-                if(sensor.requestCount < 0)
-                    sensor.requestCount = 0;
-
                 sensor.train = this.train;
-                sensor.requestCount++;
-                Ref.LOGGER.info("Sensor: " + this.toString() + "; Count: " + requestCount);
+                sensor.cooldown = this.cooldown;
                 sensor.updateGUI();
             }
         }
@@ -138,45 +154,60 @@ public class Sensor extends AbstractRailroadElement {
     }
 
     public void onTrainLeft(int address) {
+        if(Sensor.MESSAGE_HANDLED.contains(this.address))
+            return;
+
+        Sensor.MESSAGE_HANDLED.add(this.address);
+
         if (address == this.getAddress() && this.train != null) {
-            Ref.LOGGER.info("Sensor: " + this.toString() + "; Count: " + requestCount);
             this.cooldown = 4;
         }
+
         if (this.getAddress() == 2 && address == 2) {
             for (Signal s : Signal.getAllSignals())
                 s.getMessage(false).toLocoNetMessage().send();
         }
+
+        this.sync();
     }
 
     public void onTrainEnter(int address) {
+        if(Sensor.MESSAGE_HANDLED.contains(this.address))
+            return;
+        Sensor.MESSAGE_HANDLED.add(this.address);
         if (address == this.address) {
-            Ref.LOGGER.info("Sensor: " + this.toString() + "; Count: " + requestCount);
             if(this.cooldown != -1)
                 this.cooldown = -1;
         }
+
+        this.sync();
     }
 
     public void update() {
-        if (cooldown > 0)
+        if(Sensor.UPDATED.contains(this.address))
+            return;
+
+        Sensor.UPDATED.add(this.address);
+
+        if (cooldown > 0 && this.train != null && !this.train.getActualPosition().equals(this))
             cooldown--;
+        else if(cooldown > 0 && this.train == null)
+            cooldown = -1;
         else if(cooldown == 0) {
             cooldown = -1;
-            requestCount--;
-            Ref.LOGGER.info("Sensor: " + this.toString() + "; Count: " + requestCount);
-            if(requestCount < 0)
-                requestCount = 0;
-            if(requestCount == 0)
-                this.trainLeft();
+            this.trainLeft();
         }
+
+        if(this.train == null && !this.state && !Sensor.REQUESTERS.get(this.address).isEmpty()) {
+            if(this.addTrain(Sensor.REQUESTERS.get(this.address).remove(0)))
+                this.train.driveAgain(this);
+        }
+
+        this.sync();
     }
 
-    public Train trainLeft() {
-        Train t = this.train;
+    public void trainLeft() {
         this.train = null;
-
-        if (GuiMain.getInstance() != null)
-            this.updateGUI();
-        return t;
     }
 
     @Override
@@ -253,7 +284,7 @@ public class Sensor extends AbstractRailroadElement {
                 continue;
             if(this.equals(t.getActualPosition()) && this.train == null) {
                 this.train = t;
-                this.requestCount = 1;
+
                 foundATrain = true;
                 this.sync();
             } else if(this.equals(t.getActualPosition()) && !t.equals(this.train)) {
@@ -261,7 +292,6 @@ public class Sensor extends AbstractRailroadElement {
                     new RailroadOffMessage().send();
                 } else {
                     this.train = t;
-                    this.requestCount = 1;
                     foundATrain = true;
                     this.sync();
                 }
@@ -283,7 +313,6 @@ public class Sensor extends AbstractRailroadElement {
 
     public void reset() {
         this.train = null;
-        this.requestCount = 0;
         this.cooldown = -1;
         this.updateGUI();
     }

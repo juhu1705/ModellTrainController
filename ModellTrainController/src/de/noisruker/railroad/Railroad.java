@@ -8,6 +8,7 @@ import de.noisruker.railroad.elements.AbstractRailroadElement;
 import de.noisruker.railroad.elements.Sensor;
 import de.noisruker.railroad.elements.Switch;
 import de.noisruker.util.Ref;
+import de.noisruker.util.Util;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -242,16 +243,19 @@ public class Railroad {
     }
 
     public void trainEnter(final int nodeAddress) {
+        Sensor.MESSAGE_HANDLED.clear();
         LocoNet.getInstance().getTrains().forEach(t -> t.trainEnter(nodeAddress));
         Sensor.getAllSensors().forEach(s -> s.onTrainEnter(nodeAddress));
     }
 
     public void trainLeft(final int nodeAddress) {
+        Sensor.MESSAGE_HANDLED.clear();
         LocoNet.getInstance().getTrains().forEach(t -> t.trainLeft(nodeAddress));
         Sensor.getAllSensors().forEach(s -> s.onTrainLeft(nodeAddress));
     }
 
     public void update() {
+        Sensor.UPDATED.clear();
         LocoNet.getInstance().getTrains().forEach(Train::update);
         Sensor.getAllSensors().forEach(Sensor::update);
     }

@@ -292,15 +292,13 @@ public class Railway {
             train.destination = null;
             return;
         }
-        if (!train.nextSensor.isFree(train)) {
-            train.stopTrain();
-            train.waitForSwitch.put(train.actualSensor, this.getSwitches());
+
+        if(!train.equals(train.nextSensor.getTrain()))
+            train.nextSensor.appendTrain(train);
+        train.waitForSwitch.put(train.actualSensor, this.getSwitches());
+        if (!train.nextSensor.isFree(train))
             return;
-        } else {
-            if(!train.equals(train.nextSensor.getTrain()))
-                train.nextSensor.addTrain(train);
-            this.activateSwitches(this.getSwitches());
-        }
+
 
         if (train.nextSensor.equals(train.destination))
             return;
@@ -311,16 +309,9 @@ public class Railway {
             train.destination = null;
             return;
         }
-        if (!train.nextNextSensor.isFree(train)) {
-            if (train.nextNextSensor.getTrain() != null &&
-                    train.nextNextSensor.equals(train.nextNextSensor.getTrain().previousSensor)) {
-                train.stopAdd = train.nextNextSensor;
-            } else
-                train.stopTrain();
-        } else {
-            if(train.actualSensor.equals(train.nextNextSensor) || !train.equals(train.nextNextSensor.getTrain()))
-                train.nextNextSensor.addTrain(train);
-        }
+
+        if(!train.actualSensor.equals(train.nextNextSensor))
+            train.nextNextSensor.appendTrain(train);
         train.waitForSwitch.put(train.nextSensor, this.getSwitches());
     }
 

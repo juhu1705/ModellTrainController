@@ -104,7 +104,7 @@ public class GuiMain implements Initializable {
     public Label trainName, trainName1, sensorLabel;
 
     @FXML
-    public ToggleSwitch sensorListed;
+    public ToggleSwitch sensorListed, sensorShort;
     public ToggleSwitch temporary = new ToggleSwitch();
 
     @FXML
@@ -178,6 +178,8 @@ public class GuiMain implements Initializable {
                 sensorLabel.setText(name);
                 sensorListed.setSelected(sensor.shouldBeListed());
                 sensorListed.setDisable(false);
+                sensorShort.setSelected(sensor.isShort());
+                sensorShort.setDisable(false);
                 sensorName.setText(sensor.getName());
                 sensorName.setPromptText("");
                 sensorName.setDisable(false);
@@ -196,6 +198,11 @@ public class GuiMain implements Initializable {
 
     public void onSensorListedChanged() {
         this.sensor.setShouldBeListed(this.sensorListed.isSelected());
+        this.updatePlanMode();
+    }
+
+    public void onSensorShortChanged() {
+        this.sensor.setShort(this.sensorShort.isSelected());
         this.updatePlanMode();
     }
 
@@ -567,6 +574,11 @@ public class GuiMain implements Initializable {
         this.sensorListed.selectedProperty().addListener((o, oldValue, newValue) -> {
             if (oldValue != newValue) {
                 this.onSensorListedChanged();
+            }
+        });
+        this.sensorShort.selectedProperty().addListener((o, oldValue, newValue) -> {
+            if (oldValue != newValue) {
+                this.onSensorShortChanged();
             }
         });
 
