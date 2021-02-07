@@ -379,7 +379,8 @@ public class Train implements Serializable, Comparable<Train> {
             return;
         }
 
-        s.appendTrain(this);
+        if(!this.equals(s.getTrain()) && !Sensor.REQUESTERS.get(s.getAddress()).contains(this))
+            s.appendTrain(this);
 
         this.stopAdd = this.nextSensor;
 
@@ -527,6 +528,8 @@ public class Train implements Serializable, Comparable<Train> {
         if(this.nextNextSensor == null && !this.nextSensor.equals(this.destination)) {
             this.nextNextSensor = this.railway.getNextSensor(this.nextSensor);
             this.waitForSwitch.put(this.nextSensor, this.railway.getSwitches());
+            if(!this.equals(this.nextNextSensor.getTrain()) &&
+                    !Sensor.REQUESTERS.get(this.nextNextSensor.getAddress()).contains(this))
             this.nextNextSensor.appendTrain(this);
             this.stopAdd = this.nextSensor;
         }

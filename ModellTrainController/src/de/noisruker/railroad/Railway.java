@@ -293,7 +293,8 @@ public class Railway {
             return;
         }
 
-        if(!train.equals(train.nextSensor.getTrain()))
+        if(!train.equals(train.nextSensor.getTrain()) &&
+                !Sensor.REQUESTERS.get(train.nextSensor.getAddress()).contains(train))
             train.nextSensor.appendTrain(train);
         train.waitForSwitch.put(train.actualSensor, this.getSwitches());
         if (!train.nextSensor.isFree(train))

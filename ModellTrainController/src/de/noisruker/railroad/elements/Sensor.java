@@ -30,7 +30,7 @@ public class Sensor extends AbstractRailroadElement {
     }
 
     public static final ArrayList<Integer> UPDATED = new ArrayList<>(), MESSAGE_HANDLED = new ArrayList<>();
-    private static final HashMap<Integer, ArrayList<Train>> REQUESTERS = new HashMap<>();
+    public static final HashMap<Integer, ArrayList<Train>> REQUESTERS = new HashMap<>();
 
     private static void addSensor(Sensor s) {
         for (int i = 0; i < allSensors.size(); i++) {
