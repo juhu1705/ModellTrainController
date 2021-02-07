@@ -234,7 +234,7 @@
                                  <children>
                                     <Label fx:id="sensorLabel" alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
                                     <Label text="%label.name" />
-                                    <TextField fx:id="sensorName" disable="true" maxHeight="-Infinity" maxWidth="-Infinity" onAction="#onSensorNameChanged" pickOnBounds="false" VBox.vgrow="ALWAYS" />
+                                    <TextField fx:id="sensorName" alignment="CENTER" disable="true" maxHeight="-Infinity" maxWidth="-Infinity" onAction="#onSensorNameChanged" pickOnBounds="false" VBox.vgrow="ALWAYS" />
                                     <HBox maxHeight="-Infinity" maxWidth="1.7976931348623157E308" spacing="10.0" VBox.vgrow="ALWAYS">
                                        <children>
                                           <ToggleSwitch fx:id="sensorListed" disable="true" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="0.0" prefWidth="0.0">
@@ -243,6 +243,20 @@
                                              </tooltip>
                                           </ToggleSwitch>
                                           <Label maxHeight="1.7976931348623157E308" text="%label.list_sensor" HBox.hgrow="ALWAYS">
+                                             <tooltip>
+                                                <Tooltip text="%tooltip.list_sensor" />
+                                             </tooltip>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                    <HBox layoutX="20.0" layoutY="139.0" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" spacing="10.0">
+                                       <children>
+                                          <ToggleSwitch fx:id="sensorShort" disable="true" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="0.0" prefWidth="0.0">
+                                             <tooltip>
+                                                <Tooltip text="%tooltip.list_sensor" />
+                                             </tooltip>
+                                          </ToggleSwitch>
+                                          <Label maxHeight="1.7976931348623157E308" text="%label.is_short" HBox.hgrow="ALWAYS">
                                              <tooltip>
                                                 <Tooltip text="%tooltip.list_sensor" />
                                              </tooltip>
