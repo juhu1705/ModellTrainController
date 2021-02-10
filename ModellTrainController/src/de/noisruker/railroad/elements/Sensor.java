@@ -105,7 +105,11 @@ public class Sensor extends AbstractRailroadElement {
     }
 
     public void appendTrain(Train t) {
-        Sensor.REQUESTERS.get(this.address).add(t);
+        if (Sensor.REQUESTERS.containsKey(t) || this.train.equals(t)) {
+            if (!this.equals(t.getActualPosition()) && (t.equals(train) && this.state && this.equals(train.getLastSensor())))
+                Sensor.REQUESTERS.get(this.address).add(t);
+        } else
+            Sensor.REQUESTERS.get(this.address).add(t);
     }
 
     private boolean addTrain(Train t) {

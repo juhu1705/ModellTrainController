@@ -663,6 +663,10 @@ public class Train implements Serializable, Comparable<Train> {
         return this.trainStationManager;
     }
 
+    public Sensor getLastSensor() {
+        return this.previousSensor;
+    }
+
     public interface TrainSpeedChangeListener {
         public void onSpeedChanged(byte newSpeed);
     }
