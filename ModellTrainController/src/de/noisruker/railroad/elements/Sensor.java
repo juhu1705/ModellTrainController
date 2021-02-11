@@ -203,8 +203,10 @@ public class Sensor extends AbstractRailroadElement {
         }
 
         if(this.train == null && !this.state && !Sensor.REQUESTERS.get(this.address).isEmpty()) {
-            if(this.addTrain(Sensor.REQUESTERS.get(this.address).remove(0)))
+            if(this.addTrain(Sensor.REQUESTERS.get(this.address).get(0))) {
                 this.train.driveAgain(this);
+                Sensor.REQUESTERS.get(this.address).remove(0);
+            }
         }
 
         this.sync();
@@ -312,7 +314,7 @@ public class Sensor extends AbstractRailroadElement {
             return false;
 
         if (this.train != null) return this.train.equals(train);
-        return !this.getState();
+        return false;
     }
 
     public void reset() {

@@ -495,6 +495,7 @@ public class Train implements Serializable, Comparable<Train> {
 
         if (this.nextSensor.isFree(this)) {
             Ref.LOGGER.info("Start driving");
+            this.stopAdd = this.nextSensor;
             this.applyNormalSpeed();
             this.railway.activateSwitches(this.waitForSwitch.remove(this.actualSensor));
             if((this.nextNextSensor == null || !this.nextNextSensor.isFree(this)) &&
@@ -520,7 +521,7 @@ public class Train implements Serializable, Comparable<Train> {
         if(this.nextSensor == null || this.destination == null || this.railway == null || sensor == null)
             return;
         if(sensor.equals(this.nextNextSensor)) {
-            if(this.stopAdd != null)
+            if(this.stopAdd.equals(sensor))
                 this.stopAdd = null;
             return;
         }
@@ -668,7 +669,7 @@ public class Train implements Serializable, Comparable<Train> {
     }
 
     public interface TrainSpeedChangeListener {
-        public void onSpeedChanged(byte newSpeed);
+        void onSpeedChanged(byte newSpeed);
     }
 
     public void saveTo(BufferedWriter writer) throws IOException {
