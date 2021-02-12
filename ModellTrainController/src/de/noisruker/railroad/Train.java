@@ -491,6 +491,8 @@ public class Train implements Serializable, Comparable<Train> {
 
         this.railway.print();
 
+        Ref.LOGGER.info("Start immediately: " + startImmediately);
+
         if(startImmediately)
             this.applyNormalSpeed();
     }

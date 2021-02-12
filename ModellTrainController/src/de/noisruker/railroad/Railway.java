@@ -293,7 +293,7 @@ public class Railway {
             return false;
         }
 
-        boolean startImmediately = train.nextSensor.appendTrain(train);
+        boolean startImmediately = !train.nextSensor.appendTrain(train);
         train.waitForSwitch.put(train.actualSensor, this.getSwitches());
         return startImmediately;
     }
