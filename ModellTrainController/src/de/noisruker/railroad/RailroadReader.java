@@ -147,6 +147,8 @@ public class RailroadReader implements ContentHandler {
                     s.setName(params.get("name"));
                 if (params.containsKey("list"))
                     s.setShouldBeListed(Boolean.parseBoolean(params.get("list")));
+                if (params.containsKey("is_short"))
+                    s.setShort(Boolean.parseBoolean(params.get("is_short")));
                 railroad[Integer.parseInt(params.get("posX"))][Integer.parseInt(params.get("posY"))] = s;
             }
         });
