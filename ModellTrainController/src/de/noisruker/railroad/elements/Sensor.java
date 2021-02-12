@@ -214,6 +214,15 @@ public class Sensor extends AbstractRailroadElement {
                 this.train.driveAgain(this);
                 Sensor.REQUESTERS.get(this.address).remove(0);
             }
+        } else if(!Sensor.REQUESTERS.get(this.address).isEmpty() && this.state && this.train == null) {
+            Train t = Sensor.REQUESTERS.get(this.address).get(0);
+            //Ref.LOGGER.info("Try adding train: " + t.getLastSensor() + "; " + t.getDestination() + "; " + t.getSpeed() + "; " + t.getActualPosition());
+
+            if(t.getLastSensor() == null && t.getDestination() == null && t.getSpeed() < 0 && this.equals(t.getActualPosition())) {
+                if(this.addTrain(t)) {
+                    Sensor.REQUESTERS.get(this.address).remove(0);
+                }
+            }
         }
 
         this.sync();

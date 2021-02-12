@@ -355,9 +355,14 @@ public class Train implements Serializable, Comparable<Train> {
         Ref.LOGGER.info("Handle sensor");
 
         if(this.stopAdd != null && this.stopAdd.getAddress() == nodeAddress) {
-            if(!this.actualSensor.getState() || this.nextSensor.isShort())
+            if(!this.actualSensor.getState() || this.nextSensor.isShort()) {
                 this.stopTrainImmediately();
-            else
+                this.stopAdd = null;
+                this.wait = true;
+
+                Ref.LOGGER.info("Train " + this.address + " is now waiting");
+                Ref.LOGGER.info(this.actualSensor + "; " + nodeAddress + "; " + this.previousSensor);
+            } else
                 this.applyBreakSpeed();
         }
 
@@ -369,7 +374,7 @@ public class Train implements Serializable, Comparable<Train> {
 
         Sensor s = null;
 
-        if(this.nextNextSensor != null)
+        if(this.nextNextSensor != null && this.nextNextSensor.isFree(this))
             s = this.railway.getNextSensor(this.nextNextSensor);
 
         this.setUpNextSensors(nodeAddress);
@@ -419,7 +424,8 @@ public class Train implements Serializable, Comparable<Train> {
                 this.destination != null &&
                 this.railway != null) {
             this.handleSensor(nodeAddress);
-            this.activateSwitches();
+            if(!this.wait)
+                this.activateSwitches();
         }
 
         if(this.actualSensor != null) {
@@ -469,6 +475,7 @@ public class Train implements Serializable, Comparable<Train> {
         this.clearRailroad();
 
         this.stopAdd = null;
+        Util.resetSensorsContainsTrain(this);
     }
 
     private void calculateRailway() {

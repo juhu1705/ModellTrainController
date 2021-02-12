@@ -121,9 +121,7 @@ public class Config {
                 if (GuiMain.getInstance() != null) {
                     GuiMain.getInstance().setMode();
                 }
-                for (Train t : LocoNet.getInstance().getTrains()) {
-                    t.stopTrain();
-                }
+                LocoNet.getInstance().getTrains().forEach(Train::reset);
             });
 
             if (!Files.exists(FileSystems.getDefault().getPath(Ref.HOME_FOLDER + "config.cfg"),

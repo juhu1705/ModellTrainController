@@ -201,6 +201,7 @@ public class GuiLoading implements Initializable {
                 if(s != null) {
                     Ref.LOGGER.info("Open window");
                     s.centerOnScreen();
+                    Platform.runLater(() -> s.setMaximized(true));
                     Platform.runLater(() -> s.setFullScreen(Config.fullScreen));
                     s.setResizable(true);
                 }
