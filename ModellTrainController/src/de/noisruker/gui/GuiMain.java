@@ -521,6 +521,15 @@ public class GuiMain implements Initializable {
                 view.setLayoutY(32);
                 view.setSmooth(true);
                 view.setPickOnBounds(true);
+                int finalX = x;
+                int finalY = y;
+                view.setOnMouseClicked(mouse -> {
+                    if(LocoNet.getRailroad() != null && LocoNet.getRailroad().getRailroad()[finalX][finalY] instanceof Sensor) {
+                        Sensor s = (Sensor) LocoNet.getRailroad().getRailroad()[finalX][finalY];
+                        Ref.LOGGER.info(s.getName() + ": " + s.getTrain() +
+                                "; " + Sensor.REQUESTERS.get(s.getAddress()).toString());
+                    }
+                });
                 box.getChildren().add(view);
                 railroadCells.get(box).add(view);
             }

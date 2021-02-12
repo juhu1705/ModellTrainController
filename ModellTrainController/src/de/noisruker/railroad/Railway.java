@@ -286,34 +286,16 @@ public class Railway {
         train.prev = Objects.requireNonNull(this.getPreviousElement()).getPosition();
     }
 
-    public void init(Train train) {
+    public boolean init(Train train) {
         train.nextSensor = this.getNextSensor(train.actualSensor);
         if (train.nextSensor == null) {
             train.destination = null;
-            return;
+            return false;
         }
 
-        if(!train.equals(train.nextSensor.getTrain()) &&
-                !Sensor.REQUESTERS.get(train.nextSensor.getAddress()).contains(train))
-            train.nextSensor.appendTrain(train);
+        boolean startImmediately = train.nextSensor.appendTrain(train);
         train.waitForSwitch.put(train.actualSensor, this.getSwitches());
-        if (!train.nextSensor.isFree(train))
-            return;
-
-
-        if (train.nextSensor.equals(train.destination))
-            return;
-
-        train.nextNextSensor = this.getNextSensor(train.nextSensor);
-
-        if (train.nextNextSensor == null) {
-            train.destination = null;
-            return;
-        }
-
-        if(!train.actualSensor.equals(train.nextNextSensor))
-            train.nextNextSensor.appendTrain(train);
-        train.waitForSwitch.put(train.nextSensor, this.getSwitches());
+        return startImmediately;
     }
 
     public boolean isShorterThan(Railway railway) {

@@ -104,16 +104,23 @@ public class Sensor extends AbstractRailroadElement {
         this.isShort = isShort;
     }
 
-    public void appendTrain(Train t) {
-        if (Sensor.REQUESTERS.containsKey(t) || t.equals(this.train)) {
+    public boolean appendTrain(Train t) {
+        Ref.LOGGER.info(this.getName() + ": Try to add Train " + t + " to this sensor");
+        if (Sensor.REQUESTERS.get(this.address).contains(t) || t.equals(this.train)) {
             if ((this.equals(t.getActualPosition()) && !t.equals(this.train)) || (t.equals(train) && this.state && this.equals(train.getLastSensor())))
                 Sensor.REQUESTERS.get(this.address).add(t);
+            else {
+                Ref.LOGGER.info("Fail");
+                cooldown = -1;
+                return false;
+            }
         } else
             Sensor.REQUESTERS.get(this.address).add(t);
+        return true;
     }
 
     private boolean addTrain(Train t) {
-        this.recheckTrains(t);
+        //this.recheckTrains(t);
 
         if (this.train == null && (this.equals(t.getActualPosition()) || !this.getState())) {
             Sensor s = LocoNet.getRailroad().getNextSensor(this, t);
@@ -306,7 +313,7 @@ public class Sensor extends AbstractRailroadElement {
     }
 
     public boolean isFree(Train train) {
-        this.recheckTrains(train);
+        //this.recheckTrains(train);
 
         Sensor s = LocoNet.getRailroad().getNextSensor(this, train);
 
