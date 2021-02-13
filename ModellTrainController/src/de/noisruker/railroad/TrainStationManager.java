@@ -104,6 +104,15 @@ public class TrainStationManager {
         this.stations.get(actual).init();
     }
 
+    private void deactivateStation(TrainStation station) {
+        if(this.actual == -1 || !station.equals(this.stations.get(this.actual)))
+            return;
+        this.actual = -1;
+        this.train.resetRailway();
+        this.train.clearRailroad();
+        this.train.stopTrainImmediately();
+    }
+
     public void addStation(Sensor sensor, boolean isTemporary) {
         TrainStation station;
         this.stations.add(station = new TrainStation(sensor, isTemporary, this));
@@ -134,6 +143,12 @@ public class TrainStationManager {
             Platform.runLater(GuiMain.getInstance()::updateTrainStationManager);
     }
 
+    public void reset() {
+        this.stations.clear();
+        if(GuiMain.getInstance() != null && this.train.equals(GuiMain.getInstance().actual))
+            Platform.runLater(GuiMain.getInstance()::updateTrainStationManager);
+    }
+
     public class TrainStation {
 
         ToggleButton button = new ToggleButton();
@@ -149,10 +164,18 @@ public class TrainStationManager {
             this.myManager = myManager;
 
             //this.addCondition(new TimeCondition(10));
-            button.setGraphic(new FontIcon("fas-caret-right"));
+            final FontIcon CARET = new FontIcon("fas-caret-right");
+            final FontIcon SQUARE = new FontIcon("fas-square");
+
+            button.setGraphic(CARET);
             button.setOnAction(action -> {
-                button.setSelected(true);
-                Util.runNext(() -> this.myManager.activateStation(this));
+                if(button.isSelected()) {
+                    Util.runNext(() -> this.myManager.activateStation(this));
+                    button.setGraphic(SQUARE);
+                } else {
+                    Util.runNext(() -> this.myManager.deactivateStation(this));
+                    button.setGraphic(CARET);
+                }
             });
 
             id = TrainStationManager.nextID();

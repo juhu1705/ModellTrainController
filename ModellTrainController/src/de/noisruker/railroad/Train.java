@@ -325,7 +325,7 @@ public class Train implements Serializable, Comparable<Train> {
         this.switchOnDestination.clear();
     }
 
-    private void clearRailroad() {
+    protected void clearRailroad() {
         if(this.railway != null)
             this.railway.setPositions(this);
 
@@ -470,7 +470,7 @@ public class Train implements Serializable, Comparable<Train> {
         this.stopTrainImmediately();
         this.resetRailway();
 
-        this.trainStationManager.stations.clear();
+        this.trainStationManager.reset();
 
         this.clearRailroad();
 

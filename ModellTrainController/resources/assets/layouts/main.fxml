@@ -144,7 +144,7 @@
       </VBox>
    </top>
    <center>
-      <SplitPane dividerPositions="0.5775335775335775" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
+      <SplitPane dividerPositions="0.4036697247706422" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
          <items>
             <TabPane side="LEFT" tabClosingPolicy="UNAVAILABLE">
               <tabs>
@@ -227,14 +227,14 @@
                 </Tab>
                 <Tab closable="false" text="%tab.sections">
                      <content>
-                        <SplitPane dividerPositions="0.5">
-                           <items>
-                              <TreeView fx:id="sensors" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#onSensorSelectionChanged" />
-                              <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="20.0">
+                        <HBox prefHeight="460.0" prefWidth="429.0">
+                           <children>
+                              <TreeView fx:id="sensors" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#onSensorSelectionChanged" HBox.hgrow="ALWAYS" />
+                              <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="460.0" prefWidth="280.0" spacing="20.0" HBox.hgrow="NEVER">
                                  <children>
                                     <Label fx:id="sensorLabel" alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
                                     <Label text="%label.name" />
-                                    <TextField fx:id="sensorName" alignment="CENTER" disable="true" maxHeight="-Infinity" maxWidth="-Infinity" onAction="#onSensorNameChanged" pickOnBounds="false" VBox.vgrow="ALWAYS" />
+                                    <TextField fx:id="sensorName" alignment="CENTER" disable="true" maxWidth="1.7976931348623157E308" onAction="#onSensorNameChanged" pickOnBounds="false" VBox.vgrow="ALWAYS" />
                                     <HBox maxHeight="-Infinity" maxWidth="1.7976931348623157E308" spacing="10.0" VBox.vgrow="ALWAYS">
                                        <children>
                                           <ToggleSwitch fx:id="sensorListed" disable="true" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="0.0" prefWidth="0.0">
@@ -268,8 +268,8 @@
                                     <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                  </padding>
                               </VBox>
-                           </items>
-                        </SplitPane>
+                           </children>
+                        </HBox>
                      </content>
                      <graphic>
                         <FontIcon />
@@ -302,17 +302,29 @@
                   </Tab>
               </tabs>
             </TabPane>
-            <ScrollPane prefHeight="460.0" prefWidth="397.0">
-               <content>
-                  <AnchorPane>
+            <VBox prefHeight="400.0" prefWidth="350.0">
+               <children>
+                  <ScrollPane fitToHeight="true" fitToWidth="true" VBox.vgrow="ALWAYS">
+                     <content>
+                        <AnchorPane>
+                           <children>
+                              <VBox fx:id="railroadSection" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                           </children>
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
+                        </AnchorPane>
+                     </content>
+                  </ScrollPane>
+                  <HBox alignment="CENTER_RIGHT" spacing="10.0" VBox.vgrow="NEVER">
                      <children>
-                        <VBox fx:id="railroadSection" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                        <Button fx:id="zoomOut" mnemonicParsing="false" onAction="#onZoomOut" />
+                        <Label fx:id="zoomValue" alignment="CENTER" maxWidth="50.0" minWidth="50.0" prefWidth="50.0" />
+                        <Button fx:id="zoomIn" mnemonicParsing="false" onAction="#onZoomIn" />
                      </children>
-                     <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                     </padding>
-                  </AnchorPane>
-               </content></ScrollPane>
+                  </HBox>
+               </children>
+            </VBox>
          </items>
       </SplitPane>
    </center>

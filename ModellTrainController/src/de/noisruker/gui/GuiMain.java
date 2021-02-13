@@ -95,13 +95,13 @@ public class GuiMain implements Initializable {
     public ComboBox<String> actualPosition;
 
     @FXML
-    public Button actualSensor, addStation;
+    public Button actualSensor, addStation, zoomIn, zoomOut;
 
     public Train actual;
     private Sensor sensor;
 
     @FXML
-    public Label trainName, trainName1, sensorLabel;
+    public Label trainName, trainName1, sensorLabel, zoomValue;
 
     @FXML
     public ToggleSwitch sensorListed, sensorShort;
@@ -209,6 +209,40 @@ public class GuiMain implements Initializable {
     public void onNormalSpeed(ActionEvent event) {
         if (Config.mode.equals(Config.MODE_MANUAL) && actual != null)
             actual.applyNormalSpeed();
+    }
+
+    private int actualZoom = 100;
+
+    public void onZoomIn(ActionEvent event) {
+        this.setZoom(actualZoom + 10);
+    }
+
+    public void onZoomOut(ActionEvent event) {
+        this.setZoom(actualZoom - 10);
+    }
+
+    public void setZoom(int zoom) {
+        if(zoom < 10)
+            zoom = 10;
+        if(zoom > 200)
+            zoom = 200;
+
+
+        final int scale = Double.valueOf(32d * (double) zoom / 100d).intValue();
+
+        Platform.runLater(() -> this.railroadLines.forEach(line -> this.railroadCells.get(line).forEach(cell -> {
+            cell.setFitHeight(scale);
+            cell.setFitWidth(scale);
+            cell.setX(scale);
+            cell.setY(scale);
+            cell.setLayoutX(scale);
+            cell.setLayoutY(scale);
+        })));
+
+        final int finalZoom = zoom;
+        Platform.runLater(() -> this.zoomValue.setText(finalZoom + "%"));
+
+        this.actualZoom = finalZoom;
     }
 
     public void onMinSpeed(ActionEvent event) {
@@ -537,6 +571,10 @@ public class GuiMain implements Initializable {
             this.railroadSection.getChildren().add(box);
 
         }
+
+        this.setZoom(100);
+        this.zoomIn.setGraphic(new FontIcon("fas-plus"));
+        this.zoomOut.setGraphic(new FontIcon("fas-minus"));
 
         for (Theme t : Theme.values()) {
             MenuItem theme = new MenuItem(Ref.language.getString("theme.text." + t.name()));
