@@ -123,12 +123,6 @@
             <version>${javafx.version}</version>
             <type>pom</type>
         </dependency>
-        <dependency>
-            <groupId>org.jetbrains</groupId>
-            <artifactId>annotations</artifactId>
-            <version>RELEASE</version>
-            <scope>compile</scope>
-        </dependency>
 
         <dependency>
             <groupId>org.codehaus.plexus</groupId>
