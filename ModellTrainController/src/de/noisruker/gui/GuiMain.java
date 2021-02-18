@@ -211,14 +211,12 @@ public class GuiMain implements Initializable {
             actual.applyNormalSpeed();
     }
 
-    private int actualZoom = 100;
-
     public void onZoomIn(ActionEvent event) {
-        this.setZoom(actualZoom + 10);
+        this.setZoom(Config.zoom + 10);
     }
 
     public void onZoomOut(ActionEvent event) {
-        this.setZoom(actualZoom - 10);
+        this.setZoom(Config.zoom - 10);
     }
 
     public void setZoom(int zoom) {
@@ -242,7 +240,8 @@ public class GuiMain implements Initializable {
         final int finalZoom = zoom;
         Platform.runLater(() -> this.zoomValue.setText(finalZoom + "%"));
 
-        this.actualZoom = finalZoom;
+        Config.zoom = finalZoom;
+        ConfigManager.getInstance().onConfigChanged("zoom.text");
     }
 
     public void onMinSpeed(ActionEvent event) {
@@ -572,7 +571,7 @@ public class GuiMain implements Initializable {
 
         }
 
-        this.setZoom(100);
+        this.setZoom(Config.zoom);
         this.zoomIn.setGraphic(new FontIcon("fas-plus"));
         this.zoomOut.setGraphic(new FontIcon("fas-minus"));
 
