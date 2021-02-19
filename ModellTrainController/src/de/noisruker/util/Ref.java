@@ -10,6 +10,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.util.ArrayList;
 import java.util.PropertyResourceBundle;
 import java.util.Random;
@@ -47,11 +50,20 @@ public class Ref {
         HOME_FOLDER = System.getProperty("user.home") + "/.TrainController/";
     }
 
-
     static {
         LOGGER = Logger.getLogger("schiffespiel");
         LOGGER.setUseParentHandlers(false);
         Handler handler = new LoggingHandler();
+        if (!Files.exists(FileSystems.getDefault().getPath(Ref.HOME_FOLDER), LinkOption.NOFOLLOW_LINKS))
+            new File(Ref.HOME_FOLDER).mkdir();
+        try {
+            Handler file = new FileLoggingHandler(Ref.HOME_FOLDER + "train_controller.log");
+            file.setFormatter(new LoggingFormatter());
+            file.setLevel(Level.ALL);
+            LOGGER.addHandler(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         handler.setFormatter(new LoggingFormatter());
         handler.setLevel(Level.ALL);
         LOGGER.addHandler(handler);

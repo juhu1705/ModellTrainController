@@ -59,6 +59,7 @@ public class Config {
     public static int zoom = 100;
 
     public static void register() {
+        Ref.LOGGER.info("Reading config");
         try {
             ConfigManager.getInstance().register(Config.class);
 

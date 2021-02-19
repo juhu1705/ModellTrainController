@@ -61,7 +61,8 @@ public class GuiStart implements Initializable {
             else
                 port.setValue(Config.port);
             port.setValue("");
-        }
+        } else
+            Ref.LOGGER.warning("No ports are available!");
 
         if (Config.startImmediately)
             startImmediately.setSelected(true);

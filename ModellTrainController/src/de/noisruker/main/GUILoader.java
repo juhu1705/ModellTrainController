@@ -76,6 +76,8 @@ public class GUILoader extends Application {
     }
 
     public static void main(String[] args) {
+        Ref.LOGGER.info("Start " + Ref.PROJECT_NAME);
+
         Config.register();
 
         launch(args);
