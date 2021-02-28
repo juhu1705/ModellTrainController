@@ -38,7 +38,7 @@ public class GuiCreateRailroad implements Initializable {
     public int startX = -1, startY = -1, mouseX = 0, mouseY = 0;
 
     @FXML
-    public ToggleButton straight, curve, RSwitch, LSwitch, LRSwitch, delete, sensor, directional, shouldHide, end, signal;
+    public ToggleButton straight, curve, RSwitch, LSwitch, LRSwitch, delete, sensor, directional, shouldHide, end, signal, crossing;
 
     @FXML
     public VBox railroadSection;
@@ -58,6 +58,7 @@ public class GuiCreateRailroad implements Initializable {
         DIRECTIONAL,
         END,
         SIGNAL,
+        CROSSING,
         DELETE
     }
 
@@ -108,103 +109,107 @@ public class GuiCreateRailroad implements Initializable {
         this.hover_image = getImageForModeAndRotation(true);
     }
 
-    public Image getImageForModeAndRotation(boolean AsHover) {
+    public Image getImageForModeAndRotation(boolean asHover) {
         switch (mode) {
             case STRAIGHT:
                 switch (rotation) {
                     case NORTH:
                     case SOUTH:
-                        return AsHover ? RailroadImages.STRAIGHT_VERTICAL_HOVER : RailroadImages.STRAIGHT_VERTICAL;
+                        return asHover ? RailroadImages.STRAIGHT_VERTICAL_HOVER : RailroadImages.STRAIGHT_VERTICAL;
                     case WEST:
                     case EAST:
-                        return AsHover ? RailroadImages.STRAIGHT_HORIZONTAL_HOVER : RailroadImages.STRAIGHT_HORIZONTAL;
+                        return asHover ? RailroadImages.STRAIGHT_HORIZONTAL_HOVER : RailroadImages.STRAIGHT_HORIZONTAL;
                 }
             case SIGNAL:
                 switch (rotation) {
                     case NORTH:
                     case SOUTH:
-                        return AsHover ? RailroadImages.SIGNAL_VERTICAL_HOVER : RailroadImages.SIGNAL_VERTICAL;
+                        return asHover ? RailroadImages.SIGNAL_VERTICAL_HOVER : RailroadImages.SIGNAL_VERTICAL;
                     case WEST:
                     case EAST:
-                        return AsHover ? RailroadImages.SIGNAL_HORIZONTAL_HOVER : RailroadImages.SIGNAL_HORIZONTAL;
+                        return asHover ? RailroadImages.SIGNAL_HORIZONTAL_HOVER : RailroadImages.SIGNAL_HORIZONTAL;
                 }
             case DIRECTIONAL:
                 switch (rotation) {
                     case NORTH:
-                        return AsHover ? RailroadImages.STRAIGHT_NORTH_HOVER : RailroadImages.STRAIGHT_NORTH;
+                        return asHover ? RailroadImages.STRAIGHT_NORTH_HOVER : RailroadImages.STRAIGHT_NORTH;
                     case SOUTH:
-                        return AsHover ? RailroadImages.STRAIGHT_SOUTH_HOVER : RailroadImages.STRAIGHT_SOUTH;
+                        return asHover ? RailroadImages.STRAIGHT_SOUTH_HOVER : RailroadImages.STRAIGHT_SOUTH;
                     case WEST:
-                        return AsHover ? RailroadImages.STRAIGHT_WEST_HOVER : RailroadImages.STRAIGHT_WEST;
+                        return asHover ? RailroadImages.STRAIGHT_WEST_HOVER : RailroadImages.STRAIGHT_WEST;
                     case EAST:
-                        return AsHover ? RailroadImages.STRAIGHT_EAST_HOVER : RailroadImages.STRAIGHT_EAST;
+                        return asHover ? RailroadImages.STRAIGHT_EAST_HOVER : RailroadImages.STRAIGHT_EAST;
                 }
             case CURVE:
                 switch (rotation) {
                     case NORTH:
-                        return AsHover ? RailroadImages.CURVE_NORTH_EAST_HOVER : RailroadImages.CURVE_NORTH_EAST;
+                        return asHover ? RailroadImages.CURVE_NORTH_EAST_HOVER : RailroadImages.CURVE_NORTH_EAST;
                     case SOUTH:
-                        return AsHover ? RailroadImages.CURVE_SOUTH_WEST_HOVER : RailroadImages.CURVE_SOUTH_WEST;
+                        return asHover ? RailroadImages.CURVE_SOUTH_WEST_HOVER : RailroadImages.CURVE_SOUTH_WEST;
                     case WEST:
-                        return AsHover ? RailroadImages.CURVE_NORTH_WEST_HOVER : RailroadImages.CURVE_NORTH_WEST;
+                        return asHover ? RailroadImages.CURVE_NORTH_WEST_HOVER : RailroadImages.CURVE_NORTH_WEST;
                     case EAST:
-                        return AsHover ? RailroadImages.CURVE_SOUTH_EAST_HOVER : RailroadImages.CURVE_SOUTH_EAST;
+                        return asHover ? RailroadImages.CURVE_SOUTH_EAST_HOVER : RailroadImages.CURVE_SOUTH_EAST;
                 }
             case SWITCH_R:
                 switch (rotation) {
                     case NORTH:
-                        return AsHover ? RailroadImages.SWITCH_NORTH_2_HOVER : RailroadImages.SWITCH_NORTH_2;
+                        return asHover ? RailroadImages.SWITCH_NORTH_2_HOVER : RailroadImages.SWITCH_NORTH_2;
                     case SOUTH:
-                        return AsHover ? RailroadImages.SWITCH_SOUTH_2_HOVER : RailroadImages.SWITCH_SOUTH_2;
+                        return asHover ? RailroadImages.SWITCH_SOUTH_2_HOVER : RailroadImages.SWITCH_SOUTH_2;
                     case WEST:
-                        return AsHover ? RailroadImages.SWITCH_WEST_2_HOVER : RailroadImages.SWITCH_WEST_2;
+                        return asHover ? RailroadImages.SWITCH_WEST_2_HOVER : RailroadImages.SWITCH_WEST_2;
                     case EAST:
-                        return AsHover ? RailroadImages.SWITCH_EAST_2_HOVER : RailroadImages.SWITCH_EAST_2;
+                        return asHover ? RailroadImages.SWITCH_EAST_2_HOVER : RailroadImages.SWITCH_EAST_2;
                 }
             case SWITCH_L:
                 switch (rotation) {
                     case NORTH:
-                        return AsHover ? RailroadImages.SWITCH_NORTH_1_HOVER : RailroadImages.SWITCH_NORTH_1;
+                        return asHover ? RailroadImages.SWITCH_NORTH_1_HOVER : RailroadImages.SWITCH_NORTH_1;
                     case SOUTH:
-                        return AsHover ? RailroadImages.SWITCH_SOUTH_1_HOVER : RailroadImages.SWITCH_SOUTH_1;
+                        return asHover ? RailroadImages.SWITCH_SOUTH_1_HOVER : RailroadImages.SWITCH_SOUTH_1;
                     case WEST:
-                        return AsHover ? RailroadImages.SWITCH_WEST_1_HOVER : RailroadImages.SWITCH_WEST_1;
+                        return asHover ? RailroadImages.SWITCH_WEST_1_HOVER : RailroadImages.SWITCH_WEST_1;
                     case EAST:
-                        return AsHover ? RailroadImages.SWITCH_EAST_1_HOVER : RailroadImages.SWITCH_EAST_1;
+                        return asHover ? RailroadImages.SWITCH_EAST_1_HOVER : RailroadImages.SWITCH_EAST_1;
                 }
             case SWITCH_L_R:
                 switch (rotation) {
                     case NORTH:
-                        return AsHover ? RailroadImages.SWITCH_NORTH_3_HOVER : RailroadImages.SWITCH_NORTH_3;
+                        return asHover ? RailroadImages.SWITCH_NORTH_3_HOVER : RailroadImages.SWITCH_NORTH_3;
                     case SOUTH:
-                        return AsHover ? RailroadImages.SWITCH_SOUTH_3_HOVER : RailroadImages.SWITCH_SOUTH_3;
+                        return asHover ? RailroadImages.SWITCH_SOUTH_3_HOVER : RailroadImages.SWITCH_SOUTH_3;
                     case WEST:
-                        return AsHover ? RailroadImages.SWITCH_WEST_3_HOVER : RailroadImages.SWITCH_WEST_3;
+                        return asHover ? RailroadImages.SWITCH_WEST_3_HOVER : RailroadImages.SWITCH_WEST_3;
                     case EAST:
-                        return AsHover ? RailroadImages.SWITCH_EAST_3_HOVER : RailroadImages.SWITCH_EAST_3;
+                        return asHover ? RailroadImages.SWITCH_EAST_3_HOVER : RailroadImages.SWITCH_EAST_3;
                 }
             case SENSOR:
                 switch (rotation) {
                     case NORTH:
                     case SOUTH:
-                        return AsHover ? RailroadImages.STRAIGHT_SENSOR_VERTICAL_HOVER : RailroadImages.STRAIGHT_SENSOR_VERTICAL;
+                        return asHover ? RailroadImages.STRAIGHT_SENSOR_VERTICAL_HOVER : RailroadImages.STRAIGHT_SENSOR_VERTICAL;
                     case WEST:
                     case EAST:
-                        return AsHover ? RailroadImages.STRAIGHT_SENSOR_HORIZONTAL_HOVER : RailroadImages.STRAIGHT_SENSOR_HORIZONTAL;
+                        return asHover ? RailroadImages.STRAIGHT_SENSOR_HORIZONTAL_HOVER : RailroadImages.STRAIGHT_SENSOR_HORIZONTAL;
                 }
             case END:
                 switch (rotation) {
                     case NORTH:
-                        return AsHover ? RailroadImages.END_NORTH_HOVER : RailroadImages.END_NORTH;
+                        return asHover ? RailroadImages.END_NORTH_HOVER : RailroadImages.END_NORTH;
                     case SOUTH:
-                        return AsHover ? RailroadImages.END_SOUTH_HOVER : RailroadImages.END_SOUTH;
+                        return asHover ? RailroadImages.END_SOUTH_HOVER : RailroadImages.END_SOUTH;
                     case WEST:
-                        return AsHover ? RailroadImages.END_WEST_HOVER : RailroadImages.END_WEST;
+                        return asHover ? RailroadImages.END_WEST_HOVER : RailroadImages.END_WEST;
                     case EAST:
-                        return AsHover ? RailroadImages.END_EAST_HOVER : RailroadImages.END_EAST;
+                        return asHover ? RailroadImages.END_EAST_HOVER : RailroadImages.END_EAST;
                 }
+            case CROSSING:
+                return asHover ? RailroadImages.CROSSING_HOVER : RailroadImages.CROSSING;
         }
 
+        if(shouldHide == null)
+            return RailroadImages.EMPTY_2;
         return shouldHide.isSelected() ? RailroadImages.EMPTY : RailroadImages.EMPTY_2;
     }
 
@@ -229,7 +234,24 @@ public class GuiCreateRailroad implements Initializable {
         end.setSelected(false);
         directional.setSelected(false);
         signal.setSelected(false);
+        crossing.setSelected(false);
         mode = EditMode.STRAIGHT;
+        this.hover_image = getImageForModeAndRotation(true);
+    }
+
+    public void onSetModeToCrossing(ActionEvent event) {
+        straight.setSelected(false);
+        curve.setSelected(false);
+        RSwitch.setSelected(false);
+        LSwitch.setSelected(false);
+        LRSwitch.setSelected(false);
+        delete.setSelected(false);
+        sensor.setSelected(false);
+        end.setSelected(false);
+        directional.setSelected(false);
+        signal.setSelected(false);
+        crossing.setSelected(true);
+        mode = EditMode.CROSSING;
         this.hover_image = getImageForModeAndRotation(true);
     }
 
@@ -244,6 +266,7 @@ public class GuiCreateRailroad implements Initializable {
         end.setSelected(false);
         directional.setSelected(false);
         signal.setSelected(false);
+        crossing.setSelected(false);
         mode = EditMode.CURVE;
         this.hover_image = getImageForModeAndRotation(true);
     }
@@ -259,6 +282,7 @@ public class GuiCreateRailroad implements Initializable {
         end.setSelected(false);
         directional.setSelected(false);
         signal.setSelected(false);
+        crossing.setSelected(false);
         mode = EditMode.SWITCH_R;
         this.hover_image = getImageForModeAndRotation(true);
     }
@@ -274,6 +298,7 @@ public class GuiCreateRailroad implements Initializable {
         end.setSelected(false);
         directional.setSelected(false);
         signal.setSelected(false);
+        crossing.setSelected(false);
         mode = EditMode.SWITCH_L;
         this.hover_image = getImageForModeAndRotation(true);
     }
@@ -289,6 +314,7 @@ public class GuiCreateRailroad implements Initializable {
         end.setSelected(false);
         directional.setSelected(false);
         signal.setSelected(false);
+        crossing.setSelected(false);
         mode = EditMode.SWITCH_L_R;
         this.hover_image = getImageForModeAndRotation(true);
     }
@@ -304,6 +330,7 @@ public class GuiCreateRailroad implements Initializable {
         end.setSelected(false);
         directional.setSelected(false);
         signal.setSelected(false);
+        crossing.setSelected(false);
         mode = EditMode.DELETE;
         this.hover_image = getImageForModeAndRotation(true);
     }
@@ -319,6 +346,7 @@ public class GuiCreateRailroad implements Initializable {
         end.setSelected(false);
         directional.setSelected(false);
         signal.setSelected(false);
+        crossing.setSelected(false);
         mode = EditMode.SENSOR;
         this.hover_image = getImageForModeAndRotation(true);
     }
@@ -334,6 +362,7 @@ public class GuiCreateRailroad implements Initializable {
         end.setSelected(false);
         directional.setSelected(true);
         signal.setSelected(false);
+        crossing.setSelected(false);
         mode = EditMode.DIRECTIONAL;
         this.hover_image = getImageForModeAndRotation(true);
     }
@@ -349,6 +378,7 @@ public class GuiCreateRailroad implements Initializable {
         end.setSelected(true);
         directional.setSelected(false);
         signal.setSelected(false);
+        crossing.setSelected(false);
         mode = EditMode.END;
         this.hover_image = getImageForModeAndRotation(true);
     }
@@ -363,6 +393,7 @@ public class GuiCreateRailroad implements Initializable {
         delete.setSelected(false);
         end.setSelected(false);
         directional.setSelected(false);
+        crossing.setSelected(false);
         signal.setSelected(true);
         mode = EditMode.SIGNAL;
         this.hover_image = getImageForModeAndRotation(true);
@@ -402,6 +433,8 @@ public class GuiCreateRailroad implements Initializable {
                     railroadElements[x][y] = new RailroadLine(RailRotation.WEST, new Position(x, y));
                 } else if (cells.get(x).getImage().equals(RailroadImages.STRAIGHT_VERTICAL)) {
                     railroadElements[x][y] = new RailroadLine(RailRotation.NORTH, new Position(x, y));
+                } else if (cells.get(x).getImage().equals(RailroadImages.CROSSING)) {
+                    railroadElements[x][y] = new Crossing(new Position(x, y), RailRotation.NORTH);
                 } else if (cells.get(x).getImage().equals(RailroadImages.STRAIGHT_SENSOR_HORIZONTAL)) {
                     this.handleSensor(railroadElements, RailRotation.WEST, x, y);
                 } else if (cells.get(x).getImage().equals(RailroadImages.STRAIGHT_SENSOR_VERTICAL)) {
@@ -710,33 +743,16 @@ public class GuiCreateRailroad implements Initializable {
                         this.onNextRotation(null);
                     } else if (mouseEvent.getButton().equals(MouseButton.SECONDARY)) {
                         switch (mode) {
-                            case STRAIGHT:
-                                this.onSetModeToDelete(null);
-                                break;
-                            case CURVE:
-                                this.onSetModeToStraight(null);
-                                break;
-                            case SWITCH_R:
-                                this.onSetModeToCurve(null);
-                                break;
-                            case SWITCH_L:
-                                this.onSetModeToRSwitch(null);
-                                break;
-                            case SWITCH_L_R:
-                                this.onSetModeToLSwitch(null);
-                                break;
-                            case DELETE:
-                                this.onSetModeToEnd(null);
-                                break;
-                            case SENSOR:
-                                this.onSetModeToLRSwitch(null);
-                                break;
-                            case END:
-                                this.onSetModeToDirectional(null);
-                                break;
-                            case DIRECTIONAL:
-                                this.onSetModeToSensor(null);
-                                break;
+                            case STRAIGHT -> this.onSetModeToDelete(null);
+                            case CROSSING -> this.onSetModeToStraight(null);
+                            case CURVE -> this.onSetModeToCrossing(null);
+                            case SWITCH_R -> this.onSetModeToCurve(null);
+                            case SWITCH_L -> this.onSetModeToRSwitch(null);
+                            case SWITCH_L_R -> this.onSetModeToLSwitch(null);
+                            case DELETE -> this.onSetModeToEnd(null);
+                            case SENSOR -> this.onSetModeToLRSwitch(null);
+                            case END -> this.onSetModeToDirectional(null);
+                            case DIRECTIONAL -> this.onSetModeToSensor(null);
                         }
                     }
                     if (view.getImage().equals(RailroadImages.EMPTY) || view.getImage().equals(RailroadImages.EMPTY_2) || RailroadImages.HOVER_IMAGES.contains(view.getImage()))

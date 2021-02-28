@@ -28,6 +28,18 @@
                   <Tooltip text="%tooltip.straight_rail" />
                </tooltip>
             </ToggleButton>
+            <ToggleButton fx:id="crossing" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" onAction="#onSetModeToCrossing" text="ToggleButton">
+               <graphic>
+                  <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../textures/railroad/straight_rails/crossing_rail.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+               <tooltip>
+                  <Tooltip text="%tooltip.straight_rail" />
+               </tooltip>
+            </ToggleButton>
             <ToggleButton fx:id="curve" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" onAction="#onSetModeToCurve" text="ToggleButton">
                <graphic>
                   <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">

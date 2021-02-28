@@ -128,7 +128,6 @@ public class TrainStationManager {
     }
 
     public void deleteStation(TrainStation station) {
-
         if (actual != -1 && this.stations.get(actual).equals(station)) {
             station.isTemporary = true;
             train.stopTrainImmediately();
