@@ -16,7 +16,6 @@ class LoggingFormatter extends Formatter {
 
     @Override
     public String format(LogRecord record) {
-
         StringBuilder sb = new StringBuilder();
 
         sb.append("[").append(LocalDateTime.now().format(dateTimeFormatter)).append("] [").append(record.getLevel())

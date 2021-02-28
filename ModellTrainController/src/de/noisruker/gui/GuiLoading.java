@@ -58,6 +58,7 @@ public class GuiLoading implements Initializable {
     public static void checkForUpdates() throws InterruptedException {
         new Thread(() -> {
             Platform.runLater(() -> {
+                Ref.LOGGER.info("Quickstart: " + Config.startImmediately);
                 if (Config.startImmediately && Arrays.asList(SerialPortList.getPortNames()).contains(Config.port)) {
                     GuiLoading.startLocoNet();
                 } else {

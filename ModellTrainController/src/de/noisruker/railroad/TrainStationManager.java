@@ -168,9 +168,10 @@ public class TrainStationManager {
 
             button.setGraphic(CARET);
             button.setOnAction(action -> {
+                button.setSelected(true);
                 if(button.isSelected()) {
                     Util.runNext(() -> this.myManager.activateStation(this));
-                    button.setGraphic(SQUARE);
+                    button.setGraphic(CARET);
                 } else {
                     Util.runNext(() -> this.myManager.deactivateStation(this));
                     button.setGraphic(CARET);

@@ -366,6 +366,10 @@ public class Train implements Serializable, Comparable<Train> {
                 this.applyBreakSpeed();
         }
 
+        Ref.LOGGER.info("Next Sensor: " + this.nextNextSensor);
+        if(this.nextNextSensor != null)
+            Ref.LOGGER.info("Is free: " + this.nextNextSensor.isFree(this) + "; " + this.nextNextSensor.getTrain());
+
         if(this.nextNextSensor != null && !this.nextNextSensor.isFree(this)) {
             this.setUpNextSensors(nodeAddress);
             this.railway.setLastPosToTrain(this, this.actualSensor);
@@ -384,12 +388,16 @@ public class Train implements Serializable, Comparable<Train> {
             return;
         }
 
+        this.nextNextSensor = s;
+
         if(s.appendTrain(this))
             this.stopAdd = this.nextSensor;
+        else
+            this.stopAdd = s;
 
         this.waitForSwitch.put(this.nextSensor, this.railway.getSwitches());
         this.railway.setLastPosToTrain(this, this.actualSensor);
-        this.nextNextSensor = s;
+        Ref.LOGGER.info("Drive to: " + (this.stopAdd == null ? this.nextNextSensor : this.stopAdd));
     }
 
     private void printTrain() {
@@ -412,7 +420,7 @@ public class Train implements Serializable, Comparable<Train> {
             return;
         }*/
 
-        Ref.LOGGER.info("Handle Train enter");
+        Ref.LOGGER.info("Handle Train enter " + nodeAddress);
 
         if (this.destination != null &&
                 this.destination.getAddress() == nodeAddress &&
@@ -510,6 +518,9 @@ public class Train implements Serializable, Comparable<Train> {
                 this.resetRailway();
 
             this.nextSensor = this.railway.getNextSensor(actualSensor);
+            if(this.nextSensor == null)
+                this.resetRailway();
+
             this.waitForSwitch.put(this.actualSensor, this.railway.getSwitches());
             this.nextSensor.appendTrain(this);
         }
@@ -521,8 +532,9 @@ public class Train implements Serializable, Comparable<Train> {
         Ref.LOGGER.info("Drive Again: " + sensor + " is free (" + this.stopAdd + ") ");
 
         if(sensor.equals(this.nextNextSensor) && this.nextSensor.equals(this.stopAdd)) {
-            this.stopAdd = null;
+            this.stopAdd = this.nextNextSensor;
             this.applyNormalSpeed();
+            Ref.LOGGER.info("Drive to: " + sensor);
             return true;
         }
 
@@ -532,7 +544,7 @@ public class Train implements Serializable, Comparable<Train> {
             if(this.nextNextSensor.appendTrain(this))
                 this.stopAdd = this.nextSensor;
             else
-                this.stopAdd = null;
+                this.stopAdd = this.nextNextSensor;
 
             Ref.LOGGER.info("Wait next add " + this.stopAdd + " for sensor " + this.nextNextSensor + " to be free!");
         }
@@ -669,6 +681,28 @@ public class Train implements Serializable, Comparable<Train> {
 
     public Sensor getLastSensor() {
         return this.previousSensor;
+    }
+
+    public Sensor getCorrectSensor(Sensor sensor) {
+        if(sensor.equals(this.nextSensor))
+            return this.nextSensor;
+        else if(sensor.equals(this.nextNextSensor))
+            return this.nextNextSensor;
+        else if(this.nextNextSensor != null){
+            Sensor s = LocoNet.getRailroad().getNextSensor(this.nextNextSensor, this);
+            if(sensor.equals(s))
+                return s;
+        }
+
+        return sensor;
+    }
+
+    public Sensor getNextSensor() {
+        return this.nextSensor;
+    }
+
+    public Sensor getNextNextSensor() {
+        return this.nextNextSensor;
     }
 
     public interface TrainSpeedChangeListener {

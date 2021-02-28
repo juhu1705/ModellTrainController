@@ -55,7 +55,11 @@ public class Config {
     @ConfigElement(defaultValue = "0", type = "count", description = "report_address.description", name = "report_address.text", location = "config.loconet", visible = true)
     public static int reportAddress = 0;
 
+    @ConfigElement(defaultValue = "100", type = "count", description = "zoom.description", name = "zoom.text", location = "config", visible = false)
+    public static int zoom = 100;
+
     public static void register() {
+        Ref.LOGGER.info("Reading config");
         try {
             ConfigManager.getInstance().register(Config.class);
 
