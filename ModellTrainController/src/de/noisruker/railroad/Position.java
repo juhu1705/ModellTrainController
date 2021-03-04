@@ -32,6 +32,22 @@ public class Position {
         return this.y;
     }
 
+    public Position north() {
+        return new Position(this.x, this.y - 1);
+    }
+
+    public Position south() {
+        return new Position(this.x, this.y + 1);
+    }
+
+    public Position east() {
+        return new Position(this.x + 1, this.y);
+    }
+
+    public Position west() {
+        return new Position(this.x - 1, this.y);
+    }
+
     @Override
     protected Object clone() throws CloneNotSupportedException {
         return new Position(x, y);

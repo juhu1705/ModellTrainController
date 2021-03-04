@@ -1,5 +1,6 @@
 package de.noisruker.railroad.DijkstraRailroad;
 
+import de.noisruker.railroad.elements.AbstractRailroadElement;
 import de.noisruker.railroad.elements.Sensor;
 import de.noisruker.railroad.elements.Switch;
 
@@ -8,10 +9,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Objects;
 
-public class DijkstraNode {
+import static de.noisruker.railroad.DijkstraRailroad.SwitchNodePosition.*;
+
+public abstract class DijkstraNode {
 
     private static int lastID = 0;
-    private static final HashMap<Integer, DijkstraNode> NODES = new HashMap<>();
+    protected static final HashMap<Integer, DijkstraNode> NODES = new HashMap<>();
 
     private static int getNextID() {
         return DijkstraNode.lastID++;
@@ -23,63 +26,30 @@ public class DijkstraNode {
     }
 
 
-    private final int nodeID;
-    private final ArrayList<Sensor> containedSensors;
-    private final Switch aSwitch;
-    private final SwitchNodePosition directionPosition;
-    private int toTrue = -1, toFalse = -1;
+    protected final int nodeID;
+    protected final HashMap<DijkstraNode, Integer> nodes = new HashMap<>();
 
-    public DijkstraNode(Switch aSwitch, SwitchNodePosition position) {
-        this.directionPosition = position;
-        this.aSwitch = aSwitch;
+    public DijkstraNode() {
         this.nodeID = DijkstraNode.getNextID();
-        this.containedSensors = new ArrayList<>();
         DijkstraNode.NODES.put(this.nodeID, this);
     }
 
-    public void addSensors(Sensor... sensors) {
-        this.containedSensors.addAll(Arrays.asList(sensors));
+    public void addNode(int nodeID, int wayLength) {
+        this.addNode(NODES.get(nodeID), wayLength);
     }
 
-    public void addToTrue(int id) {
-        this.toTrue = id;
-    }
-
-    public void addToTrue(DijkstraNode node) {
-        this.toTrue = node.nodeID;
-    }
-
-    public void addToFalse(int id) {
-        this.toFalse = id;
-    }
-
-    public void addToFalse(DijkstraNode node) {
-        this.toFalse = node.nodeID;
-    }
-
-    public boolean containsSensor(Sensor sensor) {
-        return this.containedSensors.contains(sensor);
-    }
-
-    public DijkstraNode getToTrue() {
-        return this.toTrue > -1 ? DijkstraNode.NODES.get(toTrue) : null;
-    }
-
-    public DijkstraNode getToFalse() {
-        return this.toFalse > -1 ? DijkstraNode.NODES.get(toFalse) : null;
-    }
-
-    public DijkstraNode getOneDirection() {
-        DijkstraNode node = this.getToTrue();
-        return node == null ? this.getToFalse() : node;
+    public void addNode(DijkstraNode node, int wayLength) {
+        if(node == null || wayLength < 0)
+            return;
+        this.nodes.put(node, wayLength);
     }
 
     public boolean isOneDirectional() {
-        return this.toTrue < 0 || this.toFalse < 0 && !this.isEnd();
+        return this.nodes.size() < 2 && !this.isEnd();
     }
 
     public boolean isEnd() {
-        return this.toTrue < 0 && this.toFalse < 0;
+        return this.nodes.size() < 1;
     }
 
     @Override

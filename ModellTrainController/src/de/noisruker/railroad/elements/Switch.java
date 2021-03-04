@@ -665,6 +665,14 @@ public class Switch extends AbstractRailroadElement {
         return address;
     }
 
+    public SwitchType getSwitchType() {
+        return this.type;
+    }
+
+    public boolean getNormalDirectional() {
+        return this.normalPosition;
+    }
+
     public enum SwitchType {
         LEFT,
         RIGHT,
