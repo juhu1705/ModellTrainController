@@ -10,7 +10,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import static de.noisruker.railroad.DijkstraRailroad.SwitchNodePosition.*;
+import static de.noisruker.railroad.DijkstraRailroad.NodePosition.*;
+import static de.noisruker.railroad.DijkstraRailroad.NodePosition.IN_BOTH;
 
 public class DijkstraRailroad {
 
@@ -25,73 +26,63 @@ public class DijkstraRailroad {
         DijkstraNode.reset();
 
         ArrayList<Switch> switches = new ArrayList<>();
+        ArrayList<Sensor> sensors = new ArrayList<>();
 
         for(AbstractRailroadElement[] elements: railroad)
-            for(AbstractRailroadElement element: elements)
-                if(element instanceof Switch)
+            for(AbstractRailroadElement element: elements) {
+                if (element instanceof Switch)
                     switches.add((Switch) element);
-
-        final HashMap<Switch, ArrayList<DijkstraNode>> nodesBySwitches = new HashMap<>();
-
-        switches.forEach(s -> nodesBySwitches.put(s, this.createNodesFor(s)));
-
-        nodesBySwitches.forEach((aSwitch, dijkstraNodes) ->
-            dijkstraNodes.forEach(dijkstraNode -> {
-                if(!dijkstraNode.isInput())
-                    this.calculateMatches(dijkstraNode, nodesBySwitches, railroad);
-            }));
-
-
-    }
-
-    private void recheckSensors(AbstractRailroadElement[][] railroad, HashMap<Switch, ArrayList<DijkstraNode>> nodesBySwitches) {
-        ArrayList<Sensor> allSensors = new ArrayList<>();
-
-        for(AbstractRailroadElement[] elements: railroad) {
-            for (AbstractRailroadElement element : elements)
                 if (element instanceof Sensor)
-                    allSensors.add((Sensor) element);
-        }
+                    sensors.add((Sensor) element);
+            }
 
-        nodesBySwitches.forEach((aSwitch, dijkstraNodes) ->
-                dijkstraNodes.forEach(dijkstraNode -> {
-                    for(int i = 0; i < allSensors.size();) {
-                        if(dijkstraNode.containsSensor(allSensors.get(i)))
-                            allSensors.remove(i);
-                        else
-                            i++;
-                    }
-                }));
 
-        allSensors.forEach(sensor -> new DijkstraNode(null, WAY_BOTH).addSensors(sensor));
+        final HashMap<AbstractRailroadElement, ArrayList<DijkstraNode>> nodesByElement = new HashMap<>();
 
+        switches.forEach(s -> nodesByElement.put(s, this.createNodesFor(s)));
+        sensors.forEach(s -> nodesByElement.put(s, this.createNodesFor(s)));
+
+        nodesByElement.forEach((element, dijkstraNodes) ->
+            dijkstraNodes.forEach(dijkstraNode -> {
+                this.calculateMatches(dijkstraNode, nodesByElement, railroad);
+            }));
     }
 
-    private void calculateMatches(DijkstraNode from, HashMap<Switch, ArrayList<DijkstraNode>> nodesBySwitches,
+    private void calculateMatches(DijkstraNode from, HashMap<AbstractRailroadElement, ArrayList<DijkstraNode>> nodesBySwitches,
                                   AbstractRailroadElement[][] railroad) {
-        if(from == null)
-            return;
+        if(from instanceof SensorNode)
+            this.calculateSensorMatches((SensorNode) from, nodesBySwitches, railroad);
+        else if(from instanceof SwitchNode)
+            this.calculateSwitchMatches((SwitchNode) from, nodesBySwitches, railroad);
+    }
 
-        Switch start = from.getSwitch();
+    private void calculateSensorMatches(SensorNode from,
+                                        HashMap<AbstractRailroadElement, ArrayList<DijkstraNode>> nodesBySwitches,
+                                        AbstractRailroadElement[][] railroad) {
+        Sensor start = from.getSensor();
         Position last = start.getPosition();
-        Position actual = this.getWayToGo(start, from.getOutputDirection());
+        Position actual = this.getWayToGo(start, from.getPosition());
 
         if(actual == null)
             return;
 
         AbstractRailroadElement actualElement = this.getElement(actual, railroad);
+        int length = 1;
 
         do {
             if (actualElement == null)
                 return;
 
-            if (actualElement instanceof Sensor)
-                from.addSensors((Sensor) actualElement);
+            if (actualElement instanceof Sensor) {
+                Sensor end = (Sensor) actualElement;
+
+                this.setupConnection(from, end, last, nodesBySwitches.get(end), length);
+            }
 
             if (actualElement instanceof Switch) {
                 Switch end = (Switch) actualElement;
 
-                this.setupConnection(from, end, last, nodesBySwitches.get(end));
+                this.setupConnection(from, end, last, nodesBySwitches.get(end), length);
 
                 return;
             }
@@ -99,65 +90,138 @@ public class DijkstraRailroad {
             actualElement = this.getElement(actualElement.getToPos(last), railroad);
             last = actual;
             actual = actualElement.getPosition();
+            length++;
         } while (true);
     }
 
-    private void setupConnection(DijkstraNode from, Switch end, Position last, ArrayList<DijkstraNode> nodes) {
-        SwitchNodePosition nodeToConnect = this.calculateFromWhere(end, last);
+    private void calculateSwitchMatches(SwitchNode from,
+                                        HashMap<AbstractRailroadElement, ArrayList<DijkstraNode>> nodesBySwitches,
+                                        AbstractRailroadElement[][] railroad) {
+        if(from.getPosition().equals(IN_TRUE) || from.getPosition().equals(IN_FALSE) ||
+                from.getPosition().equals(IN_BOTH))
+            return;
 
-        if(!nodeToConnect.equals(INPUT)) {
+        Switch start = from.getSwitch();
+        Position last = start.getPosition();
+        Position actual = this.getWayToGo(start, from.getPosition());
+
+        if(actual == null)
+            return;
+
+        AbstractRailroadElement actualElement = this.getElement(actual, railroad);
+        int length = 1;
+
+        do {
+            if (actualElement == null)
+                return;
+
+            if (actualElement instanceof Sensor) {
+                Sensor end = (Sensor) actualElement;
+
+                this.setupConnection(from, end, last, nodesBySwitches.get(end), length);
+            }
+
+            if (actualElement instanceof Switch) {
+                Switch end = (Switch) actualElement;
+
+                this.setupConnection(from, end, last, nodesBySwitches.get(end), length);
+
+                return;
+            }
+
+            actualElement = this.getElement(actualElement.getToPos(last), railroad);
+            last = actual;
+            actual = actualElement.getPosition();
+            length++;
+        } while (true);
+    }
+    
+    private void setupConnection(DijkstraNode from, Sensor end, Position last, ArrayList<DijkstraNode> nodes, int length) {
+        if(end.getRotation().equals(RailRotation.NORTH) || end.getRotation().equals(RailRotation.SOUTH)) {
+            if(last.equals(end.getPosition().south()))
+                for(DijkstraNode node: nodes)
+                    if(node.getPosition().equals(IN_BOTH)) {
+                        from.addNode(node, length);
+                        return;
+                    }
+            if(last.equals(end.getPosition().north()))
+                for(DijkstraNode node: nodes)
+                    if(node.getPosition().equals(OUT_BOTH)) {
+                        from.addNode(node, length);
+                        return;
+                    }
+        }
+        if(end.getRotation().equals(RailRotation.EAST) || end.getRotation().equals(RailRotation.WEST)) {
+            if(last.equals(end.getPosition().west()))
+                for(DijkstraNode node: nodes)
+                    if(node.getPosition().equals(IN_BOTH)) {
+                        from.addNode(node, length);
+                        return;
+                    }
+            if(last.equals(end.getPosition().east()))
+                for(DijkstraNode node: nodes)
+                    if(node.getPosition().equals(OUT_BOTH)) {
+                        from.addNode(node, length);
+                        return;
+                    }
+        }
+    }
+
+    private void setupConnection(DijkstraNode from, Switch end, Position last, ArrayList<DijkstraNode> nodes, int length) {
+        NodePosition nodeToConnect = this.calculateFromWhere(end, last);
+
+        if(!nodeToConnect.equals(OUT_BOTH)) {
             DijkstraNode node = getNodeByPosition(nodeToConnect, nodes);
 
             if(node != null) {
-                from.addToTrue(node.getToTrue());
-                from.addToFalse(node.getToFalse());
+                from.addNode(node, length);
             }
         }
     }
 
-    private DijkstraNode getNodeByPosition(SwitchNodePosition position, ArrayList<DijkstraNode> nodes) {
+    private DijkstraNode getNodeByPosition(NodePosition position, ArrayList<DijkstraNode> nodes) {
         for(DijkstraNode node: nodes) {
-            if(node.getOutputDirection().equals(position))
+            if(node.getPosition().equals(position))
                 return node;
         }
         return null;
     }
 
-    private SwitchNodePosition calculateFromWhere(Switch s, Position prev) {
+    private NodePosition calculateFromWhere(Switch s, Position prev) {
         switch (s.getSwitchType()) {
             case LEFT -> {
                 switch (s.getRotation()) {
                     case NORTH -> {
                         if(prev.equals(s.getPosition().north()))
-                            return WAY_BOTH;
+                            return IN_BOTH;
                         else if(prev.equals(s.getPosition().south()))
-                            return s.getNormalDirectional() ? WAY_TRUE : WAY_FALSE;
+                            return s.getNormalDirectional() ? IN_TRUE : IN_FALSE;
                         else if(prev.equals(s.getPosition().east()))
-                            return s.getNormalDirectional() ? WAY_FALSE : WAY_TRUE;
+                            return s.getNormalDirectional() ? IN_FALSE : IN_TRUE;
                     }
                     case WEST -> {
                         if(prev.equals(s.getPosition().west()))
-                            return WAY_BOTH;
+                            return IN_BOTH;
                         else if(prev.equals(s.getPosition().east()))
-                            return s.getNormalDirectional() ? WAY_TRUE : WAY_FALSE;
+                            return s.getNormalDirectional() ? IN_TRUE : IN_FALSE;
                         else if(prev.equals(s.getPosition().north()))
-                            return s.getNormalDirectional() ? WAY_FALSE : WAY_TRUE;
+                            return s.getNormalDirectional() ? IN_FALSE : IN_TRUE;
                     }
                     case EAST -> {
                         if(prev.equals(s.getPosition().east()))
-                            return WAY_BOTH;
+                            return IN_BOTH;
                         else if(prev.equals(s.getPosition().west()))
-                            return s.getNormalDirectional() ? WAY_TRUE : WAY_FALSE;
+                            return s.getNormalDirectional() ? IN_TRUE : IN_FALSE;
                         else if(prev.equals(s.getPosition().south()))
-                            return s.getNormalDirectional() ? WAY_FALSE : WAY_TRUE;
+                            return s.getNormalDirectional() ? IN_FALSE : IN_TRUE;
                     }
                     case SOUTH -> {
                         if(prev.equals(s.getPosition().south()))
-                            return WAY_BOTH;
+                            return IN_BOTH;
                         else if(prev.equals(s.getPosition().north()))
-                            return s.getNormalDirectional() ? WAY_TRUE : WAY_FALSE;
+                            return s.getNormalDirectional() ? IN_TRUE : IN_FALSE;
                         else if(prev.equals(s.getPosition().west()))
-                            return s.getNormalDirectional() ? WAY_FALSE : WAY_TRUE;
+                            return s.getNormalDirectional() ? IN_FALSE : IN_TRUE;
                     }
                 }
             }
@@ -165,35 +229,35 @@ public class DijkstraRailroad {
                 switch (s.getRotation()) {
                     case NORTH -> {
                         if(prev.equals(s.getPosition().north()))
-                            return WAY_BOTH;
+                            return IN_BOTH;
                         else if(prev.equals(s.getPosition().south()))
-                            return s.getNormalDirectional() ? WAY_TRUE : WAY_FALSE;
+                            return s.getNormalDirectional() ? IN_TRUE : IN_FALSE;
                         else if(prev.equals(s.getPosition().west()))
-                            return s.getNormalDirectional() ? WAY_FALSE : WAY_TRUE;
+                            return s.getNormalDirectional() ? IN_FALSE : IN_TRUE;
                     }
                     case WEST -> {
                         if(prev.equals(s.getPosition().west()))
-                            return WAY_BOTH;
+                            return IN_BOTH;
                         else if(prev.equals(s.getPosition().east()))
-                            return s.getNormalDirectional() ? WAY_TRUE : WAY_FALSE;
+                            return s.getNormalDirectional() ? IN_TRUE : IN_FALSE;
                         else if(prev.equals(s.getPosition().south()))
-                            return s.getNormalDirectional() ? WAY_FALSE : WAY_TRUE;
+                            return s.getNormalDirectional() ? IN_FALSE : IN_TRUE;
                     }
                     case EAST -> {
                         if(prev.equals(s.getPosition().east()))
-                            return WAY_BOTH;
+                            return IN_BOTH;
                         else if(prev.equals(s.getPosition().west()))
-                            return s.getNormalDirectional() ? WAY_TRUE : WAY_FALSE;
+                            return s.getNormalDirectional() ? IN_TRUE : IN_FALSE;
                         else if(prev.equals(s.getPosition().north()))
-                            return s.getNormalDirectional() ? WAY_FALSE : WAY_TRUE;
+                            return s.getNormalDirectional() ? IN_FALSE : IN_TRUE;
                     }
                     case SOUTH -> {
                         if(prev.equals(s.getPosition().south()))
-                            return WAY_BOTH;
+                            return IN_BOTH;
                         else if(prev.equals(s.getPosition().north()))
-                            return s.getNormalDirectional() ? WAY_TRUE : WAY_FALSE;
+                            return s.getNormalDirectional() ? IN_TRUE : IN_FALSE;
                         else if(prev.equals(s.getPosition().east()))
-                            return s.getNormalDirectional() ? WAY_FALSE : WAY_TRUE;
+                            return s.getNormalDirectional() ? IN_FALSE : IN_TRUE;
                     }
                 }
             }
@@ -201,51 +265,49 @@ public class DijkstraRailroad {
                 switch (s.getRotation()) {
                     case NORTH -> {
                         if(prev.equals(s.getPosition().north()))
-                            return WAY_BOTH;
+                            return IN_BOTH;
                         else if(prev.equals(s.getPosition().east()))
-                            return s.getNormalDirectional() ? WAY_TRUE : WAY_FALSE;
+                            return s.getNormalDirectional() ? IN_TRUE : IN_FALSE;
                         else if(prev.equals(s.getPosition().west()))
-                            return s.getNormalDirectional() ? WAY_FALSE : WAY_TRUE;
+                            return s.getNormalDirectional() ? IN_FALSE : IN_TRUE;
                     }
                     case WEST -> {
                         if(prev.equals(s.getPosition().west()))
-                            return WAY_BOTH;
+                            return IN_BOTH;
                         else if(prev.equals(s.getPosition().north()))
-                            return s.getNormalDirectional() ? WAY_TRUE : WAY_FALSE;
+                            return s.getNormalDirectional() ? IN_TRUE : IN_FALSE;
                         else if(prev.equals(s.getPosition().south()))
-                            return s.getNormalDirectional() ? WAY_FALSE : WAY_TRUE;
+                            return s.getNormalDirectional() ? IN_FALSE : IN_TRUE;
                     }
                     case EAST -> {
                         if(prev.equals(s.getPosition().east()))
-                            return WAY_BOTH;
+                            return IN_BOTH;
                         else if(prev.equals(s.getPosition().south()))
-                            return s.getNormalDirectional() ? WAY_TRUE : WAY_FALSE;
+                            return s.getNormalDirectional() ? IN_TRUE : IN_FALSE;
                         else if(prev.equals(s.getPosition().north()))
-                            return s.getNormalDirectional() ? WAY_FALSE : WAY_TRUE;
+                            return s.getNormalDirectional() ? IN_FALSE : IN_TRUE;
                     }
                     case SOUTH -> {
                         if(prev.equals(s.getPosition().south()))
-                            return WAY_BOTH;
+                            return IN_BOTH;
                         else if(prev.equals(s.getPosition().west()))
-                            return s.getNormalDirectional() ? WAY_TRUE : WAY_FALSE;
+                            return s.getNormalDirectional() ? IN_TRUE : IN_FALSE;
                         else if(prev.equals(s.getPosition().east()))
-                            return s.getNormalDirectional() ? WAY_FALSE : WAY_TRUE;
+                            return s.getNormalDirectional() ? IN_FALSE : IN_TRUE;
                     }
                 }
             }
         }
-        return INPUT;
+        return OUT_BOTH;
     }
 
     private AbstractRailroadElement getElement(Position p, AbstractRailroadElement[][] railroad) {
         return railroad[p.getX()][p.getY()];
     }
 
-    private Position getWayToGo(Switch start, SwitchNodePosition outputDirection) {
-        Switch.SwitchType type = start.getSwitchType();
+    private Position getWayToGo(Switch start, NodePosition outputDirection) {
         RailRotation rotation = start.getRotation();
         Position from = start.getPosition();
-        boolean normalPosition = start.getNormalDirectional();
 
         Position to = null;
 
@@ -279,6 +341,30 @@ public class DijkstraRailroad {
         return to;
     }
 
+    private Position getWayToGo(Sensor start, NodePosition outputDirection) {
+        RailRotation rotation = start.getRotation();
+        Position from = start.getPosition();
+
+        Position to = null;
+
+        switch (outputDirection) {
+            case OUT_BOTH -> {
+                switch (rotation) {
+                    case NORTH, SOUTH -> to = from.south();
+                    case EAST, WEST -> to = from.west();
+                }
+            }
+            case IN_BOTH -> {
+                switch (rotation) {
+                    case NORTH, SOUTH -> to = from.north();
+                    case EAST, WEST -> to = from.east();
+                }
+            }
+        }
+
+        return to;
+    }
+
     private ArrayList<DijkstraNode> createNodesFor(Switch s) {
         SwitchNode inSwitch = new SwitchNode(s, IN_BOTH);
         SwitchNode outSwitch1 = new SwitchNode(s, OUT_TRUE);
@@ -295,6 +381,13 @@ public class DijkstraRailroad {
         inSwitch2.addToFalse(outSwitch, 0);
 
         return new ArrayList<>(Arrays.asList(inSwitch, inSwitch1, inSwitch2, outSwitch, outSwitch1, outSwitch2));
+    }
+
+    private ArrayList<DijkstraNode> createNodesFor(Sensor s) {
+        SensorNode sensorUp = new SensorNode(s, IN_BOTH);
+        SensorNode sensorDown = new SensorNode(s, OUT_BOTH);
+
+        return new ArrayList<>(Arrays.asList(sensorUp, sensorDown));
     }
 
 

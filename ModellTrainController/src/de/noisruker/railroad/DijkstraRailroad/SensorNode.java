@@ -6,8 +6,8 @@ public class SensorNode extends DijkstraNode {
 
     private final Sensor sensor;
 
-    public SensorNode(Sensor sensor) {
-        super();
+    public SensorNode(Sensor sensor, NodePosition position) {
+        super(position);
         this.sensor = sensor;
     }
 

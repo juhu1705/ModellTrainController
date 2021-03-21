@@ -1,15 +1,7 @@
 package de.noisruker.railroad.DijkstraRailroad;
 
-import de.noisruker.railroad.elements.AbstractRailroadElement;
-import de.noisruker.railroad.elements.Sensor;
-import de.noisruker.railroad.elements.Switch;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Objects;
-
-import static de.noisruker.railroad.DijkstraRailroad.SwitchNodePosition.*;
 
 public abstract class DijkstraNode {
 
@@ -28,10 +20,16 @@ public abstract class DijkstraNode {
 
     protected final int nodeID;
     protected final HashMap<DijkstraNode, Integer> nodes = new HashMap<>();
+    private final NodePosition position;
 
-    public DijkstraNode() {
+    public DijkstraNode(NodePosition position) {
         this.nodeID = DijkstraNode.getNextID();
         DijkstraNode.NODES.put(this.nodeID, this);
+        this.position = position;
+    }
+
+    public NodePosition getPosition() {
+        return this.position;
     }
 
     public void addNode(int nodeID, int wayLength) {
@@ -63,5 +61,14 @@ public abstract class DijkstraNode {
     @Override
     public int hashCode() {
         return Objects.hash(nodeID);
+    }
+
+    @Override
+    public String toString() {
+        return "DijkstraNode{" +
+                "nodeID=" + nodeID +
+                ", nodes=" + nodes +
+                ", position=" + position +
+                '}';
     }
 }

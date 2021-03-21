@@ -2,19 +2,19 @@ package de.noisruker.railroad.DijkstraRailroad;
 
 import de.noisruker.railroad.elements.Switch;
 
-import java.util.HashMap;
-
 public class SwitchNode extends DijkstraNode {
 
     private final Switch aSwitch;
-    private final SwitchNodePosition position;
     private DijkstraNode wayTrue = null;
     private DijkstraNode wayFalse = null;
 
-    public SwitchNode(Switch s, SwitchNodePosition position) {
-        super();
+    public SwitchNode(Switch s, NodePosition position) {
+        super(position);
         this.aSwitch = s;
-        this.position = position;
+    }
+
+    public Switch getSwitch() {
+        return this.aSwitch;
     }
 
     public void addToTrue(DijkstraNode node, int wayLength) {
