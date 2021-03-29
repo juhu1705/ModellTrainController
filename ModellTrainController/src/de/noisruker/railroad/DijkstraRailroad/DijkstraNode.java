@@ -22,7 +22,7 @@ public abstract class DijkstraNode {
 
     public void setDuplicate(DijkstraNode duplicate) {
         this.duplicate = duplicate;
-        this.duplicate.setDuplicate(this);
+        this.duplicate.duplicate = this;
     }
 
     public NodePosition getPosition() {
@@ -125,10 +125,16 @@ public abstract class DijkstraNode {
 
     @Override
     public String toString() {
+        StringBuilder childs = new StringBuilder();
+        for(Map.Entry<DijkstraNode, Integer> entry: this.nodes.entrySet()) {
+            childs.append("Node: ").append(entry.getKey().nodeID).append("; ");
+        }
+
         return "DijkstraNode{" +
                 "nodeID=" + nodeID +
-                ", nodes=" + nodes +
+                ", duplicate=" + duplicate.nodeID +
                 ", position=" + position +
+                ", nodes=" + childs.toString() +
                 '}';
     }
 }

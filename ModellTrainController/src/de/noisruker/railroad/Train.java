@@ -392,7 +392,7 @@ public class Train implements Serializable, Comparable<Train> {
         this.nextNextSensor = s;
 
         if(s.appendTrain(this))
-            this.stopAdd = this.nextSensor;
+            this.stopAdd = this.nextSensor != null && this.nextSensor.isFree(this) ? this.nextSensor : this.stopAdd;
         else
             this.stopAdd = s;
 

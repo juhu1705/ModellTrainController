@@ -94,6 +94,8 @@ public class DijkstraRailroad {
                 Sensor end = (Sensor) actualElement;
 
                 this.setupConnection(from, end, last, nodesBySwitches.get(end), length);
+
+                return;
             }
 
             if (actualElement instanceof Switch) {
@@ -136,6 +138,8 @@ public class DijkstraRailroad {
                 Sensor end = (Sensor) actualElement;
 
                 this.setupConnection(from, end, last, nodesBySwitches.get(end), length);
+
+                return;
             }
 
             if (actualElement instanceof Switch) {
