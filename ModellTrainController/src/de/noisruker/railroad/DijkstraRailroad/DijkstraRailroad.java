@@ -5,6 +5,7 @@ import de.noisruker.railroad.RailRotation;
 import de.noisruker.railroad.elements.AbstractRailroadElement;
 import de.noisruker.railroad.elements.Sensor;
 import de.noisruker.railroad.elements.Switch;
+import de.noisruker.util.Ref;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,8 +23,22 @@ public class DijkstraRailroad {
                 (DijkstraRailroad.instance = new DijkstraRailroad());
     }
 
+    private int lastID = 0;
+    protected final HashMap<Integer, DijkstraNode> NODES = new HashMap<>();
+
+    private DijkstraRailroad() {}
+
+    protected int getNextID() {
+        return this.lastID++;
+    }
+
+    protected void resetRailroad() {
+        this.NODES.clear();
+        this.lastID = 0;
+    }
+
     public void convertRailroad(AbstractRailroadElement[][] railroad) {
-        DijkstraNode.reset();
+        this.resetRailroad();
 
         ArrayList<Switch> switches = new ArrayList<>();
         ArrayList<Sensor> sensors = new ArrayList<>();
@@ -46,6 +61,8 @@ public class DijkstraRailroad {
             dijkstraNodes.forEach(dijkstraNode -> {
                 this.calculateMatches(dijkstraNode, nodesByElement, railroad);
             }));
+
+        this.NODES.forEach((integer, node) -> Ref.LOGGER.info(node.toString()));
     }
 
     private void calculateMatches(DijkstraNode from, HashMap<AbstractRailroadElement, ArrayList<DijkstraNode>> nodesBySwitches,
@@ -380,12 +397,18 @@ public class DijkstraRailroad {
         inSwitch1.addToTrue(outSwitch, 0);
         inSwitch2.addToFalse(outSwitch, 0);
 
+        inSwitch.setDuplicate(outSwitch);
+        outSwitch1.setDuplicate(inSwitch1);
+        outSwitch2.setDuplicate(inSwitch2);
+
         return new ArrayList<>(Arrays.asList(inSwitch, inSwitch1, inSwitch2, outSwitch, outSwitch1, outSwitch2));
     }
 
     private ArrayList<DijkstraNode> createNodesFor(Sensor s) {
         SensorNode sensorUp = new SensorNode(s, IN_BOTH);
         SensorNode sensorDown = new SensorNode(s, OUT_BOTH);
+
+        sensorUp.setDuplicate(sensorDown);
 
         return new ArrayList<>(Arrays.asList(sensorUp, sensorDown));
     }

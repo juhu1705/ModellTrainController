@@ -12,12 +12,13 @@ public class SensorNode extends DijkstraNode {
     }
 
     @Override
-    public void addNode(DijkstraNode node, int wayLength) {
+    public boolean addNode(DijkstraNode node, int wayLength) {
         if(node == null || wayLength < 0)
-            return;
+            return false;
 
         super.nodes.clear();
         super.nodes.put(node, wayLength);
+        return true;
     }
 
     public Sensor getSensor() {

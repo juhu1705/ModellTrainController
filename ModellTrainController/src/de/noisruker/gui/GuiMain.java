@@ -5,6 +5,8 @@ import de.noisruker.loconet.LocoNet;
 import de.noisruker.loconet.messages.RailroadOffMessage;
 import de.noisruker.loconet.messages.RailroadOnMessage;
 import de.noisruker.main.GUILoader;
+import de.noisruker.railroad.DijkstraRailroad.DijkstraNode;
+import de.noisruker.railroad.DijkstraRailroad.DijkstraRailroad;
 import de.noisruker.railroad.Position;
 import de.noisruker.railroad.Train;
 import de.noisruker.railroad.elements.AbstractRailroadElement;
@@ -146,6 +148,8 @@ public class GuiMain implements Initializable {
                     this.railroadCells.get(box).get(x).setImage(RailroadImages.EMPTY_2);
             }
         }
+        DijkstraRailroad.getInstance().convertRailroad(railroadElements);
+
         this.updateSensors();
         this.updateSwitches();
         this.updateTrains();

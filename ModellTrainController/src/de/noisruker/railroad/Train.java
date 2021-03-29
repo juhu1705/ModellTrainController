@@ -4,6 +4,7 @@ import de.noisruker.gui.GuiMain;
 import de.noisruker.loconet.LocoNet;
 import de.noisruker.loconet.LocoNetConnection;
 import de.noisruker.loconet.messages.*;
+import de.noisruker.railroad.DijkstraRailroad.DijkstraNode;
 import de.noisruker.railroad.elements.Sensor;
 import de.noisruker.railroad.elements.Switch;
 import de.noisruker.util.Config;
@@ -703,6 +704,10 @@ public class Train implements Serializable, Comparable<Train> {
 
     public Sensor getNextNextSensor() {
         return this.nextNextSensor;
+    }
+
+    public DijkstraNode getChosenWay(DijkstraNode from) {
+        return null;
     }
 
     public interface TrainSpeedChangeListener {

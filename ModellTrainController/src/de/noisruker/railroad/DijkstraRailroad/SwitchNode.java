@@ -28,7 +28,7 @@ public class SwitchNode extends DijkstraNode {
     }
 
     public boolean isWayFalse(int id) {
-        return this.isWayFalse(NODES.get(id));
+        return this.isWayFalse(DijkstraRailroad.getInstance().NODES.get(id));
     }
 
     public boolean isWayFalse(DijkstraNode node) {
@@ -38,7 +38,7 @@ public class SwitchNode extends DijkstraNode {
     }
 
     public boolean isWayTrue(int id) {
-        return this.isWayTrue(NODES.get(id));
+        return this.isWayTrue(DijkstraRailroad.getInstance().NODES.get(id));
     }
 
     public boolean isWayTrue(DijkstraNode node) {

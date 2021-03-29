@@ -171,7 +171,7 @@ public class ConfigManager {
      *
      * @param input Der Pfad zu der einzulesenden Datei.
      * @throws SAXException Sollte ein Fehler in der Struktur der Datei vorliegen.
-     * @throws IOException  Sollte ein Fehler beim Einlesen der Datei aufgtreten
+     * @throws IOException  Sollte ein Fehler beim Einlesen der Datei auftreten
      */
     public void load(String input) throws SAXException, IOException {
         XMLReader xmlReader = XMLReaderFactory.createXMLReader();
@@ -215,13 +215,13 @@ public class ConfigManager {
                 bw.append("   <parameter>");
                 bw.newLine();
 
-                bw.append("    <name>" + e.getName() + "</name>");
+                bw.append("    <name>").append(e.getName()).append("</name>");
                 bw.newLine();
-                bw.append("    <value>" + e.get(this) + "</value>");
+                bw.append("    <value>").append(String.valueOf(e.get(this))).append("</value>");
                 bw.newLine();
-                bw.append("    <default>" + e.getAnnotation(ConfigElement.class).defaultValue() + "</default>");
+                bw.append("    <default>").append(e.getAnnotation(ConfigElement.class).defaultValue()).append("</default>");
                 bw.newLine();
-                bw.append("    <type>" + e.getAnnotation(ConfigElement.class).type() + "</type>");
+                bw.append("    <type>").append(e.getAnnotation(ConfigElement.class).type()).append("</type>");
                 bw.newLine();
 
                 bw.append("   </parameter>");
