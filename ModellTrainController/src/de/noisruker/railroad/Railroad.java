@@ -4,6 +4,7 @@ import de.noisruker.gui.GuiMain;
 import de.noisruker.loconet.LocoNet;
 import de.noisruker.loconet.LocoNetMessageReceiver;
 import de.noisruker.loconet.messages.SensorMessage;
+import de.noisruker.railroad.DijkstraRailroad.DijkstraRailroad;
 import de.noisruker.railroad.elements.AbstractRailroadElement;
 import de.noisruker.railroad.elements.Sensor;
 import de.noisruker.railroad.elements.Switch;
@@ -32,6 +33,7 @@ public class Railroad {
         if (railroad.length < 100)
             return;
         this.railroadElements = railroad;
+        DijkstraRailroad.getInstance().convertRailroad(railroadElements);
         if (GuiMain.getInstance() != null)
             GuiMain.getInstance().checkOutRailroad();
     }

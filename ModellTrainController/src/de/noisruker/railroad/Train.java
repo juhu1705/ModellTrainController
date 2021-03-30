@@ -29,8 +29,6 @@ public class Train implements Serializable, Comparable<Train> {
      * new train will be added to the {@link LocoNet#getTrains() list of the trains}.
      *
      * @param address The address of the train
-     * @throws SerialPortException                    If there appears an error while sending the data to the LocoNet
-     * @throws LocoNetConnection.PortNotOpenException If the port is not open
      */
     public static void addTrain(byte address) {
         if (!LocoNet.getInstance().getTrains().contains(address))

@@ -46,8 +46,6 @@ public class RailroadReader implements ContentHandler {
             type = null;
         }
         LocoNet.getRailroad().applyRailroad(railroad);
-        if (GuiMain.getInstance() != null)
-            GuiMain.getInstance().checkOutRailroad();
     }
 
     @Override

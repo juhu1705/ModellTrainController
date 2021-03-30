@@ -5,11 +5,11 @@ import de.noisruker.railroad.RailRotation;
 import de.noisruker.railroad.elements.AbstractRailroadElement;
 import de.noisruker.railroad.elements.Sensor;
 import de.noisruker.railroad.elements.Switch;
-import de.noisruker.util.Ref;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import static de.noisruker.railroad.DijkstraRailroad.NodePosition.*;
 import static de.noisruker.railroad.DijkstraRailroad.NodePosition.IN_BOTH;
@@ -18,6 +18,9 @@ public class DijkstraRailroad {
 
     private static DijkstraRailroad instance;
 
+    /**
+     * @return The actual DijkstraRailroad element
+     */
     public static DijkstraRailroad getInstance() {
         return DijkstraRailroad.instance != null ? DijkstraRailroad.instance :
                 (DijkstraRailroad.instance = new DijkstraRailroad());
@@ -25,18 +28,29 @@ public class DijkstraRailroad {
 
     private int lastID = 0;
     protected final HashMap<Integer, DijkstraNode> NODES = new HashMap<>();
+    private final HashMap<AbstractRailroadElement, ArrayList<DijkstraNode>> NODES_BY_ELEMENTS = new HashMap<>();
 
     private DijkstraRailroad() {}
 
+    /**
+     * @return The next free id for a DijkstraNode
+     */
     protected int getNextID() {
         return this.lastID++;
     }
 
+    /**
+     * Resets the actual Railroad
+     */
     protected void resetRailroad() {
         this.NODES.clear();
         this.lastID = 0;
     }
 
+    /**
+     * Converts the 2 dimensional Array of {@link AbstractRailroadElement}s in this DijkstraRailroad.
+     * @param railroad The array to convert.
+     */
     public void convertRailroad(AbstractRailroadElement[][] railroad) {
         this.resetRailroad();
 
@@ -52,20 +66,19 @@ public class DijkstraRailroad {
             }
 
 
-        final HashMap<AbstractRailroadElement, ArrayList<DijkstraNode>> nodesByElement = new HashMap<>();
+        NODES_BY_ELEMENTS.clear();
 
-        switches.forEach(s -> nodesByElement.put(s, this.createNodesFor(s)));
-        sensors.forEach(s -> nodesByElement.put(s, this.createNodesFor(s)));
+        switches.forEach(s -> NODES_BY_ELEMENTS.put(s, this.createNodesFor(s)));
+        sensors.forEach(s -> NODES_BY_ELEMENTS.put(s, this.createNodesFor(s)));
 
-        nodesByElement.forEach((element, dijkstraNodes) ->
+        NODES_BY_ELEMENTS.forEach((element, dijkstraNodes) ->
             dijkstraNodes.forEach(dijkstraNode -> {
-                this.calculateMatches(dijkstraNode, nodesByElement, railroad);
+                this.calculateMatches(dijkstraNode, NODES_BY_ELEMENTS, railroad);
             }));
-
-        this.NODES.forEach((integer, node) -> Ref.LOGGER.info(node.toString()));
     }
 
-    private void calculateMatches(DijkstraNode from, HashMap<AbstractRailroadElement, ArrayList<DijkstraNode>> nodesBySwitches,
+    private void calculateMatches(DijkstraNode from,
+                                  HashMap<AbstractRailroadElement, ArrayList<DijkstraNode>> nodesBySwitches,
                                   AbstractRailroadElement[][] railroad) {
         if(from instanceof SensorNode)
             this.calculateSensorMatches((SensorNode) from, nodesBySwitches, railroad);
@@ -417,5 +430,32 @@ public class DijkstraRailroad {
         return new ArrayList<>(Arrays.asList(sensorUp, sensorDown));
     }
 
+    /**
+     * Calculate the DijkstraNode from a given Sensor and direction
+     *
+     * @param s The sensor for which the Node is searched
+     * @param direction The direction the train drives.
+     *                  true: If the train comes from south or west
+     *                  false: If the train comes from north or east
+     * @return The node for the given sensor or null if no node is found
+     */
+    public DijkstraNode getNodeByPosition(Sensor s, boolean direction) {
+        ArrayList<DijkstraNode> sensorNodes = this.NODES_BY_ELEMENTS.get(s);
+        if(sensorNodes == null || sensorNodes.isEmpty())
+            return null;
+
+        for(DijkstraNode node: sensorNodes) {
+            if(direction && node.getPosition().equals(IN_BOTH))
+                return node;
+            else if(!direction && node.getPosition().equals(OUT_BOTH))
+                return node;
+        }
+
+        return null;
+    }
+
+    public List<DijkstraNode> getShortestPath(DijkstraNode from, Sensor to) {
+        return DijkstraUtil.findShortestPath(this.NODES.values(), from, to);
+    }
 
 }

@@ -148,7 +148,6 @@ public class GuiMain implements Initializable {
                     this.railroadCells.get(box).get(x).setImage(RailroadImages.EMPTY_2);
             }
         }
-        DijkstraRailroad.getInstance().convertRailroad(railroadElements);
 
         this.updateSensors();
         this.updateSwitches();

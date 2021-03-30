@@ -17,6 +17,7 @@ module ModellTrainController {
     requires maven.model;
     requires plexus.utils;
     requires jssc;
+    requires com.google.common;
 
 
     opens de.noisruker.gui to javafx.fxml;

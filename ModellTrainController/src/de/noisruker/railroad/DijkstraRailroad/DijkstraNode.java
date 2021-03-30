@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public abstract class DijkstraNode {
+public abstract class DijkstraNode implements Comparable<DijkstraNode> {
 
     protected final int nodeID;
     protected final HashMap<DijkstraNode, Integer> nodes = new HashMap<>();
@@ -116,6 +116,11 @@ public abstract class DijkstraNode {
         if (o == null || getClass() != o.getClass()) return false;
         DijkstraNode that = (DijkstraNode) o;
         return nodeID == that.nodeID;
+    }
+
+    @Override
+    public int compareTo(DijkstraNode o) {
+        return this.nodeID - o.nodeID;
     }
 
     @Override
