@@ -69,10 +69,12 @@ public class Railroad {
     private SensorNode getSensorNode(Sensor s, Train t) {
         DijkstraNode last = null;
 
-        for (DijkstraNode node : t.getWay()) {
-            if (node instanceof SensorNode && ((SensorNode) node).isSensor(s))
-                return (SensorNode) node;
-            last = node;
+        if(t.getWay() != null) {
+            for (DijkstraNode node : t.getWay()) {
+                if (node instanceof SensorNode && ((SensorNode) node).isSensor(s))
+                    return (SensorNode) node;
+                last = node;
+            }
         }
 
         if(last == null)

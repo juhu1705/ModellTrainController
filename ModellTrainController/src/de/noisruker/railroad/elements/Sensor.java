@@ -110,8 +110,8 @@ public class Sensor extends AbstractRailroadElement {
             if ((this.equals(t.getActualPosition()) && !t.equals(this.train)) ||
                     (t.equals(train) && this.state))
                 Sensor.REQUESTERS.get(this.address).add(t);
-            else if((t.equals(train) && this.state && this.equals(train.getActualPosition()) &&
-                    !this.equals(train.getNextSensor()) && this.equals(train.getNextNextSensor()))) {
+            else if((t.equals(train) && this.state && this.equals(train.getActualPosition()) && train.getNextSensor() != null && train.getNextNextSensor() != null &&
+                    !this.equals(train.getNextSensor().getSensor()) && this.equals(train.getNextNextSensor().getSensor()))) {
                 Sensor.REQUESTERS.get(this.address).add(0, t);
                 return false;
             } else {

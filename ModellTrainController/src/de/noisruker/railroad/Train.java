@@ -86,7 +86,7 @@ public class Train implements Serializable, Comparable<Train> {
     private ArrayList<DijkstraNode> way = null;
     private SensorNode actualNode = null, nextNode = null, nextNextNode = null, previousNode = null;
 
-    protected TrainSwitchController trainSwitchController = null;
+    protected TrainSwitchController trainSwitchController = new TrainSwitchController();
     private final TrainStationManager trainStationManager;
 
     /**
@@ -644,7 +644,7 @@ public class Train implements Serializable, Comparable<Train> {
                 return s;
         }
 
-        return null;
+        return sensor;
     }
 
     @Override
@@ -705,7 +705,7 @@ public class Train implements Serializable, Comparable<Train> {
         this.nextNextNode = null;
         this.previousNode = null;
         this.destination = null;
-        this.way.clear();
+        this.way = null;
     }
 
     public TrainStationManager getTrainStationManager() {
