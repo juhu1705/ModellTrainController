@@ -4,6 +4,7 @@ import de.noisruker.config.ConfigManager;
 import de.noisruker.gui.GuiMain;
 import de.noisruker.loconet.LocoNet;
 import de.noisruker.loconet.messages.MessageType;
+import de.noisruker.loconet.messages.RailroadOffMessage;
 import de.noisruker.main.GUILoader;
 import de.noisruker.railroad.Train;
 import de.noisruker.railroad.elements.Sensor;
@@ -199,6 +200,9 @@ public class Util {
 
         if (GuiMain.getInstance() != null)
             saveRailroad();
+        if (Config.stopRailroadOnExit)
+            Util.runNext(new RailroadOffMessage()::send);
+
         closeConfig();
 
         Ref.LOGGER.info("Close " + Ref.PROJECT_NAME);

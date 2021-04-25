@@ -31,6 +31,9 @@ public class Config {
     @ConfigElement(defaultValue = "false", type = "check", description = "startImmediately.description", name = "startImmediately.text", location = "config.loconet", visible = true)
     public static boolean startImmediately;
 
+    @ConfigElement(defaultValue = "true", type = "check", description = "stopRailroad.description", name = "stopRailroad.text", location = "config.loconet", visible = true)
+    public static boolean stopRailroadOnExit;
+
     @ConfigElement(defaultValue = "false", type = "check", description = "fast_starting.description", name = "fast_starting.text", location = "config.controls", visible = true)
     public static boolean fastStarting;
 
