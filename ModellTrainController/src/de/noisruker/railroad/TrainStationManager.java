@@ -42,8 +42,6 @@ public class TrainStationManager {
 
     private int actual = -1;
 
-
-
     public TrainStationManager(Train train) {
         this.train = train;
     }
@@ -57,7 +55,7 @@ public class TrainStationManager {
                 this.setNextStation();
             }
         }
-        //if(this.actual == -1 && !stations.isEmpty()) {
+        // if(this.actual == -1 && !stations.isEmpty()) {
         //     this.actual = 0;
         //     train.setDestination(this.stations.get(actual).sensor);
         //     Platform.runLater(() -> this.stations.get(actual).button.setSelected(true));
@@ -181,8 +179,8 @@ public class TrainStationManager {
             id = TrainStationManager.nextID();
         }
 
-        private ArrayList<AbstractDrivingCondition> conditions = new ArrayList<>();
-        private ArrayList<DrivingConditionMatchmaker> matcher = new ArrayList<>();
+        private final ArrayList<AbstractDrivingCondition> conditions = new ArrayList<>();
+        private final ArrayList<DrivingConditionMatchmaker> matcher = new ArrayList<>();
 
         private boolean update() {
             if (!this.conditions.isEmpty()) {

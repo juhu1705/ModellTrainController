@@ -430,6 +430,10 @@ public class DijkstraRailroad {
         return new ArrayList<>(Arrays.asList(sensorUp, sensorDown));
     }
 
+    public DijkstraNode getNodeByPosition(Sensor s, Position prev) {
+        return this.getNodeByPosition(s, s.getPosition().south().equals(prev) || s.getPosition().west().equals(prev));
+    }
+
     /**
      * Calculate the DijkstraNode from a given Sensor and direction
      *

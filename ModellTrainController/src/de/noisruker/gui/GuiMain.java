@@ -160,7 +160,7 @@ public class GuiMain implements Initializable {
     }
 
     public void onStopAllTrains(ActionEvent event) {
-        LocoNet.getInstance().getTrains().forEach(train -> train.stopTrainImmediately());
+        LocoNet.getInstance().getTrains().forEach(Train::stopTrainImmediately);
     }
 
     public void onStopRailroad(ActionEvent event) {

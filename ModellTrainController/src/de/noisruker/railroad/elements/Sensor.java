@@ -23,7 +23,7 @@ import java.util.Objects;
 
 public class Sensor extends AbstractRailroadElement {
 
-    private static ArrayList<Sensor> allSensors = new ArrayList<>();
+    private static final ArrayList<Sensor> allSensors = new ArrayList<>();
 
     public static ArrayList<Sensor> getAllSensors() {
         return allSensors;
@@ -108,7 +108,7 @@ public class Sensor extends AbstractRailroadElement {
     public boolean appendTrain(Train t) {
         if (Sensor.REQUESTERS.get(this.address).contains(t) || t.equals(this.train)) {
             if ((this.equals(t.getActualPosition()) && !t.equals(this.train)) ||
-                    (t.equals(train) && this.state && this.equals(train.getLastSensor())))
+                    (t.equals(train) && this.state))
                 Sensor.REQUESTERS.get(this.address).add(t);
             else if((t.equals(train) && this.state && this.equals(train.getActualPosition()) &&
                     !this.equals(train.getNextSensor()) && this.equals(train.getNextNextSensor()))) {
@@ -219,17 +219,17 @@ public class Sensor extends AbstractRailroadElement {
 
             Sensor s = t.getCorrectSensor(this);
 
-            if(s.addTrain(Sensor.REQUESTERS.get(this.address).get(0))) {
+            if(s != null && s.addTrain(Sensor.REQUESTERS.get(this.address).get(0))) {
                 this.train.driveAgain(this);
                 Sensor.REQUESTERS.get(this.address).remove(0);
             }
         } else if(!Sensor.REQUESTERS.get(this.address).isEmpty() && this.state && this.train == null) {
             Train t = Sensor.REQUESTERS.get(this.address).get(0);
 
-            if(t.getLastSensor() == null && t.getDestination() == null && t.getSpeed() < 0 && this.equals(t.getActualPosition())) {
+            if(t.getDestination() == null && t.getSpeed() < 0 && this.equals(t.getActualPosition())) {
                 Sensor s = t.getCorrectSensor(this);
 
-                if(s.addTrain(t)) {
+                if(s != null && s.addTrain(t)) {
                     Sensor.REQUESTERS.get(this.address).remove(0);
                 }
             }

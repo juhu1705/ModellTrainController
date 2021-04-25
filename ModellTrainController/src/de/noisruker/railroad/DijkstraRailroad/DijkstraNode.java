@@ -1,7 +1,9 @@
 package de.noisruker.railroad.DijkstraRailroad;
 
+import de.noisruker.railroad.Position;
 import de.noisruker.railroad.Train;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -48,62 +50,35 @@ public abstract class DijkstraNode implements Comparable<DijkstraNode> {
         return this.nodes.size() < 1;
     }
 
-    public boolean reservateWithNext(Train t) {
-        if(this.reservateFor != null)
-            return false;
+    public SensorNode getNextSensor(Train t) {
+        if(t == null)
+            return null;
 
-        if(this.position.equals(NodePosition.IN_TRUE) || this.position.equals(NodePosition.IN_FALSE)) {
-            return this.setReservateFor(t);
-        }
+        if(this instanceof SensorNode)
+            return (SensorNode) this;
 
-        if(this.nodes.size() == 0) {
-            return this.setReservateFor(t);
+        if(this.nodes.size() == 0)
+            return null;
+
+        if(this instanceof SwitchNode && NodePosition.switchablePositions.contains(this.position)) {
+            t.getTrainSwitchController().addSwitch(((SwitchNode) this).getSwitch(),
+                    this.getPosition().equals(NodePosition.IN_TRUE) || this.getPosition().equals(NodePosition.OUT_TRUE));
         }
 
         if(this.nodes.size() == 1) {
             for(Map.Entry<DijkstraNode, Integer> node: this.nodes.entrySet()) {
-                if(node.getKey().reservateWithNext(t))
-                    return this.setReservateFor(t);
-                else
-                    return false;
+                return node.getKey().getNextSensor(t);
             }
         }
 
         DijkstraNode chosenWay = t.getChosenWay(this);
 
         if(chosenWay == null)
-            return this.setReservateFor(t);
-        else if(this.nodes.containsKey(chosenWay)) {
-            if(chosenWay.reservateWithNext(t))
-                return this.setReservateFor(t);
-            else
-                return false;
-        }
+            return null;
+        else if(this.nodes.containsKey(chosenWay))
+            return chosenWay.getNextSensor(t);
 
-        return false;
-    }
-
-    private boolean setReservateFor(Train t) {
-        if(this.reservateFor != null)
-            return false;
-        if(!this.reservateDuplicate(t))
-            return false;
-        this.reservateFor = t;
-
-        return true;
-    }
-
-    private boolean setReservateForDuplicate(Train t) {
-        if(this.reservateFor != null)
-            return false;
-        this.reservateFor = t;
-        return true;
-    }
-
-    public boolean reservateDuplicate(Train t) {
-        if(this.hasDuplicate())
-            return this.duplicate.setReservateForDuplicate(t);
-        return true;
+        return null;
     }
 
     public boolean hasDuplicate() {

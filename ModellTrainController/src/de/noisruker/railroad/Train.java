@@ -2,9 +2,10 @@ package de.noisruker.railroad;
 
 import de.noisruker.gui.GuiMain;
 import de.noisruker.loconet.LocoNet;
-import de.noisruker.loconet.LocoNetConnection;
 import de.noisruker.loconet.messages.*;
 import de.noisruker.railroad.DijkstraRailroad.DijkstraNode;
+import de.noisruker.railroad.DijkstraRailroad.DijkstraRailroad;
+import de.noisruker.railroad.DijkstraRailroad.SensorNode;
 import de.noisruker.railroad.elements.Sensor;
 import de.noisruker.railroad.elements.Switch;
 import de.noisruker.util.Config;
@@ -12,10 +13,10 @@ import de.noisruker.util.Ref;
 import de.noisruker.util.Util;
 import javafx.application.Platform;
 import javafx.scene.layout.VBox;
-import jssc.SerialPortException;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,6 +39,7 @@ public class Train implements Serializable, Comparable<Train> {
     /**
      * The universal Serial-Version-UID
      */
+    @Serial
     private static final long serialVersionUID = Ref.UNIVERSAL_SERIAL_VERSION_UID;
 
     /**
@@ -79,9 +81,12 @@ public class Train implements Serializable, Comparable<Train> {
      * Parameters for the auto drive progress
      */
     protected Position prev = null;
-    protected Sensor actualSensor = null, nextSensor = null, nextNextSensor = null, previousSensor = null, destination = null, stopAdd = null;
+    protected Sensor actualSensor = null, destination = null, stopAdd = null;
 
-    protected Railway railway = null;
+    private ArrayList<DijkstraNode> way = null;
+    private SensorNode actualNode = null, nextNode = null, nextNextNode = null, previousNode = null;
+
+    protected TrainSwitchController trainSwitchController = null;
     private final TrainStationManager trainStationManager;
 
     /**
@@ -159,7 +164,7 @@ public class Train implements Serializable, Comparable<Train> {
             return;
 
         this.speed = speed == 0 ? 0 : (byte) (speed + 1);
-        this.trainSpeedChangeListener.forEach(a -> a.onSpeedChanged(this.speed));
+        this.trainSpeedChangeListener.forEach(a -> a.onSpeedChanged(this, this.speed));
     }
 
     private void setActualSpeed(byte actualSpeed) {
@@ -280,24 +285,24 @@ public class Train implements Serializable, Comparable<Train> {
 
     /* Methods for the automatic driving process */
 
-    HashMap<Sensor, HashMap<Switch, Integer>> waitForSwitch = new HashMap<>();
     HashMap<Switch, Boolean> switchOnDestination = new HashMap<>();
 
     private void setUpNextSensors(int nodeAddress) {
-        if(nodeAddress != this.nextSensor.getAddress())
+        if(nodeAddress != this.nextNode.getSensor().getAddress())
             return;
 
-        this.previousSensor = this.actualSensor;
-        this.actualSensor = this.nextSensor;
-        this.nextSensor = this.nextNextSensor;
-        this.nextNextSensor = null;
+        this.previousNode = this.actualNode;
+        this.actualNode = this.nextNode;
+        this.nextNode = this.nextNextNode;
+        this.nextNextNode = null;
+        this.actualSensor = this.actualNode.getSensor();
+        this.updateLastPosition(this.actualNode.getPrevPosition());
     }
 
     private void activateSwitches(int nodeAddress) {
         if (this.actualSensor != null &&
-                this.actualSensor.getAddress() == nodeAddress &&
-                this.waitForSwitch.containsKey(this.actualSensor))
-            this.railway.activateSwitches(this.waitForSwitch.remove(this.actualSensor));
+                this.actualSensor.getAddress() == nodeAddress)
+            this.trainSwitchController.activateSwitches(this.actualSensor);
     }
 
     private void setUpWaiting(int nodeAddress) {
@@ -311,10 +316,10 @@ public class Train implements Serializable, Comparable<Train> {
         Ref.LOGGER.info("Reached destination");
 
         this.setUpNextSensors(nodeAddress);
-        this.nextSensor = null;
-        this.nextNextSensor = null;
+        this.nextNode = null;
+        this.nextNextNode = null;
 
-        if(this.previousSensor == null || !this.equals(this.previousSensor.getTrain()) || !this.previousSensor.getState() || this.actualSensor.isShort()) {
+        if(this.previousNode == null || !this.equals(this.previousNode.getSensor().getTrain()) || !this.previousNode.getSensor().getState() || this.actualNode.getSensor().isShort()) {
             this.stopTrain();
             this.clearRailroad();
         } else
@@ -325,16 +330,16 @@ public class Train implements Serializable, Comparable<Train> {
     }
 
     protected void clearRailroad() {
-        if(this.railway != null)
-            this.railway.setPositions(this);
+        if(this.actualNode != null)
+            this.prev = this.actualNode.getPrevPosition();
 
         this.actualSensor = this.destination;
 
-        this.previousSensor = null;
+        this.previousNode = null;
         this.destination = null;
-        this.railway = null;
-        this.nextSensor = null;
-        this.nextNextSensor = null;
+        this.way = null;
+        this.nextNode = null;
+        this.nextNextNode = null;
 
         this.stopNext = false;
     }
@@ -344,8 +349,8 @@ public class Train implements Serializable, Comparable<Train> {
         this.applyBreakSpeed();
         this.actualSensor = this.destination;
 
-        if (this.railway != null)
-            this.railway.setPositions(this);
+        if(this.actualNode != null)
+            this.prev = this.actualNode.getPrevPosition();
 
         Ref.LOGGER.info("Train " + this.getAddress() + " stop on station " + this.actualSensor);
     }
@@ -354,58 +359,54 @@ public class Train implements Serializable, Comparable<Train> {
         Ref.LOGGER.info("Handle sensor");
 
         if(this.stopAdd != null && this.stopAdd.getAddress() == nodeAddress) {
-            if(!this.actualSensor.getState() || this.nextSensor.isShort()) {
+            if(!this.actualNode.getSensor().getState() || this.nextNode.getSensor().isShort()) {
                 this.stopTrainImmediately();
                 this.stopAdd = null;
                 this.wait = true;
 
                 Ref.LOGGER.info("Train " + this.address + " is now waiting");
-                Ref.LOGGER.info(this.actualSensor + "; " + nodeAddress + "; " + this.previousSensor);
+                Ref.LOGGER.info(this.actualNode.getSensor() + "; " + nodeAddress + "; " + this.previousNode.getSensor());
             } else
                 this.applyBreakSpeed();
         }
 
-        Ref.LOGGER.info("Next Sensor: " + this.nextNextSensor);
-        if(this.nextNextSensor != null)
-            Ref.LOGGER.info("Is free: " + this.nextNextSensor.isFree(this) + "; " + this.nextNextSensor.getTrain());
+        Ref.LOGGER.info("Next Sensor: " + this.nextNextNode);
+        if(this.nextNextNode != null)
+            Ref.LOGGER.info("Is free: " + this.nextNextNode.getSensor().isFree(this) + "; " + this.nextNextNode.getSensor().getTrain());
 
-        if(this.nextNextSensor != null && !this.nextNextSensor.isFree(this)) {
+        if(this.nextNextNode != null && !this.nextNextNode.getSensor().isFree(this)) {
             this.setUpNextSensors(nodeAddress);
-            this.railway.setLastPosToTrain(this, this.actualSensor);
             return;
         }
 
-        Sensor s = null;
+        SensorNode s = null;
 
-        if(this.nextNextSensor != null && this.nextNextSensor.isFree(this))
-            s = this.railway.getNextSensor(this.nextNextSensor);
+        if(this.nextNextNode != null && this.nextNextNode.getSensor().isFree(this)) {
+            this.trainSwitchController.setActualHandledSensor(this.nextNextNode.getSensor());
+            s = this.nextNextNode.getNextSensor(this);
+        }
 
         this.setUpNextSensors(nodeAddress);
 
-        if (s == null) {
-            this.railway.setLastPosToTrain(this, this.actualSensor);
+        if (s == null)
             return;
-        }
 
-        this.nextNextSensor = s;
+        this.nextNextNode = s;
 
-        if(s.appendTrain(this))
-            this.stopAdd = this.nextSensor != null && this.nextSensor.isFree(this) ? this.nextSensor : this.stopAdd;
+        if(s.getSensor().appendTrain(this))
+            this.stopAdd = this.nextNode != null && this.nextNode.getSensor().isFree(this) ? this.nextNode.getSensor() : this.stopAdd;
         else
-            this.stopAdd = s;
+            this.stopAdd = s.getSensor();
 
-        this.waitForSwitch.put(this.nextSensor, this.railway.getSwitches());
-        this.railway.setLastPosToTrain(this, this.actualSensor);
-        Ref.LOGGER.info("Drive to: " + (this.stopAdd == null ? this.nextNextSensor : this.stopAdd));
+        Ref.LOGGER.info("Drive to: " + (this.stopAdd == null ? this.nextNextNode.getSensor() : this.stopAdd));
     }
 
     private void printTrain() {
-        Ref.LOGGER.info(this.toString() + ": " + this.actualSensor + "; " + this.nextNextSensor);
+        Ref.LOGGER.info(this.toString() + ": " + this.actualSensor + "; " + this.nextNextNode);
     }
 
     public void activateSwitches() {
-        if (this.actualSensor != null && this.waitForSwitch.containsKey(this.actualSensor))
-            this.railway.activateSwitches(this.waitForSwitch.remove(this.actualSensor));
+        this.trainSwitchController.activateSwitches(this.actualNode.getSensor());
     }
 
     public void trainEnter(int nodeAddress) {
@@ -424,12 +425,13 @@ public class Train implements Serializable, Comparable<Train> {
         if (this.destination != null &&
                 this.destination.getAddress() == nodeAddress &&
                 this.destination.isFree(this) &&
-                this.destination.equals(this.nextSensor)) {
+                this.nextNode != null &&
+                this.destination.equals(this.nextNode.getSensor())) {
             this.onDestinationReached(nodeAddress);
-        } else if (this.nextSensor != null &&
-                this.nextSensor.getAddress() == nodeAddress &&
+        } else if (this.nextNode != null &&
+                this.nextNode.getSensor().getAddress() == nodeAddress &&
                 this.destination != null &&
-                this.railway != null) {
+                this.way != null) {
             this.handleSensor(nodeAddress);
             if(!this.wait)
                 this.activateSwitches();
@@ -443,8 +445,8 @@ public class Train implements Serializable, Comparable<Train> {
     public void trainLeft(int nodeAddress) {
         if (this.stopAdd != null &&
                 this.stopAdd.getAddress() == actualSensor.getAddress() &&
-                this.previousSensor != null &&
-                this.previousSensor.getAddress() == nodeAddress) {
+                this.previousNode != null &&
+                this.previousNode.getSensor().getAddress() == nodeAddress) {
             Ref.LOGGER.info("Stop add: " + this.stopAdd + "; " + this.actualSensor);
 
             this.stopTrain();
@@ -452,11 +454,11 @@ public class Train implements Serializable, Comparable<Train> {
             this.wait = true;
 
             Ref.LOGGER.info("Train " + this.address + " is now waiting");
-            Ref.LOGGER.info(this.actualSensor + "; " + nodeAddress + "; " + this.previousSensor);
+            Ref.LOGGER.info(this.actualSensor + "; " + nodeAddress + "; " + this.previousNode);
         }
 
-        if (this.previousSensor != null &&
-                this.previousSensor.getAddress() == nodeAddress &&
+        if (this.previousNode != null &&
+                this.previousNode.getSensor().getAddress() == nodeAddress &&
                 this.stopNext) {
             this.stopTrain();
 
@@ -488,69 +490,81 @@ public class Train implements Serializable, Comparable<Train> {
     private void calculateRailway() {
         Ref.LOGGER.info("Calculate railway");
 
-        this.railway = LocoNet.getRailroad().findWay(this.actualSensor, this.destination, this.prev);
+        this.way = (ArrayList<DijkstraNode>) DijkstraRailroad.getInstance().getShortestPath(this.actualNode, this.destination);
 
-        if (railway == null) {
+        if (this.way == null) {
             Ref.LOGGER.warning("No railway was found");
             return;
         }
 
-        boolean startImmediately = this.railway.init(this);
-
-        if (this.destination == null) {
+        if (!this.initRailway()) {
             Ref.LOGGER.warning("Error due to init Railway");
-            this.railway = null;
-            return;
+            this.destination = null;
+            this.way = null;
         }
+    }
 
-        this.railway.print();
+    private boolean initRailway() {
+        this.getTrainSwitchController().setActualHandledSensor(this.actualNode.getSensor());
+        this.nextNode = this.actualNode.getNextSensor(this);
+        if(this.nextNode == null)
+            return false;
 
-        Ref.LOGGER.info("Start immediately: " + startImmediately);
+        this.getTrainSwitchController().setActualHandledSensor(this.nextNode.getSensor());
+        this.nextNode.getSensor().appendTrain(this);
 
-        if(startImmediately)
-            this.applyNormalSpeed();
+        if(this.nextNode.getSensor().equals(this.destination))
+            return true;
+
+        this.nextNextNode = this.nextNode.getNextSensor(this);
+        if(this.nextNextNode == null)
+            return false;
+
+        this.getTrainSwitchController().setActualHandledSensor(this.nextNextNode.getSensor());
+        this.nextNextNode.getSensor().appendTrain(this);
+
+        return true;
     }
 
     private void checkForDrivingAgain() {
-        if(this.nextSensor == null) {
+        if(this.nextNode == null) {
             if(this.actualSensor == null)
                 this.resetRailway();
 
-            this.nextSensor = this.railway.getNextSensor(actualSensor);
-            if(this.nextSensor == null)
+            this.trainSwitchController.setActualHandledSensor(this.actualNode.getSensor());
+            this.nextNode = this.actualNode.getNextSensor(this);
+            if(this.nextNode == null)
                 this.resetRailway();
 
-            this.waitForSwitch.put(this.actualSensor, this.railway.getSwitches());
-            this.nextSensor.appendTrain(this);
+            this.nextNode.getSensor().appendTrain(this);
         }
     }
 
     public boolean driveAgain(Sensor sensor) {
-        if(this.nextSensor == null || this.destination == null || this.railway == null || sensor == null)
+        if(this.nextNode == null || this.destination == null || this.way == null || sensor == null)
             return false;
         Ref.LOGGER.info("Drive Again: " + sensor + " is free (" + this.stopAdd + ") ");
 
-        if(sensor.equals(this.nextNextSensor) && this.nextSensor.equals(this.stopAdd)) {
-            this.stopAdd = this.nextNextSensor;
+        if(this.nextNextNode != null && sensor.equals(this.nextNextNode.getSensor()) && this.nextNode.getSensor().equals(this.stopAdd)) {
+            this.stopAdd = this.nextNextNode.getSensor();
             this.applyNormalSpeed();
             Ref.LOGGER.info("Drive to: " + sensor);
             return true;
         }
 
-        if(this.nextNextSensor == null && !this.nextSensor.equals(this.destination)) {
-            this.nextNextSensor = this.railway.getNextSensor(this.nextSensor);
-            this.waitForSwitch.put(this.nextSensor, this.railway.getSwitches());
-            if(this.nextNextSensor.appendTrain(this))
-                this.stopAdd = this.nextSensor;
+        if(this.nextNextNode == null && !this.nextNode.getSensor().equals(this.destination)) {
+            this.trainSwitchController.setActualHandledSensor(this.nextNode.getSensor());
+            this.nextNextNode = this.nextNode.getNextSensor(this);
+            if(this.nextNextNode == null || this.nextNextNode.getSensor().appendTrain(this))
+                this.stopAdd = this.nextNode.getSensor();
             else
-                this.stopAdd = this.nextNextSensor;
+                this.stopAdd = this.nextNextNode.getSensor();
 
-            Ref.LOGGER.info("Wait next add " + this.stopAdd + " for sensor " + this.nextNextSensor + " to be free!");
+            Ref.LOGGER.info("Wait next add " + this.stopAdd + " for sensor " + this.nextNextNode + " to be free!");
         }
 
-        if(sensor.equals(this.nextSensor)) {
-            if(this.waitForSwitch.containsKey(this.actualSensor))
-                this.railway.activateSwitches(this.waitForSwitch.remove(this.actualSensor));
+        if(sensor.equals(this.nextNode.getSensor())) {
+            this.trainSwitchController.activateSwitches(this.actualNode.getSensor());
             this.wait = false;
             this.applyNormalSpeed();
             return true;
@@ -559,15 +573,15 @@ public class Train implements Serializable, Comparable<Train> {
     }
 
     private void checkDriving() {
-        if (this.railway == null && this.destination != null)
+        if (this.trainSwitchController == null && this.destination != null)
             this.calculateRailway();
-        else if (this.railway != null && this.destination != null && this.speed == 0)
+        else if (this.trainSwitchController != null && this.destination != null && this.speed == 0)
             this.checkForDrivingAgain();
 
 
         if (this.speed < this.normalSpeed && !this.stopNext &&
                 (this.stopAdd == null || !this.stopAdd.equals(this.actualSensor)) &&
-                this.destination != null && this.speed != 0 && this.railway != null) {
+                this.destination != null && this.speed != 0 && this.trainSwitchController != null) {
             this.applyNormalSpeed();
         }
 
@@ -619,6 +633,20 @@ public class Train implements Serializable, Comparable<Train> {
                 ((Train) train).getSlot() == this.getSlot();
     }
 
+    public Sensor getCorrectSensor(Sensor sensor) {
+        if(this.nextNode != null && sensor.equals(this.nextNode.getSensor()))
+            return this.nextNode.getSensor();
+        else if(this.nextNextNode != null && sensor.equals(this.nextNextNode.getSensor()))
+            return this.nextNextNode.getSensor();
+        else if(this.nextNextNode != null){
+            Sensor s = LocoNet.getRailroad().getNextSensor(this.nextNextNode.getSensor(), this);
+            if(sensor.equals(s))
+                return s;
+        }
+
+        return null;
+    }
+
     @Override
     public int compareTo(Train train) {
         return this.getAddress() - train.getAddress();
@@ -644,6 +672,8 @@ public class Train implements Serializable, Comparable<Train> {
         this.actualSensor.appendTrain(this);
         this.switchOnDestination.forEach(Switch::setAndUpdateState);
         this.switchOnDestination.clear();
+
+        this.actualNode = (SensorNode) DijkstraRailroad.getInstance().getNodeByPosition(this.getActualPosition(), p);
     }
 
     public void updateLastPosition(Position p) {
@@ -671,45 +701,46 @@ public class Train implements Serializable, Comparable<Train> {
     }
 
     public void resetRailway() {
-        this.railway = null;
+        this.nextNode = null;
+        this.nextNextNode = null;
+        this.previousNode = null;
+        this.destination = null;
+        this.way.clear();
     }
 
     public TrainStationManager getTrainStationManager() {
         return this.trainStationManager;
     }
 
-    public Sensor getLastSensor() {
-        return this.previousSensor;
+    public SensorNode getNextSensor() {
+        return this.nextNode;
     }
 
-    public Sensor getCorrectSensor(Sensor sensor) {
-        if(sensor.equals(this.nextSensor))
-            return this.nextSensor;
-        else if(sensor.equals(this.nextNextSensor))
-            return this.nextNextSensor;
-        else if(this.nextNextSensor != null){
-            Sensor s = LocoNet.getRailroad().getNextSensor(this.nextNextSensor, this);
-            if(sensor.equals(s))
-                return s;
-        }
-
-        return sensor;
-    }
-
-    public Sensor getNextSensor() {
-        return this.nextSensor;
-    }
-
-    public Sensor getNextNextSensor() {
-        return this.nextNextSensor;
+    public SensorNode getNextNextSensor() {
+        return this.nextNextNode;
     }
 
     public DijkstraNode getChosenWay(DijkstraNode from) {
-        return null;
+        int indexOf = this.way.indexOf(from);
+        if(indexOf == -1 || this.way.size() <= indexOf + 1)
+            return null;
+        return this.way.get(indexOf + 1);
+    }
+
+    public ArrayList<DijkstraNode> getWay() {
+        return this.way;
+    }
+
+    public DijkstraNode getActualNode() {
+        return this.actualNode;
+    }
+
+    public TrainSwitchController getTrainSwitchController() {
+        return this.trainSwitchController;
     }
 
     public interface TrainSpeedChangeListener {
-        void onSpeedChanged(byte newSpeed);
+        void onSpeedChanged(Train t, byte newSpeed);
     }
 
     public void saveTo(BufferedWriter writer) throws IOException {

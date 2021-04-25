@@ -1,7 +1,6 @@
 package de.noisruker.railroad.DijkstraRailroad;
 
 import java.util.*;
-import com.google.common.graph.ValueGraph;
 import de.noisruker.railroad.elements.Sensor;
 
 public class DijkstraUtil {

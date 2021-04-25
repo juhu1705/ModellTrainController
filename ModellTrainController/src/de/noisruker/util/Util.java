@@ -29,6 +29,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.logging.Level;
 
 public class Util {
@@ -293,9 +294,13 @@ public class Util {
     }
 
     public static void resetSensorsContainsTrain(Train train) {
-        for(Sensor s: Sensor.getAllSensors())
-            if(train.equals(s.getTrain()))
+        for(Sensor s: Sensor.getAllSensors()) {
+            if (train.equals(s.getTrain()))
                 s.reset();
+        }
+        for(Map.Entry<Integer, ArrayList<Train>> entry: Sensor.REQUESTERS.entrySet()) {
+            entry.getValue().remove(train);
+        }
     }
 
     public static boolean contained(Train train, Train... except) {

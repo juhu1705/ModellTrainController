@@ -47,7 +47,7 @@ public class GuiControlTrain implements Initializable {
     @FXML
     public ListView<String> standardValues;
 
-    private Train.TrainSpeedChangeListener changeListener = newSpeed -> Platform.runLater(() -> this.speed.setValue(newSpeed - 1));
+    private final Train.TrainSpeedChangeListener changeListener = (train, newSpeed) -> Platform.runLater(() -> this.speed.setValue(newSpeed - 1));
 
     public void onNormalSpeed(ActionEvent event) {
         if (Config.mode.equals(Config.MODE_MANUAL))

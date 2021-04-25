@@ -1,5 +1,6 @@
 package de.noisruker.railroad.DijkstraRailroad;
 
+import de.noisruker.railroad.Position;
 import de.noisruker.railroad.elements.Sensor;
 
 public class SensorNode extends DijkstraNode {
@@ -8,6 +9,8 @@ public class SensorNode extends DijkstraNode {
 
     public SensorNode(Sensor sensor, NodePosition position) {
         super(position);
+        if(sensor == null)
+            throw new NullPointerException("Sensor could not be null!");
         this.sensor = sensor;
     }
 
@@ -29,5 +32,20 @@ public class SensorNode extends DijkstraNode {
         if(this.sensor != null)
             return this.sensor.equals(s);
         return false;
+    }
+
+    public Position getPrevPosition() {
+        return switch (this.sensor.getRotation()) {
+            case NORTH, SOUTH -> this.getPosition().equals(NodePosition.IN_BOTH) ? this.sensor.getPosition().south() : this.sensor.getPosition().north();
+            case EAST, WEST -> this.getPosition().equals(NodePosition.IN_BOTH) ? this.sensor.getPosition().west() : this.sensor.getPosition().east();
+        };
+    }
+
+    @Override
+    public String toString() {
+        return "SensorNode{" +
+                "sensor=" + sensor.getAddress() +
+                super.toString() +
+                '}';
     }
 }

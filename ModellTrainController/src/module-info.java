@@ -27,4 +27,8 @@ module ModellTrainController {
 
     exports de.noisruker.main;
     exports de.noisruker.gui;
+    exports de.noisruker.railroad;
+    exports de.noisruker.railroad.elements;
+    exports de.noisruker.railroad.DijkstraRailroad;
+    exports de.noisruker.loconet;
 }
