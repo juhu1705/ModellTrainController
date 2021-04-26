@@ -201,7 +201,7 @@ public class Util {
         if (GuiMain.getInstance() != null)
             saveRailroad();
         if (Config.stopRailroadOnExit)
-            Util.runNext(new RailroadOffMessage()::send);
+            new RailroadOffMessage().send();
 
         closeConfig();
 

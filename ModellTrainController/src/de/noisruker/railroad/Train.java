@@ -528,13 +528,17 @@ public class Train implements Serializable, Comparable<Train> {
 
     private void checkForDrivingAgain() {
         if(this.nextNode == null) {
-            if(this.actualSensor == null)
+            if(this.actualSensor == null) {
                 this.resetRailway();
+                return;
+            }
 
             this.trainSwitchController.setActualHandledSensor(this.actualNode.getSensor());
             this.nextNode = this.actualNode.getNextSensor(this);
-            if(this.nextNode == null)
+            if(this.nextNode == null) {
                 this.resetRailway();
+                return;
+            }
 
             this.nextNode.getSensor().appendTrain(this);
         }
@@ -721,6 +725,8 @@ public class Train implements Serializable, Comparable<Train> {
     }
 
     public DijkstraNode getChosenWay(DijkstraNode from) {
+        if(this.way == null)
+            return null;
         int indexOf = this.way.indexOf(from);
         if(indexOf == -1 || this.way.size() <= indexOf + 1)
             return null;
