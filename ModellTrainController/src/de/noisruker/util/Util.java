@@ -3,6 +3,7 @@ package de.noisruker.util;
 import de.noisruker.config.ConfigManager;
 import de.noisruker.gui.GuiMain;
 import de.noisruker.loconet.LocoNet;
+import de.noisruker.loconet.LocoNetMessageSender;
 import de.noisruker.loconet.messages.MessageType;
 import de.noisruker.loconet.messages.RailroadOffMessage;
 import de.noisruker.main.GUILoader;
@@ -200,8 +201,18 @@ public class Util {
 
         if (GuiMain.getInstance() != null)
             saveRailroad();
-        if (Config.stopRailroadOnExit)
+        if (Config.stopRailroadOnExit) {
             new RailroadOffMessage().send();
+
+            while (!LocoNetMessageSender.getInstance().areAllMessagesSend()) {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException ignored) { }
+            }
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException ignored) { }
+        }
 
         closeConfig();
 

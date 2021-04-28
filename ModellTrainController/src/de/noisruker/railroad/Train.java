@@ -497,11 +497,18 @@ public class Train implements Serializable, Comparable<Train> {
             return;
         }
 
+        Ref.LOGGER.info("Railway: " + this.way.toString());
+
         if (!this.initRailway()) {
             Ref.LOGGER.warning("Error due to init Railway");
             this.destination = null;
             this.way = null;
         }
+
+        Ref.LOGGER.info("Actual: " + this.actualNode);
+        Ref.LOGGER.info("Next: " + this.nextNode);
+        Ref.LOGGER.info("NextNext: " + this.nextNextNode);
+        Ref.LOGGER.info("Destination: " + this.destination);
     }
 
     private boolean initRailway() {
@@ -678,6 +685,7 @@ public class Train implements Serializable, Comparable<Train> {
         this.switchOnDestination.clear();
 
         this.actualNode = (SensorNode) DijkstraRailroad.getInstance().getNodeByPosition(this.getActualPosition(), p);
+        Ref.LOGGER.info(this.actualNode.toString());
     }
 
     public void updateLastPosition(Position p) {
