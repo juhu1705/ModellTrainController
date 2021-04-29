@@ -55,11 +55,11 @@ public class TrainStationManager {
                 this.setNextStation();
             }
         }
-        // if(this.actual == -1 && !stations.isEmpty()) {
-        //     this.actual = 0;
-        //     train.setDestination(this.stations.get(actual).sensor);
-        //     Platform.runLater(() -> this.stations.get(actual).button.setSelected(true));
-        // }
+        /*if(this.actual == -1 && !stations.isEmpty()) {
+            this.actual = 0;
+            train.setDestination(this.stations.get(actual).sensor);
+            Platform.runLater(() -> this.stations.get(actual).button.setSelected(true));
+        }*/
     }
 
     public void setNextStation() {

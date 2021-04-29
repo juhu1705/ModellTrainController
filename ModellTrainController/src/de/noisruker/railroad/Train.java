@@ -24,6 +24,8 @@ import java.util.HashMap;
 public class Train implements Serializable, Comparable<Train> {
 
     /**
+     * TODO: Das Weichenstellen muss nocheinmal überprüft werden, da es momentan nicht funktioniert
+     *
      * This methods requests the slot of a Train from the LocoNet. Before you use this method make sure you
      * {@link LocoNet#start(String) connected your LocoNet}. After this method is called the LocoNet answer with a
      * {@link TrainSlotMessage train slot message}. This method will be automatically processed by the LocoNet and the
@@ -584,9 +586,9 @@ public class Train implements Serializable, Comparable<Train> {
     }
 
     private void checkDriving() {
-        if (this.trainSwitchController == null && this.destination != null)
+        if (this.way == null && this.destination != null)
             this.calculateRailway();
-        else if (this.trainSwitchController != null && this.destination != null && this.speed == 0)
+        else if (this.way != null && this.destination != null && this.speed == 0)
             this.checkForDrivingAgain();
 
 
