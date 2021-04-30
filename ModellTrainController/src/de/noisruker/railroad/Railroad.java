@@ -58,6 +58,14 @@ public class Railroad {
         });
     }
 
+    public Sensor getNextSensorForSensor(Sensor s, Train t) {
+        SensorNode node = this.getSensorNode(s, t);
+        if(node != null)
+            return node.clacNextSensorForSensor(t).getSensor();
+
+        return null;
+    }
+
     public Sensor getNextSensor(Sensor s, Train t) {
         SensorNode node = this.getSensorNode(s, t);
         if(node != null)

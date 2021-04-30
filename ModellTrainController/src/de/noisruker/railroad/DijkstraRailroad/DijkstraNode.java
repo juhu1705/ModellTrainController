@@ -50,6 +50,48 @@ public abstract class DijkstraNode implements Comparable<DijkstraNode> {
         return this.nodes.size() < 1;
     }
 
+    public SensorNode clacNextSensorForSensor(Train t) {
+        if(t == null)
+            return null;
+
+        if(this.nodes.size() == 0)
+            return null;
+
+        if(this.nodes.size() == 1) {
+            for(Map.Entry<DijkstraNode, Integer> node: this.nodes.entrySet()) {
+                return node.getKey().calcNextSensor(t);
+            }
+        }
+
+        DijkstraNode chosenWay = t.getChosenWay(this);
+
+        if(chosenWay == null)
+            return null;
+        else if(this.nodes.containsKey(chosenWay))
+            return chosenWay.calcNextSensor(t);
+
+        return null;
+    }
+
+    private SensorNode calcNextSensor(Train t) {
+        if(t == null)
+            return null;
+
+        if(this instanceof SensorNode)
+            return (SensorNode) this;
+
+        if(this.nodes.size() == 0)
+            return null;
+
+        if(this.nodes.size() == 1) {
+            for(Map.Entry<DijkstraNode, Integer> node: this.nodes.entrySet()) {
+                return node.getKey().calcNextSensor(t);
+            }
+        }
+
+        return null;
+    }
+
     public SensorNode getNextSensor(Train t) {
         if(t == null)
             return null;

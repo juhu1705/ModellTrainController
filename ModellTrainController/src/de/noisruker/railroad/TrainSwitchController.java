@@ -34,10 +34,13 @@ public class TrainSwitchController {
     }
 
     public void addSwitch(Switch s, boolean direction) {
+        Ref.LOGGER.info("Added switch (" + s.toString() + ") for sensor (" + this.actualHandledSensor.toString() + ") with direction " + direction);
         this.addedSwitches.put(s, direction);
     }
 
     public void activateSwitches(Sensor s) {
+        Ref.LOGGER.info("Activate switches for Sensor " + s.toString());
+
         if(this.switchesBySensors.containsKey(s))
             this.switchesBySensors.remove(s).forEach(Switch::setAndUpdateState);
         else if(this.actualHandledSensor.equals(s)) {
