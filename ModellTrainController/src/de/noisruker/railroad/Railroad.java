@@ -60,8 +60,11 @@ public class Railroad {
 
     public Sensor getNextSensorForSensor(Sensor s, Train t) {
         SensorNode node = this.getSensorNode(s, t);
-        if(node != null)
-            return node.clacNextSensorForSensor(t).getSensor();
+        if(node != null) {
+            SensorNode n = node.clacNextSensorForSensor(t);
+            if(n != null)
+                return n.getSensor();
+        }
 
         return null;
     }

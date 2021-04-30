@@ -34,7 +34,7 @@ public class TrainSwitchController {
     }
 
     public void addSwitch(Switch s, boolean direction) {
-        Ref.LOGGER.info("Added switch (" + s.toString() + ") for sensor (" + this.actualHandledSensor.toString() + ") with direction " + direction);
+        Ref.LOGGER.info("Added switch (" + s.toString() + ") for sensor (" + this.actualHandledSensor + ") with direction " + direction);
         this.addedSwitches.put(s, direction);
     }
 
