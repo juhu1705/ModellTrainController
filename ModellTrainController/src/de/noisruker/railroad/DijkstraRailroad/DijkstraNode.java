@@ -77,6 +77,9 @@ public abstract class DijkstraNode implements Comparable<DijkstraNode> {
         if(t == null)
             return null;
 
+        if(this instanceof SwitchNode)
+            return null;
+
         if(this instanceof SensorNode)
             return (SensorNode) this;
 
