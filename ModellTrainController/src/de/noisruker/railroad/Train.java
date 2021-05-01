@@ -435,6 +435,7 @@ public class Train implements Serializable, Comparable<Train> {
                 this.destination != null &&
                 this.way != null) {
             this.handleSensor(nodeAddress);
+            Ref.LOGGER.info("Train is waiting: " + this.wait);
             if(!this.wait)
                 this.activateSwitches();
         }
@@ -576,8 +577,10 @@ public class Train implements Serializable, Comparable<Train> {
             Ref.LOGGER.info("Wait next add " + this.stopAdd + " for sensor " + this.nextNextNode + " to be free!");
         }
 
+        Ref.LOGGER.info("Drive again tests next Node: " + this.nextNode);
+
         if(sensor.equals(this.nextNode.getSensor())) {
-            this.trainSwitchController.activateSwitches(this.actualNode.getSensor());
+            this.activateSwitches();
             this.wait = false;
             this.applyNormalSpeed();
             return true;
