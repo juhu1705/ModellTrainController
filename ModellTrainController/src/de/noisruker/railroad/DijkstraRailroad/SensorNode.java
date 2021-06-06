@@ -44,7 +44,7 @@ public class SensorNode extends DijkstraNode {
     @Override
     public String toString() {
         return "SensorNode{" +
-                "sensor=" + sensor.getAddress() +
+                "sensor=" + sensor.getAddress() + ", " +
                 super.toString() +
                 '}';
     }

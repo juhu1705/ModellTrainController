@@ -626,11 +626,13 @@ public class GuiMain implements Initializable {
 
         this.checkOutRailroad();
 
-        actualPosition = new ComboBox();
+        this.nextStation = new ComboBox<>();
+        this.actualPosition = new ComboBox<>();
 
         this.setMode();
 
         this.actualPosition.addEventHandler(ActionEvent.ANY, this::onActualPositionEdited);
+        this.nextStation.addEventHandler(ActionEvent.ANY, this::onDrivingToPosition);
 
         this.sensorListed.selectedProperty().addListener((o, oldValue, newValue) -> {
             if (oldValue != newValue) {
@@ -814,18 +816,20 @@ public class GuiMain implements Initializable {
             if(s.shouldBeListed())
                 stationSensors.add(s.toString());
         }
-        if (sensors.isEmpty()) {
+        if (stationSensors.isEmpty()) {
             return;
         }
 
-        this.nextStation.setItems(FXCollections.observableArrayList(sensors));
+        this.nextStation.setItems(FXCollections.observableArrayList(stationSensors));
 
         HBox box = new HBox(this.temporary, l);
 
         box.setAlignment(Pos.CENTER_LEFT);
         box.setSpacing(20);
 
-        this.allSensors.getChildren().addAll(box, nextStation);
+        this.allSensors.getChildren().addAll(box, this.nextStation);
+
+
 
         /*for (Sensor s : Sensor.getAllSensors()) {
             if (s.shouldBeListed()) {
