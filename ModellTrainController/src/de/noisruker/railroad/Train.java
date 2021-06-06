@@ -493,16 +493,16 @@ public class Train implements Serializable, Comparable<Train> {
 
         this.way = (ArrayList<DijkstraNode>) DijkstraRailroad.getInstance().getShortestPath(this.actualNode, this.destination);
 
+        if (this.way == null) {
+            Ref.LOGGER.warning("No railway was found");
+            return;
+        }
+
         for(DijkstraNode node: this.way) {
             Ref.LOGGER.info("Way: " + node);
             if(node instanceof SensorNode) {
                 Ref.LOGGER.info("--> Sensor: " + ((SensorNode) node).getSensor().getName());
             }
-        }
-
-        if (this.way == null) {
-            Ref.LOGGER.warning("No railway was found");
-            return;
         }
 
         Ref.LOGGER.info("Railway: " + this.way.toString());

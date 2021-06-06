@@ -2,6 +2,7 @@ package de.noisruker.railroad.DijkstraRailroad;
 
 import java.util.*;
 import de.noisruker.railroad.elements.Sensor;
+import de.noisruker.util.Ref;
 
 public class DijkstraUtil {
 
@@ -31,6 +32,8 @@ public class DijkstraUtil {
             // Iterate over all neighbors
             Set<Map.Entry<DijkstraNode, Integer>> neighbors = node.nodes.entrySet();
             for (Map.Entry<DijkstraNode, Integer> neighborSet : neighbors) {
+                Ref.LOGGER.info("Child of " + node + " is " + neighborSet.getKey());
+
                 if(neighborSet.getKey() == null)
                     continue;
 
@@ -77,6 +80,10 @@ public class DijkstraUtil {
     private static <N extends DijkstraNode> List<N> buildPath(DijkstraNodeWrapper<N> nodeWrapper) {
         List<N> path = new ArrayList<>();
         while (nodeWrapper != null) {
+            Ref.LOGGER.info("Node: " + nodeWrapper.getNode());
+            if(nodeWrapper.getNode() instanceof SensorNode) {
+                Ref.LOGGER.info("---> Sensor: " + ((SensorNode) nodeWrapper.getNode()).getSensor());
+            }
             path.add(nodeWrapper.getNode());
             nodeWrapper = nodeWrapper.getPredecessor();
         }

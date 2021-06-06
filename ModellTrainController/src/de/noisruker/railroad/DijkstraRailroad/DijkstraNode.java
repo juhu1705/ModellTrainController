@@ -158,7 +158,7 @@ public abstract class DijkstraNode implements Comparable<DijkstraNode> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DijkstraNode that = (DijkstraNode) o;
-        return nodeID == that.nodeID;
+        return this.nodeID == that.nodeID;
     }
 
     @Override
