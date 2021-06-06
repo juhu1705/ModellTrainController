@@ -47,5 +47,11 @@ public class SwitchNode extends DijkstraNode {
         return false;
     }
 
-
+    @Override
+    public String toString() {
+        return "SwitchNode{" +
+                "aSwitch=" + aSwitch +
+                super.toString() +
+                '}';
+    }
 }
