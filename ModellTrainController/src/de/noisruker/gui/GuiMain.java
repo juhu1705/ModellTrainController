@@ -94,7 +94,7 @@ public class GuiMain implements Initializable {
     @FXML
     public ComboBox<String> mode;
 
-    public ComboBox<String> actualPosition;
+    public ComboBox<String> actualPosition, nextStation;
 
     @FXML
     public Button actualSensor, addStation, zoomIn, zoomOut;
@@ -467,6 +467,18 @@ public class GuiMain implements Initializable {
         }
     }
 
+    public void onDrivingToPosition(ActionEvent event) {
+        if(this.nextStation.getValue() == null)
+            return;
+
+        Sensor s = Util.getSensorByString(this.nextStation.getValue(), Sensor.getAllSensors());
+
+        if (this.actual != null && s != null)
+            this.actual.getTrainStationManager().addStation(s, this.temporary.isSelected());
+
+        this.nextStation.setValue("");
+    }
+
     public void onActualPositionEdited(ActionEvent event) {
         if (this.actualPosition.getValue() != null) {
             if (this.actual != null) {
@@ -797,14 +809,25 @@ public class GuiMain implements Initializable {
         l.setAlignment(Pos.CENTER);
         l.setPrefHeight(18);
 
+        ArrayList<String> stationSensors = new ArrayList<>();
+        for (Sensor s : Sensor.getAllSensors()) {
+            if(s.shouldBeListed())
+                stationSensors.add(s.toString());
+        }
+        if (sensors.isEmpty()) {
+            return;
+        }
+
+        this.nextStation.setItems(FXCollections.observableArrayList(sensors));
+
         HBox box = new HBox(this.temporary, l);
 
         box.setAlignment(Pos.CENTER_LEFT);
         box.setSpacing(20);
 
-        this.allSensors.getChildren().addAll(box);
+        this.allSensors.getChildren().addAll(box, nextStation);
 
-        for (Sensor s : Sensor.getAllSensors()) {
+        /*for (Sensor s : Sensor.getAllSensors()) {
             if (s.shouldBeListed()) {
                 Button b = new Button(s.toString());
                 b.setMinWidth(200);
@@ -815,7 +838,7 @@ public class GuiMain implements Initializable {
                 });
                 this.allSensors.getChildren().add(b);
             }
-        }
+        }*/
     }
 
     public void updateTrains() {

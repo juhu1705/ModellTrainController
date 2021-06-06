@@ -23,6 +23,7 @@ public class DijkstraUtil {
             // Have we reached the target? --> Build and return the path
             if(node instanceof SensorNode) {
                 if (((SensorNode) node).getSensor().equals(target)) {
+                    //TODO: CHECK
                     return buildPath(nodeWrapper);
                 }
             }

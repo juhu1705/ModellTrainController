@@ -735,6 +735,7 @@ public class GuiCreateRailroad implements Initializable {
                             case END:
                             case DIRECTIONAL:
                             case SIGNAL:
+                            case CROSSING:
                             case DELETE:
                                 this.setImage(finalX, finalY, getImageForModeAndRotation(false));
                                 break;

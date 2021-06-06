@@ -142,7 +142,7 @@
         </resources>
         <plugins>
 
-            <plugin>
+            <!--<plugin>
                 <groupId>org.moditect</groupId>
                 <artifactId>moditect-maven-plugin</artifactId>
                 <version>1.0.0.Beta2</version>
@@ -153,7 +153,7 @@
                         <configuration>
                             <outputDirectory>${project.build.directory}/modules</outputDirectory>
                             <modules>
-                                <!-- <module>
+                                <!- <module>
                                     <artifact>
                                         <groupId>org.scream3r</groupId>
                                         <artifactId>jssc</artifactId>
@@ -188,7 +188,7 @@
                                     <moduleInfo>
                                         <name>commons.lang3</name>
                                     </moduleInfo>
-                                </module>!-->
+                                </module>!->
                             </modules>
 
                         </configuration>
@@ -197,7 +197,7 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin>-->
 
             <plugin>
                 <groupId>org.openjfx</groupId>

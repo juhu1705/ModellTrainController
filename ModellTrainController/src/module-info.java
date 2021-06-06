@@ -19,7 +19,6 @@ module ModellTrainController {
     requires jssc;
     requires com.google.common;
 
-
     opens de.noisruker.gui to javafx.fxml;
     opens de.noisruker.main to javafx.fxml;
     opens assets.language to javafx.base;
