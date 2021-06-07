@@ -28,7 +28,7 @@ public class DijkstraRailroad {
 
     private int lastID = 0;
     protected final HashMap<Integer, DijkstraNode> NODES = new HashMap<>();
-    private final HashMap<AbstractRailroadElement, ArrayList<DijkstraNode>> NODES_BY_ELEMENTS = new HashMap<>();
+    private final HashMap<Position, ArrayList<DijkstraNode>> NODES_BY_POSITION = new HashMap<>();
 
     private DijkstraRailroad() {}
 
@@ -66,19 +66,17 @@ public class DijkstraRailroad {
             }
 
 
-        NODES_BY_ELEMENTS.clear();
+        NODES_BY_POSITION.clear();
 
-        switches.forEach(s -> NODES_BY_ELEMENTS.put(s, this.createNodesFor(s)));
-        sensors.forEach(s -> NODES_BY_ELEMENTS.put(s, this.createNodesFor(s)));
+        switches.forEach(s -> NODES_BY_POSITION.put(s.getPosition(), this.createNodesFor(s)));
+        sensors.forEach(s -> NODES_BY_POSITION.put(s.getPosition(), this.createNodesFor(s)));
 
-        NODES_BY_ELEMENTS.forEach((element, dijkstraNodes) ->
-            dijkstraNodes.forEach(dijkstraNode -> {
-                this.calculateMatches(dijkstraNode, NODES_BY_ELEMENTS, railroad);
-            }));
+        NODES_BY_POSITION.forEach((element, dijkstraNodes) ->
+            dijkstraNodes.forEach(dijkstraNode -> this.calculateMatches(dijkstraNode, NODES_BY_POSITION, railroad)));
     }
 
     private void calculateMatches(DijkstraNode from,
-                                  HashMap<AbstractRailroadElement, ArrayList<DijkstraNode>> nodesBySwitches,
+                                  HashMap<Position, ArrayList<DijkstraNode>> nodesBySwitches,
                                   AbstractRailroadElement[][] railroad) {
         if(from instanceof SensorNode)
             this.calculateSensorMatches((SensorNode) from, nodesBySwitches, railroad);
@@ -87,7 +85,7 @@ public class DijkstraRailroad {
     }
 
     private void calculateSensorMatches(SensorNode from,
-                                        HashMap<AbstractRailroadElement, ArrayList<DijkstraNode>> nodesBySwitches,
+                                        HashMap<Position, ArrayList<DijkstraNode>> nodesBySwitches,
                                         AbstractRailroadElement[][] railroad) {
         Sensor start = from.getSensor();
         Position last = start.getPosition();
@@ -103,18 +101,16 @@ public class DijkstraRailroad {
             if (actualElement == null)
                 return;
 
-            if (actualElement instanceof Sensor) {
-                Sensor end = (Sensor) actualElement;
+            if (actualElement instanceof Sensor end) {
 
-                this.setupConnection(from, end, last, nodesBySwitches.get(end), length);
+                this.setupConnection(from, end, last, nodesBySwitches.get(end.getPosition()), length);
 
                 return;
             }
 
-            if (actualElement instanceof Switch) {
-                Switch end = (Switch) actualElement;
+            if (actualElement instanceof Switch end) {
 
-                this.setupConnection(from, end, last, nodesBySwitches.get(end), length);
+                this.setupConnection(from, end, last, nodesBySwitches.get(end.getPosition()), length);
 
                 return;
             }
@@ -127,7 +123,7 @@ public class DijkstraRailroad {
     }
 
     private void calculateSwitchMatches(SwitchNode from,
-                                        HashMap<AbstractRailroadElement, ArrayList<DijkstraNode>> nodesBySwitches,
+                                        HashMap<Position, ArrayList<DijkstraNode>> nodesBySwitches,
                                         AbstractRailroadElement[][] railroad) {
         if(from.getPosition().equals(IN_TRUE) || from.getPosition().equals(IN_FALSE) ||
                 from.getPosition().equals(IN_BOTH))
@@ -147,18 +143,16 @@ public class DijkstraRailroad {
             if (actualElement == null)
                 return;
 
-            if (actualElement instanceof Sensor) {
-                Sensor end = (Sensor) actualElement;
+            if (actualElement instanceof Sensor end) {
 
-                this.setupConnection(from, end, last, nodesBySwitches.get(end), length);
+                this.setupConnection(from, end, last, nodesBySwitches.get(end.getPosition()), length);
 
                 return;
             }
 
-            if (actualElement instanceof Switch) {
-                Switch end = (Switch) actualElement;
+            if (actualElement instanceof Switch end) {
 
-                this.setupConnection(from, end, last, nodesBySwitches.get(end), length);
+                this.setupConnection(from, end, last, nodesBySwitches.get(end.getPosition()), length);
 
                 return;
             }
@@ -444,7 +438,7 @@ public class DijkstraRailroad {
      * @return The node for the given sensor or null if no node is found
      */
     public DijkstraNode getNodeByPosition(Sensor s, boolean direction) {
-        ArrayList<DijkstraNode> sensorNodes = this.NODES_BY_ELEMENTS.get(s);
+        ArrayList<DijkstraNode> sensorNodes = this.NODES_BY_POSITION.get(s);
         if(sensorNodes == null || sensorNodes.isEmpty())
             return null;
 
