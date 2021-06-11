@@ -101,14 +101,16 @@ public class DijkstraRailroad {
             if (actualElement == null)
                 return;
 
-            if (actualElement instanceof Sensor end) {
+            if (actualElement instanceof Sensor) {
+                Sensor end = (Sensor) actualElement;
 
                 this.setupConnection(from, end, last, nodesBySwitches.get(end.getPosition()), length);
 
                 return;
             }
 
-            if (actualElement instanceof Switch end) {
+            if (actualElement instanceof Switch) {
+                Switch end = (Switch) actualElement;
 
                 this.setupConnection(from, end, last, nodesBySwitches.get(end.getPosition()), length);
 
@@ -143,14 +145,16 @@ public class DijkstraRailroad {
             if (actualElement == null)
                 return;
 
-            if (actualElement instanceof Sensor end) {
+            if (actualElement instanceof Sensor) {
+                Sensor end = (Sensor) actualElement;
 
                 this.setupConnection(from, end, last, nodesBySwitches.get(end.getPosition()), length);
 
                 return;
             }
 
-            if (actualElement instanceof Switch end) {
+            if (actualElement instanceof Switch) {
+                Switch end = (Switch) actualElement;
 
                 this.setupConnection(from, end, last, nodesBySwitches.get(end.getPosition()), length);
 
@@ -438,7 +442,7 @@ public class DijkstraRailroad {
      * @return The node for the given sensor or null if no node is found
      */
     public DijkstraNode getNodeByPosition(Sensor s, boolean direction) {
-        ArrayList<DijkstraNode> sensorNodes = this.NODES_BY_POSITION.get(s);
+        ArrayList<DijkstraNode> sensorNodes = this.NODES_BY_POSITION.get(s.getPosition());
         if(sensorNodes == null || sensorNodes.isEmpty())
             return null;
 
