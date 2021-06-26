@@ -32,8 +32,6 @@ public class DijkstraUtil {
             // Iterate over all neighbors
             Set<Map.Entry<DijkstraNode, Integer>> neighbors = node.nodes.entrySet();
             for (Map.Entry<DijkstraNode, Integer> neighborSet : neighbors) {
-                Ref.LOGGER.info("Child of " + node + " is " + neighborSet.getKey());
-
                 if(neighborSet.getKey() == null)
                     continue;
 
@@ -47,6 +45,8 @@ public class DijkstraUtil {
                 // Calculate total distance from start to neighbor via current node
                 int distance = neighborSet.getValue();
                 int totalDistance = nodeWrapper.getTotalDistance() + distance;
+
+                Ref.LOGGER.info("Add new Node with distance " + totalDistance);
 
                 // Neighbor not yet discovered?
                 DijkstraNodeWrapper<N> neighborWrapper = nodeWrappers.get(neighbor);
@@ -70,6 +70,7 @@ public class DijkstraUtil {
 
                     queue.add(neighborWrapper);
                 }
+                Ref.LOGGER.info(queue.toString());
             }
         }
 
