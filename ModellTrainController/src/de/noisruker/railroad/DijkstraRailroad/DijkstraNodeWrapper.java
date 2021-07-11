@@ -2,7 +2,7 @@ package de.noisruker.railroad.DijkstraRailroad;
 
 import java.util.Objects;
 
-public class DijkstraNodeWrapper<N> implements Comparable<DijkstraNodeWrapper<N>> {
+public class DijkstraNodeWrapper<N extends DijkstraNode> implements Comparable<DijkstraNodeWrapper<N>> {
 
     private final N node;
     private int totalDistance;
@@ -36,7 +36,7 @@ public class DijkstraNodeWrapper<N> implements Comparable<DijkstraNodeWrapper<N>
 
     @Override
     public int compareTo(DijkstraNodeWrapper<N> o) {
-        return Integer.compare(this.totalDistance, o.totalDistance);
+        return Integer.compare(this.totalDistance, o.totalDistance) == 0 ? Integer.compare(this.node.nodeID, o.node.nodeID) : Integer.compare(this.totalDistance, o.totalDistance);
     }
 
     @Override
