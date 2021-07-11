@@ -51,4 +51,12 @@ public class DijkstraNodeWrapper<N> implements Comparable<DijkstraNodeWrapper<N>
     public int hashCode() {
         return Objects.hash(node);
     }
+
+    @Override
+    public String toString() {
+        return "DijkstraNodeWrapper{" +
+                "node=" + node +
+                ", totalDistance=" + totalDistance +
+                '}';
+    }
 }
