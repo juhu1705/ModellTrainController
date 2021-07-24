@@ -43,7 +43,7 @@ public class TrainSwitchController {
 
         if(this.switchesBySensors.containsKey(s))
             this.switchesBySensors.remove(s).forEach(Switch::setAndUpdateState);
-        else if(this.actualHandledSensor.equals(s)) {
+        else if(this.actualHandledSensor != null && this.actualHandledSensor.equals(s)) {
             this.addedSwitches.forEach(Switch::setAndUpdateState);
             this.addedSwitches.clear();
             this.actualHandledSensor = null;
