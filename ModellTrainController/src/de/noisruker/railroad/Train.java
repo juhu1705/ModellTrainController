@@ -413,12 +413,12 @@ public class Train implements Serializable, Comparable<Train> {
         if(this.speed == 0 || Config.mode.equals(Config.MODE_MANUAL))
             return;
 
-        /**if (this.stopAdd != null &&
+        if (this.stopAdd != null &&
                 this.stopAdd.getAddress() == nodeAddress &&
                 (this.actualSensor == null || !this.actualSensor.getState())) {
             this.setUpWaiting(nodeAddress);
             return;
-        }*/
+        }
 
         Ref.LOGGER.info("Handle Train enter " + nodeAddress);
 
@@ -496,13 +496,6 @@ public class Train implements Serializable, Comparable<Train> {
         if (this.way == null) {
             Ref.LOGGER.warning("No railway was found");
             return;
-        }
-
-        for(DijkstraNode node: this.way) {
-            Ref.LOGGER.info("Way: " + node);
-            if(node instanceof SensorNode) {
-                Ref.LOGGER.info("--> Sensor: " + ((SensorNode) node).getSensor().getName());
-            }
         }
 
         Ref.LOGGER.info("Railway: " + this.way.toString());

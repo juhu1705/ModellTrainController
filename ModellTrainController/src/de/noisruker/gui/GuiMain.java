@@ -4,6 +4,7 @@ import de.noisruker.config.ConfigManager;
 import de.noisruker.loconet.LocoNet;
 import de.noisruker.loconet.messages.RailroadOffMessage;
 import de.noisruker.loconet.messages.RailroadOnMessage;
+import de.noisruker.loconet.messages.StopTrainsMessage;
 import de.noisruker.main.GUILoader;
 import de.noisruker.railroad.DijkstraRailroad.DijkstraNode;
 import de.noisruker.railroad.DijkstraRailroad.DijkstraRailroad;
@@ -160,7 +161,7 @@ public class GuiMain implements Initializable {
     }
 
     public void onStopAllTrains(ActionEvent event) {
-        LocoNet.getInstance().getTrains().forEach(Train::stopTrainImmediately);
+        new StopTrainsMessage().send();
     }
 
     public void onStopRailroad(ActionEvent event) {

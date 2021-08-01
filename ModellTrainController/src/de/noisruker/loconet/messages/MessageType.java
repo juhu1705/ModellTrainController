@@ -2,7 +2,7 @@ package de.noisruker.loconet.messages;
 
 public enum MessageType {
 
-    // INFO: Befehle die nur aus dem OPCPDE bestehen:
+    // INFO: Befehle die nur aus dem OPC0DE bestehen:
     /**
      * Lässt alle Züge anhalten.
      */
