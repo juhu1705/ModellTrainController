@@ -118,6 +118,8 @@ public class DijkstraRailroad {
             }
 
             actualElement = this.getElement(actualElement.getToPos(last), railroad);
+            if(last.equals(actualElement.getPosition()))
+                return;
             last = actual;
             actual = actualElement.getPosition();
             length++;
@@ -162,6 +164,8 @@ public class DijkstraRailroad {
             }
 
             actualElement = this.getElement(actualElement.getToPos(last), railroad);
+            if(last.equals(actualElement.getPosition()))
+                return;
             last = actual;
             actual = actualElement.getPosition();
             length++;
