@@ -47,7 +47,7 @@ public class LocoNetMessageSender {
     }
 
     public void sendMessages() {
-        if (isRunning)
+        if (isRunning | this.connection == null)
             return;
         isRunning = true;
         new Thread(() -> {

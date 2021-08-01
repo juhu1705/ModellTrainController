@@ -4,6 +4,7 @@ import de.noisruker.config.ConfigElement;
 import de.noisruker.config.ConfigManager;
 import de.noisruker.gui.GuiMain;
 import de.noisruker.loconet.LocoNet;
+import de.noisruker.loconet.messages.StopTrainsMessage;
 import de.noisruker.main.GUILoader;
 import de.noisruker.railroad.Train;
 import jfxtras.styles.jmetro.JMetro;
@@ -128,7 +129,8 @@ public class Config {
                 if (GuiMain.getInstance() != null) {
                     GuiMain.getInstance().setMode();
                 }
-                LocoNet.getInstance().getTrains().forEach(Train::reset);
+
+                new StopTrainsMessage().send();
             });
 
             if (!Files.exists(FileSystems.getDefault().getPath(Ref.HOME_FOLDER + "config.cfg"),
