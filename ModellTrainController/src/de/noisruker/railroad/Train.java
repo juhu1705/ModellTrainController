@@ -272,6 +272,7 @@ public class Train implements Serializable, Comparable<Train> {
      * @implNote The train will stop slowly, not immediately
      */
     public void stopTrain() {
+        Ref.LOGGER.info("Stop Train " + this.address);
         this.setSpeed((byte) 0);
     }
 
@@ -427,6 +428,7 @@ public class Train implements Serializable, Comparable<Train> {
                 this.destination.isFree(this) &&
                 this.nextNode != null &&
                 this.destination.equals(this.nextNode.getSensor())) {
+            Ref.LOGGER.info("Train reached destination");
             this.onDestinationReached(nodeAddress);
         } else if (this.nextNode != null &&
                 this.nextNode.getSensor().getAddress() == nodeAddress &&

@@ -130,7 +130,7 @@ public class Config {
                     GuiMain.getInstance().setMode();
                 }
 
-                new StopTrainsMessage().send();
+                // TODO: Stop all trains here
             });
 
             if (!Files.exists(FileSystems.getDefault().getPath(Ref.HOME_FOLDER + "config.cfg"),
